@@ -1,4 +1,4 @@
-package com.galvanize.invoicify.repository.repositories.flatFeeBillingRecord;
+package com.galvanize.invoicify.repository.repositories.flatfeebillingrecord;
 
 import com.galvanize.invoicify.repository.dataaccess.FlatFeeBillingRecordDataAccess;
 

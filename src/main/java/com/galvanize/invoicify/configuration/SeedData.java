@@ -1,7 +1,7 @@
 package com.galvanize.invoicify.configuration;
 
 import com.galvanize.invoicify.models.User;
-import com.galvanize.invoicify.repository.repositories.userRepository.UserRepository;
+import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

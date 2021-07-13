@@ -1,6 +1,6 @@
 package com.galvanize.invoicify.repository.adapter;
 
-import com.galvanize.invoicify.repository.repositories.userRepository.UserRepository;
+import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
