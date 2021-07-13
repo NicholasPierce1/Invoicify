@@ -1,4 +1,4 @@
-package com.galvanize.invoicify.repository.dataAccess.Definition;
+package com.galvanize.invoicify.repository.dataAccess.definition;
 
 import java.util.function.Supplier;
 

@@ -1,9 +1,9 @@
 package com.galvanize.invoicify.repository.sharedFiles.dataAccessConversion;
 
-import com.galvanize.invoicify.repository.dataAccess.Definition.IDataAccess;
+import com.galvanize.invoicify.repository.dataAccess.definition.IDataAccess;
+import com.sun.istack.NotNull;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;

@@ -1,7 +1,7 @@
 package com.galvanize.invoicify.services;
 
 import com.galvanize.invoicify.models.User;
-import com.galvanize.invoicify.repository.repositories.UserRepository;
+import com.galvanize.invoicify.repository.repositories.userRepository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,6 +1,6 @@
 package com.galvanize.invoicify.controllers;
 
-import com.galvanize.invoicify.repository.repositories.UserRepository;
+import com.galvanize.invoicify.repository.repositories.userRepository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,8 +23,8 @@ public class UserController {
 	private PasswordEncoder encoder;
 
 	@PutMapping("{id}")
-	public User updateUser(Authentication auth, @RequestBody User user, @PathVariable Long id) {
-		User currentUserData = this.userRepository.findOne(id);
+	public User updateUser(Authentication auth, @RequestBody User user, @PathVariable Long id) throws Exception {
+		User currentUserData = this.userRepository.findById(id).orElseThrow(Exception::new);
 		user.setId(currentUserData.getId());
 
 		if (user.getPassword() == null) {
