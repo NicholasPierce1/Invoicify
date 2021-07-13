@@ -6,9 +6,10 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordManagerRepository;
 
 @Component
-public class FlatFeeBillingRecordManagerImpl implements FlatFeeBillingRecordManagerRepository{
+public class FlatFeeBillingRecordManagerImpl implements FlatFeeBillingRecordManagerRepository {
 
     private final EntityManagerFactory _entityManagerFactory;
 
