@@ -1,6 +1,6 @@
-package com.galvanize.invoicify.repository.sharedFiles.dataAccessConversion;
+package com.galvanize.invoicify.repository.sharedfiles.sharedfiles;
 
-import com.galvanize.invoicify.repository.dataAccess.definition.IDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 import com.sun.istack.NotNull;
 import org.springframework.stereotype.Component;
 

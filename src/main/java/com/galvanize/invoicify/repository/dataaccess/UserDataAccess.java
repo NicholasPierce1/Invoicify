@@ -1,9 +1,8 @@
-package com.galvanize.invoicify.repository.dataAccess;
+package com.galvanize.invoicify.repository.dataaccess;
 
 
-import com.galvanize.invoicify.models.BillingRecord;
 import com.galvanize.invoicify.models.User;
-import com.galvanize.invoicify.repository.dataAccess.definition.IDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

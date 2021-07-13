@@ -1,6 +1,6 @@
 package com.galvanize.invoicify.repository.repositories.flatFeeBillingRecord;
 
-import com.galvanize.invoicify.repository.dataAccess.FlatFeeBillingRecordDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.FlatFeeBillingRecordDataAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

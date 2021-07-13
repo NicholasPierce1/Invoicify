@@ -1,4 +1,4 @@
-package com.galvanize.invoicify.repository.dataAccess;
+package com.galvanize.invoicify.repository.dataaccess;
 
 import com.galvanize.invoicify.models.BillingRecord;
 
