@@ -1,6 +1,6 @@
 package com.galvanize.invoicify.controllers;
 
-import com.galvanize.invoicify.repositories.UserRepository;
+import com.galvanize.invoicify.repository.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;

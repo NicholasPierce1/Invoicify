@@ -1,5 +1,6 @@
 package com.galvanize.invoicify.configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,8 +17,9 @@ import com.galvanize.invoicify.services.AppUserDetailsService;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private AppUserDetailsService userDetailsService;
+    private final AppUserDetailsService userDetailsService;
 
+    @Autowired
     public SecurityConfig(AppUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
