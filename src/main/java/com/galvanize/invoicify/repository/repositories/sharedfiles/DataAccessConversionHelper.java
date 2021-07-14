@@ -1,4 +1,4 @@
-package com.galvanize.invoicify.repository.sharedfiles.sharedfiles;
+package com.galvanize.invoicify.repository.repositories.sharedfiles;
 
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 import com.sun.istack.NotNull;

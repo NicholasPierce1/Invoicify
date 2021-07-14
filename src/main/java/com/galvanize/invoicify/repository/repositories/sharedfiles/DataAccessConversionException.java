@@ -1,4 +1,4 @@
-package com.galvanize.invoicify.repository.sharedfiles.sharedfiles;
+package com.galvanize.invoicify.repository.repositories.sharedfiles;
 
 /**
  * <h1>DataAccessConversionException</h1>
