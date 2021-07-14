@@ -47,9 +47,9 @@ public class SessionController {
 		UserDetails details = userDetails.loadUserByUsername(user.getUsername());
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(details, user.getPassword(),
 				details.getAuthorities());
-		authenticator.authenticate(token);
+		authenticator.authenticate(token); // throws authentication exception if bad credentials (v 2.5.2)
 
-		if (token.isAuthenticated()) {
+		if (token.isAuthenticated()) { // always true -- exception throw prior if not use case
 			SecurityContextHolder.getContext().setAuthentication(token);
 		}
 		return details;

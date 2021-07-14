@@ -1,4 +1,4 @@
-package com.galvanize.invoicify.repository.sharedfiles.sharedfiles;
+package com.galvanize.invoicify.repository.repositories.sharedfiles;
 
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 import com.sun.istack.NotNull;
@@ -75,13 +75,18 @@ public final class DataAccessConversionHelper {
     }
 
     /**
-     * todo: nick add doc
-     * @param dataAccessList
-     * @param modelSupplier
-     * @param <T>
-     * @param <K>
-     * @param <M>
-     * @return
+     * <p>
+     *      Converts a list of data access objects to their respective model
+     *      reflections.
+     * </p>
+     * @param dataAccessList: List retaining data access object that'll be used to create the list
+     *                      of model reflections
+     * @param modelSupplier: provides implementation of creating a model object.
+     *                     NOTE: the default state set in the supplier may/will be written over.
+     * @param <T>: List of IDataAccess objects with their respective model type
+     * @param <K>: An IDataAccess object with its respective model type
+     * @param <M>: A model type used to create data access reflections
+     * @return a list of model objects
      */
     public <T extends List<K>, K extends IDataAccess<M>, M> List<M> convertToModelVersions(
             @NotNull final T dataAccessList,
@@ -99,12 +104,16 @@ public final class DataAccessConversionHelper {
     }
 
     /**
-     * todo: nick add doc
-     * @param dataAccess
-     * @param modelSupplier
-     * @param <T>
-     * @param <M>
-     * @return
+     * <p>
+     *     Converts a data access object to a model object
+     * </p>
+     * @param dataAccess: data access object that'll be used to create the list
+     *                     of model reflections
+     * @param modelSupplier: provides implementation of creating a model object.
+     *                    NOTE: the default state set in the supplier may/will be written over.
+     * @param <T>: An IDataAccess object with its respective model type
+     * @param <M>: A model type used to create data access reflections
+     * @return a model object of the reflect data access definition
      */
     public <T extends IDataAccess<M>, M> M convertToModelVersion(
             @NotNull final T dataAccess,
