@@ -9,16 +9,34 @@ import com.sun.istack.NotNull;
  */
 public class QueryTableNameModifier {
     /**
-     * Replaces the targeted query with all nominal place holders (tableName)
-     * with the selected table targeted for the repository.
-     * @param query: String query to manipulate (final member) so new copy given
-     * @param tableName: String name of table for which entity repository corresponds with
+     * Replaces the targeted query with all nominal place holders (t#) to their corresponding tableName.
+     * NOTE: t1 --> tableName[0]
+     *
+     * ex:
+     *  - input:
+     *    -  query: Select t1.*, t2.* From t1, t2 Where t1.id = t2.childId
+     *    - tableNames: table1, table2
+     *  - output: Select table1.*, table2.* From table1, table2 Where table1.id = table2.childId
+     *
+     *  ex:
+     *   - input:
+     *    - query: Select t1.* From t1
+     *    - tableNames: table1
+     *   - output: Select table1.* From table1
+     *
+     * @param query: String query to manipulate
+     * @param tableNames: String name of tables for which entity repository corresponds with
      * @return amended query with table names inserted at placeholders.
      */
-    public static @NotNull String insertTableNameIntoQuery(
-            @NotNull final String query,
-            @NotNull final String tableName){
-        //todo: refactor for multi-table modification
-        return null; // query.replaceAll("tableName",tableName );
+    public static @NotNull String insertTableNamesIntoQuery(
+            @NotNull String query,
+            @NotNull final String... tableNames){
+
+        for(int i = 0; i < tableNames.length; i++){
+            final String tableStringId = String.format("t%d", i + 1);
+            query = query.replaceAll(tableStringId, tableNames[i]);
+        }
+
+        return query;
     }
 }
