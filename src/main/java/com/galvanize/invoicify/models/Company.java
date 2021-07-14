@@ -1,6 +1,7 @@
 package com.galvanize.invoicify.models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "company")
@@ -12,6 +13,17 @@ public class Company {
 
     @Column(nullable = false)
     private String name;
+
+    @Transient
+    private List<String> Companies;
+
+    public List<String> getCompanies() {
+        return Companies;
+    }
+
+    public void setCompanies(List<String> companies) {
+        Companies = companies;
+    }
 
     public Company() {
     }
