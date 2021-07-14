@@ -45,8 +45,12 @@ public class UserController {
 
 	@GetMapping
 	public List<User> getUsers() {
-		List<User> Users = this.userRepository.findAll();
-		return Users;
+		return this.userRepository.findAll();
+	}
+
+	@GetMapping("{id}")
+	public User getUser(@PathVariable Long id){
+		return this.userRepository.findById(id).get();
 	}
 
 }

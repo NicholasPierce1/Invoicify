@@ -30,4 +30,10 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$").isNotEmpty());
     }
 
+    @Test
+    public void getSpecificUser() throws Exception {
+        this.mvc.perform(get("/api/user/7"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(7));
+    }
 }
