@@ -15,9 +15,6 @@ import java.util.Optional;
 public class AppUserDetailsService implements UserDetailsService {
 
 	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
 	private Adapter _adapter;
 
 	@Override
@@ -25,6 +22,7 @@ public class AppUserDetailsService implements UserDetailsService {
 		final Optional<User> user = this._adapter.getUserByUserName(username);
 
 		return user.orElseThrow( () -> new UsernameNotFoundException(username) );
+		//return null;
 	}
 
 }

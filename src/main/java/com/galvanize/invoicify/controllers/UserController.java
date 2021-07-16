@@ -19,6 +19,8 @@ public class UserController {
 	@Autowired
 	private Adapter adapter;
 
+
+
 	@PutMapping("{id}")
 	public User updateUser(Authentication auth, @RequestBody User user, @PathVariable Long id) throws Exception {
 		 return adapter.updateUser(user, id);
@@ -37,7 +39,6 @@ public class UserController {
 	@GetMapping("{id}")
 	public User getUser(@PathVariable Long id){
 		return adapter.findUser(id);
-		//return this.userRepository.findById(id).get();
 	}
 
 }

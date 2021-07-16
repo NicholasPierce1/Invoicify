@@ -30,6 +30,7 @@ public final class Adapter {
         this._companyRepository = companyRepository;
     }
 
+
     // ...stubs go below
     // add your method signatures to complete your user stories here
 
@@ -47,22 +48,22 @@ public final class Adapter {
 
         if (user.getUsername() != null || !user.getUsername().equals("")) {
             //check if there's another user with the given username and prevent duplication of user ids.
-			/*int userCountByUsername = this.userRepository.countUsersByUserName(user.getUsername());
+			int userCountByUsername = this._userRepository.countUsersByUserName(user.getUsername());
 			if (userCountByUsername > 1) {
 				throw new Exception("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
-			}*/
+			}
             currentUserData.setUsername(user.getUsername());
         }
 
         if (user.getPassword() != null || !user.getPassword().equals("")) {
-            currentUserData.setPassword(encoder.encode(user.getPassword()));
+            currentUserData.setPassword(_encoder.encode(user.getPassword()));
         }
         return _userRepository.save(currentUserData).convertTo((User::new));
     }
 
     public User createUser(User user) {
         UserDataAccess userDataAccess = new UserDataAccess();
-        userDataAccess.setPassword(encoder.encode(user.getPassword()));
+        userDataAccess.setPassword(_encoder.encode(user.getPassword()));
         return _userRepository.save(userDataAccess).convertTo((User::new));
     }
 
