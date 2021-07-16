@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public final class Adapter {
+public class Adapter {
 
     public final UserRepository _userRepository;
 
@@ -77,6 +77,7 @@ public final class Adapter {
     }
 
     public List<Company> findAllCompaniesBasic(){
+
         return this._companyRepository
                 .findAll()
                 .stream()

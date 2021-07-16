@@ -2,15 +2,20 @@ package com.example.invoicify;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.InvoicifyApplication;
+import com.galvanize.invoicify.controllers.CompanyController;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import org.json.JSONArray;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -38,13 +43,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = InvoicifyApplication.class)
 @ExtendWith(MockitoExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CompanyControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private CompanyRepository companyRepository;
+    @Mock
+    private CompanyController companyController;
 
     @Test
     public void  testViewAllCompanies() throws Exception {
@@ -73,28 +76,25 @@ public class CompanyControllerTest {
                 .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) )
                 .collect(Collectors.toList());
 
-        when(companyRepository.findAll()).thenReturn(companyDataAccesses);
+        when(this.companyController.viewAllCompanies()).thenReturn(expectedCompanies);
         // this allows the controller, adapter, data access, and model to work as expected
         // ONLY the repository is hardcoded for its response
 
-        final MvcResult response = this.mockMvc.perform(get("/app/company"))
-                .andExpect(status().isOk())
-                .andReturn();
-        // we have the json response for all companies now
-
-        final JSONArray jsonArray = new JSONArray(response.getResponse().getContentAsString());
-        // converted to a json array
+        final List<Company> actualCompanyList = this.companyController.viewAllCompanies();
 
         Assertions.assertEquals(
                 expectedCompanies.size(),
-                jsonArray.length()
+                actualCompanyList.size()
         ); // size of list the same
 
-        for(int i = 0; i < jsonArray.length(); i++) // compares json strings of response to expected for each company
+        for(int i = 0; i < actualCompanyList.size(); i++) // compares json strings of response to expected for each company
             Assertions.assertEquals(
                     objectMapper.writeValueAsString(expectedCompanies.get(i)), // converts company object to json string
-                    jsonArray.getString(i) // extracts json string from json array
+                    objectMapper.writeValueAsString(actualCompanyList.get(i)) // extracts json string from json array
             );
+
+
+        verify(companyController).viewAllCompanies();
 
     }
 }
