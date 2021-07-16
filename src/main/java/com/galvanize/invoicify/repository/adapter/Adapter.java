@@ -1,5 +1,6 @@
 package com.galvanize.invoicify.repository.adapter;
 
+import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
@@ -72,5 +73,13 @@ public final class Adapter {
 
     public User findUser(Long id) {
         return _userRepository.findById(id).map(userDataAccess -> userDataAccess.convertTo(User::new)).get();
+    }
+
+    public List<Company> findAllCompaniesBasic(){
+        return this._companyRepository
+                .findAll()
+                .stream()
+                .map( (companyDataAccess) -> companyDataAccess.convertTo(Company::new) )
+                .collect(Collectors.toList());
     }
 }
