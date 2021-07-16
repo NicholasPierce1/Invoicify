@@ -37,14 +37,14 @@ public final class Adapter {
     }
 
 
-    public User updateUser(User user, Long id) throws Exception {
-        UserDataAccess currentUserData = this._userRepository.findById(id).orElseThrow(Exception::new);
+    public User updateUser(User user, Long id) throws DuplicateUserException {
+        UserDataAccess currentUserData = this._userRepository.findById(id).get();//orElseThrow(DuplicateUserException::new);
 
         if (user.getUsername() != null || !user.getUsername().equals("")) {
             //check if there's another user with the given username and prevent duplication of user ids.
 			int userCountByUsername = this._userRepository.countUsersByUserName(user.getUsername());
-			if (userCountByUsername > 1) {
-				throw new Exception("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
+			if (userCountByUsername > 0) {
+				throw new DuplicateUserException("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
 			}
             currentUserData.setUsername(user.getUsername());
         }
