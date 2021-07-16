@@ -15,11 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public final class Adapter {
 
-    public final UserRepository _userRepository;
-
-
-    @Autowired
-    private PasswordEncoder encoder;
+    private final UserRepository _userRepository;
 
     @Autowired
     public Adapter(UserRepository userRepository){
@@ -38,7 +34,7 @@ public final class Adapter {
     }
 
 
-    public User updateUser(User user, Long id) throws Exception {
+    public User updateUser(User user, Long id, PasswordEncoder encoder) throws Exception {
         UserDataAccess currentUserData = this._userRepository.findById(id).orElseThrow(Exception::new);
 
         if (user.getUsername() != null || !user.getUsername().equals("")) {
@@ -56,7 +52,7 @@ public final class Adapter {
         return _userRepository.save(currentUserData).convertTo((User::new));
     }
 
-    public User createUser(User user) {
+    public User createUser(User user, PasswordEncoder encoder) {
         UserDataAccess userDataAccess = new UserDataAccess();
         userDataAccess.setPassword(encoder.encode(user.getPassword()));
         return _userRepository.save(userDataAccess).convertTo((User::new));
