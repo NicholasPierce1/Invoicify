@@ -5,6 +5,7 @@ import com.galvanize.invoicify.repository.repositories.companyrepository.Company
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,4 +33,12 @@ public final class Adapter {
                 .collect(Collectors.toList());
     }
 
+//    public
+
+    public Company findCompanyById(@PathVariable long id) {
+
+        return this._companyRepository
+                .findById(id)
+                .map(companyDataAccess -> companyDataAccess.convertTo(Company::new)).get();
+    }
 }

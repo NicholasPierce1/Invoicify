@@ -48,20 +48,20 @@ public class CompanyControllerTest {
     private CompanyRepository companyRepository;
 
     @Test
-    public void  testViewAllCompanies() throws Exception {
+    public void testViewAllCompanies() throws Exception {
 
 
         // todo: nick, create bean for object mapper via mapper build
         final ObjectMapper objectMapper = new ObjectMapper();
 
-        final ArrayList<CompanyDataAccess> companyDataAccesses = new ArrayList<CompanyDataAccess>(){{
+        final ArrayList<CompanyDataAccess> companyDataAccesses = new ArrayList<CompanyDataAccess>() {{
 
-            add(new CompanyDataAccess(){{
+            add(new CompanyDataAccess() {{
                 setId(1L);
                 setName("LTI");
             }});
 
-            add(new CompanyDataAccess(){{
+            add(new CompanyDataAccess() {{
                 setId(2L);
                 setName("Galvanize");
             }});
@@ -70,9 +70,9 @@ public class CompanyControllerTest {
 
         List<Company> expectedCompanies =
                 companyDataAccesses
-                .stream()
-                .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) )
-                .collect(Collectors.toList());
+                        .stream()
+                        .map((companyDataAccess -> companyDataAccess.convertTo(Company::new)))
+                        .collect(Collectors.toList());
 
         when(companyRepository.findAll()).thenReturn(companyDataAccesses);
         // this allows the controller, adapter, data access, and model to work as expected
@@ -91,7 +91,7 @@ public class CompanyControllerTest {
                 jsonArray.length()
         ); // size of list the same
 
-        for(int i = 0; i < jsonArray.length(); i++) // compares json strings of response to expected for each company
+        for (int i = 0; i < jsonArray.length(); i++) // compares json strings of response to expected for each company
             Assertions.assertEquals(
                     objectMapper.writeValueAsString(expectedCompanies.get(i)), // converts company object to json string
                     jsonArray.getString(i) // extracts json string from json array
@@ -99,17 +99,37 @@ public class CompanyControllerTest {
 
     }
 
+//    @Test
+//    public void testGetAllCompanies() throws Exception {
+//        this.mockMvc.perform(get("/api/company"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$").isNotEmpty());
+//    }
+
     @Test
     public void testGetCompanyById() throws Exception {
 
-        Company company = new Company(1L);
+        Company company = new Company();
+        company.setId(1l);
 
-        RequestBuilder request = get("/json-object");
-        this.mockMvc.perform(request)
+//        RequestBuilder request = get("/app/company/1");
+        this.mockMvc.perform(get("/app/company/1"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value(0));
+                    .andExpect(jsonPath("$.id").value(1));
     }
 
-
+//    @Test
+//    public void testGetCompanyById() throws Exception {
+//    }
 }
+
+
+
+
+
+
+
+
+
+
 
