@@ -85,4 +85,11 @@ public class Adapter {
                 .map( (companyDataAccess) -> companyDataAccess.convertTo(Company::new) )
                 .collect(Collectors.toList());
     }
+
+    public Company findCompanyById(@PathVariable long id) {
+
+        return this._companyRepository
+                .findById(id)
+                .map(companyDataAccess -> companyDataAccess.convertTo(Company::new)).get();
+    }
 }
