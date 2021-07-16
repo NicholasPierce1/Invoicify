@@ -53,7 +53,13 @@ public class CompanyDataAccess implements IDataAccess<Company> {
 
     @Override
     public Company convertTo(Supplier<Company> supplier) {
-        return null;
+
+        final Company company = supplier.get();
+
+        company.setName(this.getName());
+        company.setId(this.getId());
+
+        return company;
     }
 
 
