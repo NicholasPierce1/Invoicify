@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public final class Adapter {
 
-    private final UserRepository _userRepository;
+    public final UserRepository _userRepository;
 
 
     @Autowired
@@ -52,5 +54,20 @@ public final class Adapter {
             currentUserData.setPassword(encoder.encode(user.getPassword()));
         }
         return _userRepository.save(currentUserData).convertTo((User::new));
+    }
+
+    public User createUser(User user) {
+        UserDataAccess userDataAccess = new UserDataAccess();
+        userDataAccess.setPassword(encoder.encode(user.getPassword()));
+        return _userRepository.save(userDataAccess).convertTo((User::new));
+    }
+
+
+    public List<User> findAll() {
+        return _userRepository.findAll().stream().map(userDataAccess -> userDataAccess.convertTo(User::new)).collect(Collectors.toList());
+    }
+
+    public User findUser(Long id) {
+        return _userRepository.findById(id).map(userDataAccess -> userDataAccess.convertTo(User::new)).get();
     }
 }

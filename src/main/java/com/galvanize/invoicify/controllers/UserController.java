@@ -26,21 +26,18 @@ public class UserController {
 
 	@PostMapping
 	public User createUser(@RequestBody User user) {
-		String password = user.getPassword();
-		String encryptedPassword = encoder.encode(password);
-		user.setPassword(encryptedPassword);
-		userRepository.save(user);
-		return user;
+		return adapter.createUser(user);
 	}
 
 	@GetMapping
 	public List<User> getUsers() {
-		return this.userRepository.findAll();
+		return adapter.findAll();
 	}
 
 	@GetMapping("{id}")
 	public User getUser(@PathVariable Long id){
-		return this.userRepository.findById(id).get();
+		return adapter.findUser(id);
+		//return this.userRepository.findById(id).get();
 	}
 
 }

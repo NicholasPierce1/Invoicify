@@ -26,6 +26,12 @@ public final class UserDataAccess implements IDataAccess<User> {
 
     public UserDataAccess(){}
 
+    public UserDataAccess(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+
     // get & set
 
     public Long getId() {
