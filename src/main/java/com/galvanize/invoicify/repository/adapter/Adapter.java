@@ -16,11 +16,14 @@ import java.util.stream.Collectors;
 public final class Adapter {
 
     private final UserRepository _userRepository;
+    private final PasswordEncoder _encoder;
 
     @Autowired
-    public Adapter(UserRepository userRepository){
+    public Adapter(UserRepository userRepository, PasswordEncoder encoder){
         this._userRepository = userRepository;
+        this._encoder = encoder;
     }
+
 
     // ...stubs go below
     // add your method signatures to complete your user stories here
@@ -34,27 +37,27 @@ public final class Adapter {
     }
 
 
-    public User updateUser(User user, Long id, PasswordEncoder encoder) throws Exception {
+    public User updateUser(User user, Long id) throws Exception {
         UserDataAccess currentUserData = this._userRepository.findById(id).orElseThrow(Exception::new);
 
         if (user.getUsername() != null || !user.getUsername().equals("")) {
             //check if there's another user with the given username and prevent duplication of user ids.
-			/*int userCountByUsername = this.userRepository.countUsersByUserName(user.getUsername());
+			int userCountByUsername = this._userRepository.countUsersByUserName(user.getUsername());
 			if (userCountByUsername > 1) {
 				throw new Exception("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
-			}*/
+			}
             currentUserData.setUsername(user.getUsername());
         }
 
         if (user.getPassword() != null || !user.getPassword().equals("")) {
-            currentUserData.setPassword(encoder.encode(user.getPassword()));
+            currentUserData.setPassword(_encoder.encode(user.getPassword()));
         }
         return _userRepository.save(currentUserData).convertTo((User::new));
     }
 
-    public User createUser(User user, PasswordEncoder encoder) {
+    public User createUser(User user) {
         UserDataAccess userDataAccess = new UserDataAccess();
-        userDataAccess.setPassword(encoder.encode(user.getPassword()));
+        userDataAccess.setPassword(_encoder.encode(user.getPassword()));
         return _userRepository.save(userDataAccess).convertTo((User::new));
     }
 
