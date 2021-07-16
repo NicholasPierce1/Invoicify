@@ -4,27 +4,11 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "company")
 public class Company {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
-
-    @Transient
-    private ArrayList<String> Companies;
-
-    public ArrayList<String> getCompanies() {
-        return Companies;
-    }
-
-    public void setCompanies(ArrayList<String> companies) {
-        Companies = companies;
-    }
 
     public Company() {
     }
