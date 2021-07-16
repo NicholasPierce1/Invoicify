@@ -39,7 +39,6 @@ public class UserController {
 	@GetMapping("{id}")
 	public User getUser(@PathVariable Long id){
 		return adapter.findUser(id);
-		//return this.userRepository.findById(id).get();
 	}
 
 }
