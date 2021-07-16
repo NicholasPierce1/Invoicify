@@ -66,6 +66,7 @@ public class UserControllerTest {
 
         String userCredentials = "{" +
                 "    \"username\":\"admin2\"," +
+                "    \"password\":\"password2\"" +
                 "}";
 
         MockHttpServletRequestBuilder request = put("/api/user/7")
@@ -81,8 +82,8 @@ public class UserControllerTest {
     public void modifyUserCredentialsWithJustPassword() throws Exception {
 
         String userCredentials = "{" +
-                "\"username\":\"admin2\"," +
-                "\"password\":\"password2\"" +
+                "    \"username\":\"admin2\"," +
+                "    \"password\":\"password2\"" +
                 "}";
 
         MockHttpServletRequestBuilder request = put("/api/user/7")
@@ -100,6 +101,7 @@ public class UserControllerTest {
         //bob already exists. Check @SeedData.java
         String userCredentials = "{" +
                     "\"username\":\"bob\"," +
+                    "\"password\":\"password2\"" +
                 "}";
 
         MockHttpServletRequestBuilder request = put("/api/user/7")

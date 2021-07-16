@@ -19,18 +19,16 @@ public class UserController {
 	@Autowired
 	private Adapter adapter;
 
-	@Autowired
-	private PasswordEncoder encoder;
 
 
 	@PutMapping("{id}")
 	public User updateUser(Authentication auth, @RequestBody User user, @PathVariable Long id) throws Exception {
-		 return adapter.updateUser(user, id, encoder);
+		 return adapter.updateUser(user, id);
 	}
 
 	@PostMapping
 	public User createUser(@RequestBody User user) {
-		return adapter.createUser(user, encoder);
+		return adapter.createUser(user);
 	}
 
 	@GetMapping
@@ -41,7 +39,6 @@ public class UserController {
 	@GetMapping("{id}")
 	public User getUser(@PathVariable Long id){
 		return adapter.findUser(id);
-		//return this.userRepository.findById(id).get();
 	}
 
 }
