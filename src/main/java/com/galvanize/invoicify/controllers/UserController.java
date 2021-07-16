@@ -22,16 +22,21 @@ public class UserController {
 	@PutMapping("{id}")
 	public User updateUser(Authentication auth, @RequestBody User user, @PathVariable Long id) throws Exception {
 		User currentUserData = this.userRepository.findById(id).orElseThrow(Exception::new);
-//		user.setId(currentUserData.getId());
 
-		if (user.getPassword() != null) {
-			currentUserData.setPassword(user.getPassword());
-		} else {
-			String encryptedPassword = encoder.encode(user.getPassword());
-			user.setPassword(encryptedPassword);
+		if (user.getUsername() != null || !user.getUsername().equals("")) {
+			//check if there's another user with the given username and prevent duplication of user ids.
+			/*int userCountByUsername = this.userRepository.countUsersByUserName(user.getUsername());
+			if (userCountByUsername > 1) {
+				throw new Exception("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
+			}*/
+			currentUserData.setUsername(user.getUsername());
 		}
 
-		return userRepository.save(user);
+		if (user.getPassword() != null || !user.getPassword().equals("")) {
+			currentUserData.setPassword(encoder.encode(user.getPassword()));
+		}
+
+		return userRepository.save(currentUserData);
 	}
 
 	@PostMapping

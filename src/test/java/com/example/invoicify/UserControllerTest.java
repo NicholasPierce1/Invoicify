@@ -44,11 +44,28 @@ public class UserControllerTest {
     }
 
     @Test
-    public void modifyUserCredentials() throws Exception {
+    public void modifyUserCredentialsWithNonExistingUserNameAndPassword() throws Exception {
 
         String userCredentials = "{" +
-                "    \"username\":\"user1\"," +
+                "    \"username\":\"admin2\"," +
                 "    \"password\":\"password2\"" +
+                "}";
+
+        MockHttpServletRequestBuilder request = put("/api/user/7")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userCredentials);
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("admin2"))
+                .andExpect(jsonPath("$.password").value("password2"));
+    }
+
+    @Test
+    public void modifyUserCredentialsWithJustUserName() throws Exception {
+
+        String userCredentials = "{" +
+                "    \"username\":\"admin2\"," +
                 "}";
 
         MockHttpServletRequestBuilder request = put("/api/user/7")
@@ -60,6 +77,38 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.password").value("password2"));
     }
 
+    @Test
+    public void modifyUserCredentialsWithJustPassword() throws Exception {
+
+        String userCredentials = "{" +
+                    "\"password\":\"password2\"" +
+                "}";
+
+        MockHttpServletRequestBuilder request = put("/api/user/7")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userCredentials);
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.password").value("password2"));
+    }
+
+    @Test
+    public void modifyUserCredentialsWithAnotherUsernameThatAlreadyExists() throws Exception {
+
+        //bob already exists. Check @SeedData.java
+        String userCredentials = "{" +
+                    "\"username\":\"bob\"," +
+                "}";
+
+        MockHttpServletRequestBuilder request = put("/api/user/7")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userCredentials);
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.password").value("password2"));
+    }
 
 
 
