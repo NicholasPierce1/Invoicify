@@ -45,8 +45,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class CompanyControllerTest {
 
-
-    @Mock
     private CompanyRepository companyRepository;
 
     @Autowired
@@ -55,16 +53,18 @@ public class CompanyControllerTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private Adapter adapter;
-
     private CompanyController companyController;
+
+    private Adapter adapter;
 
     @BeforeAll
     public void createAdapter(){
 
-        adapter = new Adapter(userRepository, companyRepository, passwordEncoder);
+        this.companyRepository = Mockito.mock(CompanyRepository.class);
 
-        companyController = new CompanyController(adapter);
+        this.adapter = new Adapter(userRepository, companyRepository, passwordEncoder);
+
+        this.companyController = new CompanyController(adapter);
 
     }
 
@@ -95,10 +95,10 @@ public class CompanyControllerTest {
                         .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) )
                         .collect(Collectors.toList());
 
-        when(this.companyRepository.findAll()).thenReturn(companyDataAccesses);
+        when(companyRepository.findAll()).thenReturn(companyDataAccesses);
         // this allows the controller, adapter, data access, and model to work as expected
         // ONLY the repository is hardcoded for its response
-
+        System.out.println(adapter._companyRepository.findAll().size());
         final List<Company> actualCompanyList = this.companyController.viewAllCompanies();
 
         Assertions.assertEquals(
@@ -113,7 +113,7 @@ public class CompanyControllerTest {
             );
 
 
-        verify(companyController).viewAllCompanies();
+        verify(companyRepository, times(2)).findAll();
 
     }
 

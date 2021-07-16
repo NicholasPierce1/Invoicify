@@ -37,8 +37,6 @@ public final class Adapter {
                 .collect(Collectors.toList());
     }
 
-//    public
-
     public Company findCompanyById(@PathVariable long id) {
 
         return this._companyRepository
