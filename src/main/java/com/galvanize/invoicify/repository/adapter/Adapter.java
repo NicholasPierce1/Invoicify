@@ -22,7 +22,7 @@ public final class Adapter {
     public final  CompanyRepository _companyRepository;
 
     @Autowired
-    private PasswordEncoder encoder;
+    private PasswordEncoder _encoder;
 
     @Autowired
     public Adapter(UserRepository userRepository, CompanyRepository companyRepository){
