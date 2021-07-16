@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -17,8 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Optional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -28,6 +28,9 @@ public class UserControllerTest {
 
     @Autowired
     MockMvc mvc;
+
+    @Autowired
+    PasswordEncoder encoder;
 
     @Test
     public void getAllUsers() throws Exception {
@@ -51,14 +54,18 @@ public class UserControllerTest {
                 "    \"password\":\"password2\"" +
                 "}";
 
+
         MockHttpServletRequestBuilder request = put("/api/user/7")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userCredentials);
 
+        System.out.println(encoder.encode("password1"));
+
         this.mvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value("admin2"))
-                .andExpect(jsonPath("$.password").value("password2"));
+                .andExpect(jsonPath("$.password").value(encoder.encode("password2")));
+
     }
 
     @Test
@@ -66,7 +73,7 @@ public class UserControllerTest {
 
         String userCredentials = "{" +
                 "    \"username\":\"admin2\"," +
-                "    \"password\":\"password2\"" +
+                "    \"password\":\"\"" +
                 "}";
 
         MockHttpServletRequestBuilder request = put("/api/user/7")
@@ -75,14 +82,14 @@ public class UserControllerTest {
 
         this.mvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.password").value("password2"));
+                .andExpect(jsonPath("$.username").value("admin2"));
     }
 
     @Test
     public void modifyUserCredentialsWithJustPassword() throws Exception {
 
         String userCredentials = "{" +
-                "    \"username\":\"admin2\"," +
+                "    \"username\":\"\"," +
                 "    \"password\":\"password2\"" +
                 "}";
 
@@ -108,10 +115,45 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userCredentials);
 
+
+        this.mvc.perform(request)
+                .andExpect(status().is5xxServerError());
+    }
+
+    @Test
+    public void createNewUser() throws Exception {
+
+        String userCredentials = "{" +
+                "\"username\":\"newUser\"," +
+                "\"password\":\"password2\"" +
+                "}";
+
+        MockHttpServletRequestBuilder request = post("/api/user/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userCredentials);
+
         this.mvc.perform(request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.password").value("password2"));
+                .andExpect(jsonPath("$.username").value("newUser"));
     }
+
+    @Test
+    public void createAnExistingUser() throws Exception {
+
+        String userCredentials = "{" +
+                "\"username\":\"bob\"," +
+                "\"password\":\"password2\"" +
+                "}";
+
+        MockHttpServletRequestBuilder request = post("/api/user/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userCredentials);
+
+        this.mvc.perform(request)
+                .andExpect(status().is5xxServerError());
+    }
+
+
 
 
 
