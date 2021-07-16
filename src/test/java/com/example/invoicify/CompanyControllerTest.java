@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletResponse;
@@ -72,9 +73,9 @@ public class CompanyControllerTest {
 
         List<Company> expectedCompanies =
                 companyDataAccesses
-                .stream()
-                .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) )
-                .collect(Collectors.toList());
+                        .stream()
+                        .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) )
+                        .collect(Collectors.toList());
 
         when(this.companyController.viewAllCompanies()).thenReturn(expectedCompanies);
         // this allows the controller, adapter, data access, and model to work as expected
@@ -97,5 +98,38 @@ public class CompanyControllerTest {
         verify(companyController).viewAllCompanies();
 
     }
+
+//    @Test
+//    public void testGetAllCompanies() throws Exception {
+//        this.mockMvc.perform(get("/api/company"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$").isNotEmpty());
+//    }
+
+//    @Test
+//    public void testGetCompanyById() throws Exception {
+//
+//        Company company = new Company();
+//        company.setId(1l);
+//
+////        RequestBuilder request = get("/app/company/1");
+//        this.mockMvc.perform(get("/app/company/1"))
+//                    .andExpect(status().isOk())
+//                    .andExpect(jsonPath("$.id").value(1));
+//    }
+
+//    @Test
+//    public void testGetCompanyById() throws Exception {
+//    }
 }
+
+
+
+
+
+
+
+
+
+
 
