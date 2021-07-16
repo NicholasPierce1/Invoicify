@@ -20,8 +20,6 @@ public class User implements UserDetails {
 	private Long id;
 
 	private String password;
-
-	@JsonInclude()
 	private String username;
 
 	public User() {
