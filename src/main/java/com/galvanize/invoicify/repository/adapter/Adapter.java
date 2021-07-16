@@ -2,6 +2,7 @@ package com.galvanize.invoicify.repository.adapter;
 
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
+import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ public final class Adapter {
 
     public final UserRepository _userRepository;
 
+    public final  CompanyRepository _companyRepository;
 
     @Autowired
     private PasswordEncoder encoder;
