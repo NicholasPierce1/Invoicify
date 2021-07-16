@@ -22,10 +22,10 @@ public class UserController {
 	@PutMapping("{id}")
 	public User updateUser(Authentication auth, @RequestBody User user, @PathVariable Long id) throws Exception {
 		User currentUserData = this.userRepository.findById(id).orElseThrow(Exception::new);
-		user.setId(currentUserData.getId());
+//		user.setId(currentUserData.getId());
 
-		if (user.getPassword() == null) {
-			user.setPassword(currentUserData.getPassword());
+		if (user.getPassword() != null) {
+			currentUserData.setPassword(user.getPassword());
 		} else {
 			String encryptedPassword = encoder.encode(user.getPassword());
 			user.setPassword(encryptedPassword);
