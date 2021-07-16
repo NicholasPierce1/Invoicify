@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletResponse;
@@ -97,5 +98,18 @@ public class CompanyControllerTest {
             );
 
     }
+
+    @Test
+    public void testGetCompanyById() throws Exception {
+
+        Company company = new Company(1L);
+
+        RequestBuilder request = get("/json-object");
+        this.mockMvc.perform(request)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(0));
+    }
+
+
 }
 
