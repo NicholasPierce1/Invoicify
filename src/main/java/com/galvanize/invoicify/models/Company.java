@@ -1,6 +1,7 @@
 package com.galvanize.invoicify.models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,13 +16,13 @@ public class Company {
     private String name;
 
     @Transient
-    private List<String> Companies;
+    private ArrayList<String> Companies;
 
-    public List<String> getCompanies() {
+    public ArrayList<String> getCompanies() {
         return Companies;
     }
 
-    public void setCompanies(List<String> companies) {
+    public void setCompanies(ArrayList<String> companies) {
         Companies = companies;
     }
 

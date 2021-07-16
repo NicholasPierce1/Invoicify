@@ -8,10 +8,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+//import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -24,14 +25,19 @@ public class CompanyControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+//    objectmapper
+
     @Test
     public void  testViewAllCompanies() throws Exception {
 
-        Company comp = new Company();
-
+//        Company comp = new Company();
+        ArrayList<Company> companies = new ArrayList<>();
+        companies.add( new Company(1L, "LTI"));
+        companies.add( new Company(2L, "Galvanize"));
+        System.out.println(companies);
         this.mockMvc.perform(get("/app/company"))
                 .andExpect(status().isOk())
-                .andExpect((ResultMatcher) content().string(comp.getName()));
+                .andExpect(content().json("[]"));
 
     }
 }
