@@ -7,6 +7,7 @@ import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
+import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.json.JSONArray;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -48,7 +50,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CompanyControllerTest {
 
     @Mock
+    private CompanyRepository companyRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private Adapter adapter;
+
     private CompanyController companyController;
+
+    @BeforeAll
+    public void createAdapter(){
+
+        adapter = new Adapter(userRepository, companyRepository, passwordEncoder);
+
+        companyController = new CompanyController(adapter);
+
+    }
 
     @Test
     public void  testViewAllCompanies() throws Exception {
@@ -77,7 +98,7 @@ public class CompanyControllerTest {
                         .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) )
                         .collect(Collectors.toList());
 
-        when(this.companyController.viewAllCompanies()).thenReturn(expectedCompanies);
+        when(this.companyRepository.findAll()).thenReturn(companyDataAccesses);
         // this allows the controller, adapter, data access, and model to work as expected
         // ONLY the repository is hardcoded for its response
 

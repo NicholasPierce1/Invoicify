@@ -22,13 +22,13 @@ public class Adapter {
 
     public final  CompanyRepository _companyRepository;
 
-    @Autowired
-    private PasswordEncoder _encoder;
+    private final PasswordEncoder _encoder;
 
     @Autowired
-    public Adapter(UserRepository userRepository, CompanyRepository companyRepository){
+    public Adapter(UserRepository userRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder){
         this._userRepository = userRepository;
         this._companyRepository = companyRepository;
+        this._encoder = passwordEncoder;
     }
 
 
