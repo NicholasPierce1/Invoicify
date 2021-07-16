@@ -42,10 +42,9 @@ public final class Adapter {
 
         if (user.getUsername() != null || !user.getUsername().equals("")) {
             //check if there's another user with the given username and prevent duplication of user ids.
-			int userCountByUsername = this._userRepository.countUsersByUserName(user.getUsername());
-			if (userCountByUsername > 0) {
-				throw new DuplicateUserException("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
-			}
+            if (isUserExists(user.getUsername())){
+                throw new DuplicateUserException("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
+            }
             currentUserData.setUsername(user.getUsername());
         }
 
@@ -55,10 +54,20 @@ public final class Adapter {
         return _userRepository.save(currentUserData).convertTo((User::new));
     }
 
-    public User createUser(User user) {
+    public User createUser(User user) throws DuplicateUserException {
+        if (isUserExists(user.getUsername())){
+            throw new DuplicateUserException("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
+        }
         UserDataAccess userDataAccess = new UserDataAccess();
+        userDataAccess.setUsername(user.getUsername());
         userDataAccess.setPassword(_encoder.encode(user.getPassword()));
         return _userRepository.save(userDataAccess).convertTo((User::new));
+    }
+
+    private boolean isUserExists(String userName) throws DuplicateUserException {
+        int userCountByUsername = this._userRepository.countUsersByUserName(userName);
+
+        return userCountByUsername > 0;
     }
 
 

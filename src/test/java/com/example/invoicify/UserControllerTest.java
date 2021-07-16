@@ -18,8 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Optional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -120,6 +119,41 @@ public class UserControllerTest {
         this.mvc.perform(request)
                 .andExpect(status().is5xxServerError());
     }
+
+    @Test
+    public void createNewUser() throws Exception {
+
+        String userCredentials = "{" +
+                "\"username\":\"newUser\"," +
+                "\"password\":\"password2\"" +
+                "}";
+
+        MockHttpServletRequestBuilder request = post("/api/user/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userCredentials);
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("newUser"));
+    }
+
+    @Test
+    public void createAnExistingUser() throws Exception {
+
+        String userCredentials = "{" +
+                "\"username\":\"bob\"," +
+                "\"password\":\"password2\"" +
+                "}";
+
+        MockHttpServletRequestBuilder request = post("/api/user/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userCredentials);
+
+        this.mvc.perform(request)
+                .andExpect(status().is5xxServerError());
+    }
+
+
 
 
 
