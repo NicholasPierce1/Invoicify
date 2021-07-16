@@ -10,7 +10,9 @@ import com.galvanize.invoicify.repository.repositories.companyrepository.Company
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.json.JSONArray;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -42,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = InvoicifyApplication.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 public class CompanyControllerTest {
 

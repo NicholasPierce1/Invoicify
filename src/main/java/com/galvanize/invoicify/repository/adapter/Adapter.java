@@ -4,6 +4,7 @@ import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
