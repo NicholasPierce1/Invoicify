@@ -13,13 +13,17 @@ import java.util.stream.Collectors;
 @Service
 public final class Adapter {
 
-    private final UserRepository _userRepository;
-    private final CompanyRepository _companyRepository;
+    public final UserRepository _userRepository;
+
+    public final  CompanyRepository _companyRepository;
+
+    private final PasswordEncoder _encoder;
 
     @Autowired
-    public Adapter(UserRepository userRepository, CompanyRepository companyRepository){
+    public Adapter(UserRepository userRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder){
         this._userRepository = userRepository;
         this._companyRepository = companyRepository;
+        this._encoder = passwordEncoder;
     }
 
     // ...stubs go below

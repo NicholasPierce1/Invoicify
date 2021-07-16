@@ -15,8 +15,13 @@ import java.util.List;
 @RequestMapping("/app/company")
 public class CompanyController  {
 
+//    @Autowired
+    private final Adapter adapter;
+
     @Autowired
-    private Adapter adapter;
+    public CompanyController(Adapter adapter){
+        this.adapter = adapter;
+    }
 
     @GetMapping(
             value = {"/", ""},
