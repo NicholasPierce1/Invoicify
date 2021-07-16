@@ -5,6 +5,7 @@ import com.galvanize.invoicify.repository.adapter.Adapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,16 @@ public class CompanyController  {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public List<Company> viewAllCompanies() {
-        return this.adapter.findAllCompaniesBasic();
+        return adapter.findAllCompaniesBasic();
+    }
+
+    @GetMapping(
+            value = {"/{id}"},
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Company findById(@PathVariable Long id) {
+
+        return adapter.findCompanyById(id);
+
     }
 }

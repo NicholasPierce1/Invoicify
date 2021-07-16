@@ -25,6 +25,11 @@ public class CompanyDataAccess implements IDataAccess<Company> {
 
     public CompanyDataAccess(){}
 
+    public CompanyDataAccess(Long id, String name) {
+        this.id=id;
+        this.name=name;
+    }
+
 
     //set & get
 
