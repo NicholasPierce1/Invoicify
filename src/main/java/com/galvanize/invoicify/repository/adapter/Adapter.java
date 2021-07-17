@@ -4,6 +4,7 @@ import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -13,13 +14,17 @@ import java.util.stream.Collectors;
 @Service
 public final class Adapter {
 
-    private final UserRepository _userRepository;
-    private final CompanyRepository _companyRepository;
+    public final UserRepository _userRepository;
+
+    public final  CompanyRepository _companyRepository;
+
+    private final PasswordEncoder _encoder;
 
     @Autowired
-    public Adapter(UserRepository userRepository, CompanyRepository companyRepository){
+    public Adapter(UserRepository userRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder){
         this._userRepository = userRepository;
         this._companyRepository = companyRepository;
+        this._encoder = passwordEncoder;
     }
 
     // ...stubs go below

@@ -7,9 +7,12 @@ import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
+import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.json.JSONArray;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -17,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -41,14 +45,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = InvoicifyApplication.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 public class CompanyControllerTest {
 
-    @Autowired
-    MockMvc mockMvc;
+    private CompanyRepository companyRepository;
 
-    @Mock
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private CompanyController companyController;
+
+    private Adapter adapter;
+
+    @BeforeAll
+    public void createAdapter(){
+
+        this.companyRepository = Mockito.mock(CompanyRepository.class);
+
+        this.adapter = new Adapter(userRepository, companyRepository, passwordEncoder);
+
+        this.companyController = new CompanyController(adapter);
+
+    }
 
     @Test
     public void  testViewAllCompanies() throws Exception {
@@ -77,10 +99,10 @@ public class CompanyControllerTest {
                         .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) )
                         .collect(Collectors.toList());
 
-        when(this.companyController.viewAllCompanies()).thenReturn(expectedCompanies);
+        when(companyRepository.findAll()).thenReturn(companyDataAccesses);
         // this allows the controller, adapter, data access, and model to work as expected
         // ONLY the repository is hardcoded for its response
-
+        System.out.println(adapter._companyRepository.findAll().size());
         final List<Company> actualCompanyList = this.companyController.viewAllCompanies();
 
         Assertions.assertEquals(
@@ -95,7 +117,7 @@ public class CompanyControllerTest {
             );
 
 
-        verify(companyController).viewAllCompanies();
+        verify(companyRepository, times(2)).findAll();
 
     }
 
