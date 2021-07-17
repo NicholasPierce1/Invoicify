@@ -18,13 +18,21 @@ public class CompanyController  {
     @Autowired
     private Adapter adapter;
 
-    @GetMapping(
-            value = {"/", ""},
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+//    @GetMapping(
+//            value = {"/", ""},
+//            produces = MediaType.APPLICATION_JSON_VALUE
+//    )
+//    public List<Company> viewAllCompanies() {
+//        return adapter.findAllCompaniesBasic();
+//    }
+
+    @GetMapping("/all")
     public List<Company> viewAllCompanies() {
+        System.out.println("Before");
         return adapter.findAllCompaniesBasic();
+
     }
+
 
     @GetMapping(
             value = {"/{id}"},

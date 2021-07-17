@@ -29,6 +29,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class CompanyControllerTest {
 
+    @Autowired
+    MockMvc mockMvc;
 
     @Mock
     private CompanyController companyController;
@@ -96,9 +99,18 @@ public class CompanyControllerTest {
 
     }
 
+    @Test
+    public void testGetCompanyById() throws Exception {
+
+        Company company =  new Company(1L);
+        when(companyController.findById(1L))
+                .thenReturn(company);
+
+    }
+
 //    @Test
 //    public void testGetAllCompanies() throws Exception {
-//        this.mockMvc.perform(get("/api/company"))
+//        this.mockMvc.perform(get("/api/company/all"))
 //                .andExpect(status().isOk())
 //                .andExpect(jsonPath("$").isNotEmpty());
 //    }
@@ -118,6 +130,8 @@ public class CompanyControllerTest {
 //    @Test
 //    public void testGetCompanyById() throws Exception {
 //    }
+
+
 }
 
 
