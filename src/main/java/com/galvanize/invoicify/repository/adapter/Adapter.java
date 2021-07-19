@@ -63,4 +63,13 @@ public final class Adapter {
                         .convertTo(Company::new);
 
     }
+    public Company deleteCompany(Long id)  {
+
+    Company companyToDelete = _companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertTo(Company::new)).get();
+    _companyRepository.deleteById(id);
+
+
+        return companyToDelete;
+
+    }
 }

@@ -194,6 +194,33 @@ public class CompanyControllerTest {
         );
 
     }
+
+    @Test
+    public void testDeleteCompanyById() throws Exception {
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+
+        companyDataAccess.setName("LTI");
+
+        Company expectedCompany =
+                companyDataAccess.convertTo(Company::new);
+
+        when(this.companyRepository.findByName(companyDataAccess.getName())).thenReturn(Optional.of(companyDataAccess));
+
+        final Company actualCompany = this.companyController.deleteCompanyById(expectedCompany.getId());
+
+        assertEquals(
+
+                objectMapper.writeValueAsString(actualCompany),
+                objectMapper.writeValueAsString(expectedCompany)
+
+        );
+
+
+
+    }
 }
 
 

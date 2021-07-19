@@ -41,4 +41,12 @@ public class CompanyController  {
     public Company addCompany(@RequestBody Company company) {
         return adapter.createCompany(company);
     }
+
+    @DeleteMapping(
+            value = {"/{id}"},
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Company deleteCompanyById(@PathVariable Long id) {
+         return adapter.deleteCompany(id);
+    }
 }
