@@ -72,14 +72,17 @@ public class UserControllerTest {
         UserDataAccess userDataAccess = new UserDataAccess("testuser1","testpassword2");
         User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getPassword());
 
-        when(userRepository.countUsersByUserName(any())).thenReturn(2);
-
-        User actualUser = this.userController.createUser(expectedUser);
-
-        assertNull(actualUser);
-
+        when(userRepository.countUsersByUserName(any())).thenReturn(0);
+        //when(userRepository.save(any())).thenReturn(userDataAccess);
+        User actualUser = null;
+        try {
+            actualUser = this.userController.createUser(expectedUser);
+            //we shouldn't be hitting this assert equals. if this test complains about 1 not being equal to 0 then that means this test failed and a user was actually created.
+            assertEquals(1,0, "you don't want to hit this assert. Please check your create user endpoint and make sure it doesn't allow creating a user with an existing username.");
+        } catch (Exception e ) {
+            assertNull(actualUser);
+        }
         verify(userRepository,times(1)).countUsersByUserName(any());
-
     }
 
 
@@ -98,15 +101,7 @@ public class UserControllerTest {
         verify(userRepository, times(1)).save(any());
     }
 
-    @Test
-    public void modifyUserCredentialsWithNonExistingUserNameAndPassword() throws Exception {
-        UserDataAccess userDataAccess = new UserDataAccess("testuser1","testpassword2");
-        User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getPassword());
-        when(userRepository.findById(any())).thenReturn(Optional.of(userDataAccess));
-        when(userRepository.save(any())).thenReturn(Optional.of(userDataAccess));
-        final User actualUser = userController.updateUser(expectedUser, 1L);
 
-    }
 
     @Test
     public void getAllUsers() throws Exception {
@@ -150,58 +145,86 @@ public class UserControllerTest {
 
     }
 
+    @Test
+    public void modifyUserCredentialsWithNonExistingUserNameAndPassword() throws Exception {
+        UserDataAccess existingUserToBeUpdated = new UserDataAccess("testuser1","testpassword2");
+        UserDataAccess savedUpdatedUser = new UserDataAccess("NewUserName","NewPassword");
+
+        User expectedUser = new User("NewUserName","NewPassword");
+
+        when(userRepository.findById(any())).thenReturn(Optional.of(existingUserToBeUpdated));
+        when(userRepository.save(any())).thenReturn(savedUpdatedUser);
+
+        User actualUser = userController.updateUser(null, expectedUser, 1L);
+
+        assertEquals(actualUser.getUsername(), expectedUser.getUsername());
+        assertEquals(actualUser.getPassword(), expectedUser.getPassword());
+
+        verify(userRepository, times(1)).findById(any());
+        verify(userRepository, times(1)).save(any());
+
+    }
 
 
     @Test
     public void modifyUserCredentialsWithJustUserName() throws Exception {
+        UserDataAccess existingUserToBeUpdated = new UserDataAccess("testuser1","testpassword2");
+        UserDataAccess savedUpdatedUser = new UserDataAccess("NewUserName","testpassword2");
 
-        String userCredentials = "{" +
-                "    \"username\":\"admin2\"," +
-                "    \"password\":\"\"" +
-                "}";
+        User expectedUser = new User("NewUserName","");
 
-        MockHttpServletRequestBuilder request = put("/api/user/7")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(userCredentials);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserToBeUpdated));
+        when(userRepository.save(any())).thenReturn(savedUpdatedUser);
 
-        this.mvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("admin2"));
+        User actualUser = userController.updateUser(null, expectedUser, 1L);
+
+        assertEquals(actualUser.getUsername(), "NewUserName");
+        assertEquals(actualUser.getPassword(), "testpassword2");
+
+        verify(userRepository, times(1)).findById(any());
+        verify(userRepository, times(1)).save(any());
+
     }
 
     @Test
     public void modifyUserCredentialsWithJustPassword() throws Exception {
+        UserDataAccess existingUserToBeUpdated = new UserDataAccess("testuser1","testpassword2");
+        UserDataAccess savedUpdatedUser = new UserDataAccess("testuser1","newPassword1");
 
-        String userCredentials = "{" +
-                "    \"username\":\"\"," +
-                "    \"password\":\"password2\"" +
-                "}";
+        User expectedUser = new User("","newPassword1");
 
-        MockHttpServletRequestBuilder request = put("/api/user/7")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(userCredentials);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserToBeUpdated));
+        when(userRepository.save(any())).thenReturn(savedUpdatedUser);
 
-        this.mvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.password").value("password2"));
+        User actualUser = userController.updateUser(null, expectedUser, 1L);
+
+        assertEquals(actualUser.getUsername(), "testuser1");
+        assertEquals(actualUser.getPassword(), "newPassword1");
+
+        verify(userRepository, times(1)).findById(any());
+        verify(userRepository, times(1)).save(any());
+
     }
 
     @Test
     public void modifyUserCredentialsWithAnotherUsernameThatAlreadyExists() throws Exception {
+        UserDataAccess existingUserToBeUpdated = new UserDataAccess("testuser1","testpassword2");
+        //bob is already existing in the database so don't do anything
+        User expectedUser = new User("bob","newPassword1");
 
-        //bob already exists. Check @SeedData.java
-        String userCredentials = "{" +
-                    "\"username\":\"bob\"," +
-                    "\"password\":\"password2\"" +
-                "}";
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserToBeUpdated));
+        when(userRepository.countUsersByUserName(any())).thenReturn(2);
+        User actualUser = null;
+        try {
+            actualUser = userController.updateUser(null, expectedUser, 1L);
+            assertEquals(1,0, "you don't want to hit this assert. Please check your update user and make sure it doesn't allow updating an existing user with the same username.");
+        } catch (Exception e) {
+            assertNull(actualUser);
+        }
+        verify(userRepository, times(1)).findById(any());
+        verify(userRepository, times(1)).countUsersByUserName(any());
 
-        MockHttpServletRequestBuilder request = put("/api/user/7")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(userCredentials);
 
-
-        this.mvc.perform(request)
-                .andExpect(status().is5xxServerError());
     }
 
 
