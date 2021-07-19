@@ -65,6 +65,22 @@ public class UserControllerTest {
         this.userController = new UserController(adapter);
     }
 
+
+    @Test
+    public void createNewUser() throws Exception {
+        UserDataAccess userDataAccess = new UserDataAccess("testuser1","testpassword2");
+        User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getPassword());
+
+        when(userRepository.save(any())).thenReturn(userDataAccess);
+        User actualUser = this.userController.createUser(expectedUser);
+
+        String actualUserStr = objectMapper.writeValueAsString(actualUser);
+        String expectedUserStr = objectMapper.writeValueAsString(expectedUser);
+
+        assertEquals(actualUserStr, expectedUserStr);
+        verify(userRepository, times(1)).save(any());
+    }
+
     @Test
     public void getAllUsers() throws Exception {
         UserDataAccess user1 = new UserDataAccess("testuser1","testpassword2");
@@ -181,22 +197,6 @@ public class UserControllerTest {
                 .andExpect(status().is5xxServerError());
     }
 
-    @Test
-    public void createNewUser() throws Exception {
-
-        String userCredentials = "{" +
-                "\"username\":\"newUser\"," +
-                "\"password\":\"password2\"" +
-                "}";
-
-        MockHttpServletRequestBuilder request = post("/api/user/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(userCredentials);
-
-        this.mvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("newUser"));
-    }
 
     @Test
     public void createAnExistingUser() throws Exception {
