@@ -1,27 +1,41 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
 import com.galvanize.invoicify.models.BillingRecord;
+import com.galvanize.invoicify.models.FlatFeeBillingRecord;
+import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
 import javax.persistence.*;
 import java.util.function.Supplier;
 
-@Entity
-public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess{
+@Entity(name = "FLAT_FEE_BILLING_RECORD")
+public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<FlatFeeBillingRecord> {
 
     // fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    public long id;
 
-    private Long BillingRecordId;
+    @Column(name = "billing_record_id", nullable = false)
+    private long billingRecordId;
 
-    private String dummy;
+    @Column(nullable = false)
+    private double amount;
 
     // constructor/s
 
+    public FlatFeeBillingRecordDataAccess(){
+
+    }
 
     // get & set
 
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
 
     // method/s
 
@@ -31,7 +45,7 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess{
     }
 
     @Override
-    public <M extends BillingRecord> M convertTo(Supplier<M> supplier) {
+    public <M extends FlatFeeBillingRecord> M convertTo(Supplier<M> supplier) {
         return null;
     }
 

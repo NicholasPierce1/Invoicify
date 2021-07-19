@@ -9,24 +9,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Entity
-// user is a reserved word in psql so we change the table name to avoid issues
-@Table(name="app_user")
 public class User implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(nullable = false)
 	private String password;
-
-	@Column(nullable = false, unique = true)
 	private String username;
 
 	public User() {

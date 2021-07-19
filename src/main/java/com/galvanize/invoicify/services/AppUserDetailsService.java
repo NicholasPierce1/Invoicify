@@ -1,6 +1,7 @@
 package com.galvanize.invoicify.services;
 
 import com.galvanize.invoicify.models.User;
+import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,19 +9,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AppUserDetailsService implements UserDetailsService {
 
 	@Autowired
-	private UserRepository userRepository;
+	private Adapter _adapter;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		final User user = userRepository.findByUsername(username);
-		if (user == null) {
-			throw new UsernameNotFoundException(username);
-		}
-		return user;
+		final Optional<User> user = this._adapter.getUserByUserName(username);
+
+		return user.orElseThrow( () -> new UsernameNotFoundException(username) );
+		//return null;
 	}
 
 }
