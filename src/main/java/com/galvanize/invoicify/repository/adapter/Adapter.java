@@ -1,5 +1,6 @@
 package com.galvanize.invoicify.repository.adapter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.models.*;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
@@ -141,6 +142,36 @@ public class Adapter {
         );
 
         return billingRecords;
+
+    }
+
+    public @NotNull Optional<BillingRecord> getBillingRecordById(@NotNull final Long id){
+        final ObjectMapper objectMapper = new ObjectMapper();
+        // note: billing record may be in Flat, Rate, or none
+        Optional<BillingRecord> billingRecord;
+
+        // checking if flat fee retains billing record
+        billingRecord = this.
+                _flatFeeBillingRecordRepository.findById(id)
+                .map(
+                        (flatFeeBillingRecordDataAccess -> flatFeeBillingRecordDataAccess.convertTo(FlatFeeBillingRecord::new))
+                );
+        try {
+            System.out.println(objectMapper.writeValueAsString(billingRecord.get()));
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        if(billingRecord.isPresent())
+            return billingRecord;
+
+        // check if rate base retains billing record
+        // returns regardless if present or not
+        return this.
+                _rateBasedBillingRecordRepository.findById(id)
+                .map(
+                        (flatFeeBillingRecordDataAccess -> flatFeeBillingRecordDataAccess.convertTo(RateBasedBillingRecord::new))
+                );
 
     }
 }
