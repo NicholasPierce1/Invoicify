@@ -1,6 +1,7 @@
 package com.example.invoicify;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.UserController;
 import com.galvanize.invoicify.models.User;
@@ -55,6 +56,8 @@ public class UserControllerTest {
 
     private Adapter adapter;
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     @BeforeAll
     public void createAdapter() {
         this.userRepository = Mockito.mock(UserRepository.class);
@@ -69,16 +72,21 @@ public class UserControllerTest {
         List<UserDataAccess> mockUserDataAccessList = new ArrayList<UserDataAccess>();
         mockUserDataAccessList.add(user1);
         mockUserDataAccessList.add(user2);
-        List<User> expectedUserList = mockUserDataAccessList.stream().map(userDataAccess -> userDataAccess.convertTo(User::new)).collect(Collectors.toList());
+        List<User> expectedUsers = mockUserDataAccessList.stream().map(userDataAccess -> userDataAccess.convertTo(User::new)).collect(Collectors.toList());
 
         when(userRepository.findAll()).thenReturn(mockUserDataAccessList);
         final List<User> actualUsers = userController.getUsers();
         assertTrue(actualUsers.size() == 2);
-        System.out.println(actualUsers);
-        assertTrue(actualUsers.contains(expectedUserList.get(0)));
-        assertTrue(actualUsers.contains(expectedUserList.get(1)));
 
-        verify(userRepository, times(2)).findAll();
+
+        for(int i=0; i<actualUsers.size(); i++) {
+            String actualUserStr = objectMapper.writeValueAsString(actualUsers.get(i));
+            String expectedUserStr = objectMapper.writeValueAsString(expectedUsers.get(i));
+            assertEquals(actualUserStr, expectedUserStr);
+        }
+
+
+        verify(userRepository, times(1)).findAll();
     }
 
     @Test
