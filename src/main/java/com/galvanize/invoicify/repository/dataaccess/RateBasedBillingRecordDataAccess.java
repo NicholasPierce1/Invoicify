@@ -62,6 +62,12 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
 
     @Override
     public <M extends RateBasedBillingRecord> M convertTo(Supplier<M> supplier) {
-        return super.convertTo(supplier);
+
+        final M rateBaseBillingRecord = super.convertTo(supplier);
+
+        rateBaseBillingRecord.setQuantity(this.getQuantity());
+        rateBaseBillingRecord.setRate(this.getRate());
+
+        return rateBaseBillingRecord;
     }
 }

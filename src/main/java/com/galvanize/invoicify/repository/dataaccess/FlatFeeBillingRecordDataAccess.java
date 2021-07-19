@@ -51,7 +51,12 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<Flat
 
     @Override
     public <M extends FlatFeeBillingRecord> M convertTo(Supplier<M> supplier) {
-        return null;
+
+        final M flatFeeBillingRecord = super.convertTo(supplier);
+        flatFeeBillingRecord.setAmount(this.getAmount());
+
+        return flatFeeBillingRecord;
+
     }
 
 

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/billingRecord/")
+@RequestMapping(value = {"/api/billingRecord/", "/api/billingRecord"})
 public class BillingRecordController {
 
     private final Adapter _adapter;
@@ -25,7 +25,7 @@ public class BillingRecordController {
     }
 
     @RequestMapping(
-            value = "/",
+            value = {"/", ""},
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
