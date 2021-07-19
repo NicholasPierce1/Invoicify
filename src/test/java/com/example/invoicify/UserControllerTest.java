@@ -69,13 +69,14 @@ public class UserControllerTest {
         List<UserDataAccess> mockUserDataAccessList = new ArrayList<UserDataAccess>();
         mockUserDataAccessList.add(user1);
         mockUserDataAccessList.add(user2);
-        List<User> expectedUserList = mockUserDataAccessList.stream().map(userDataAccess -> userDataAccess.convertTo(User::New)).collect(Collectors.toList());
+        List<User> expectedUserList = mockUserDataAccessList.stream().map(userDataAccess -> userDataAccess.convertTo(User::new)).collect(Collectors.toList());
 
         when(userRepository.findAll()).thenReturn(mockUserDataAccessList);
-        final List<User> expectedUsers = userController.getUsers();
-        assertTrue(expectedUsers.size() == 2);
-        assertTrue(expectedUsers.contains(expectedUserList.get(0)));
-        assertTrue(expectedUsers.contains(expectedUserList.get(1)));
+        final List<User> actualUsers = userController.getUsers();
+        assertTrue(actualUsers.size() == 2);
+        System.out.println(actualUsers);
+        assertTrue(actualUsers.contains(expectedUserList.get(0)));
+        assertTrue(actualUsers.contains(expectedUserList.get(1)));
 
         verify(userRepository, times(2)).findAll();
     }
