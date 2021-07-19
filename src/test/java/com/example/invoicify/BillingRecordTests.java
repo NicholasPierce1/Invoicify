@@ -5,21 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.BillingRecordController;
 import com.galvanize.invoicify.controllers.CompanyController;
-import com.galvanize.invoicify.models.BillingRecord;
-import com.galvanize.invoicify.models.FlatFeeBillingRecord;
-import com.galvanize.invoicify.models.RateBasedBillingRecord;
+import com.galvanize.invoicify.models.*;
 import com.galvanize.invoicify.repository.adapter.Adapter;
+import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.FlatFeeBillingRecordDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.RateBasedBillingRecordDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.aspectj.lang.annotation.After;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.*;
@@ -46,10 +44,8 @@ public class BillingRecordTests {
 
     private RateBaseBillingRecordRepository _rateBasedBillingRecordRepository;
 
-    @Autowired
     private CompanyRepository _companyRepository;
 
-    @Autowired
     private UserRepository _userRepository;
 
     @Autowired
@@ -71,6 +67,10 @@ public class BillingRecordTests {
 
     private ObjectMapper _objectMapper;
 
+    private UserDataAccess userOneDataAccess;
+
+    private CompanyDataAccess companyOneDataAccess;
+
     @BeforeAll
     public void createAdapter(){
 
@@ -78,6 +78,8 @@ public class BillingRecordTests {
 
         this._flatFeeBillingRecordRepository = Mockito.mock(FlatFeeBillingRecordRepository.class);
         this._rateBasedBillingRecordRepository = Mockito.mock(RateBaseBillingRecordRepository.class);
+        this._userRepository = Mockito.mock(UserRepository.class);
+        this._companyRepository = Mockito.mock(CompanyRepository.class);
 
         this._adapter = new Adapter(
                 _userRepository,
@@ -88,14 +90,35 @@ public class BillingRecordTests {
 
         this._billingRecordController = new BillingRecordController(_adapter);
 
+        final Company companyOne = new Company();
+        companyOne.setName("Subway");
+        companyOne.setId(1L);
+
+        this.companyOneDataAccess = new CompanyDataAccess();
+        this.companyOneDataAccess.setName(companyOne.getName());
+        this.companyOneDataAccess.setId(companyOne.getId());
+
+        final User userOne = new User();
+        userOne.setId(1L);
+        userOne.setUsername("username");
+        userOne.setPassword("password");
+
+        this.userOneDataAccess = new UserDataAccess();
+        this.userOneDataAccess.setId(userOne.getId());
+        this.userOneDataAccess.setUsername(userOne.getUsername());
+        this.userOneDataAccess.setPassword(userOne.getPassword());
+
         this._flatFeeBillingRecordsDataAccess = new ArrayList<FlatFeeBillingRecordDataAccess>()
         {{
             add(new FlatFeeBillingRecordDataAccess()
                 {{
                     setId(1L);
                     setAmount(150);
-                    setCompanyId(1L);
                     setDescription("description one");
+                    setCompanyId(companyOne.getId());
+                    setCompany(companyOne);
+                    setCreatedBy(userOne.getId());
+                    setUser(userOne);
                     setInUse(false);
                 }}
             );
@@ -104,7 +127,10 @@ public class BillingRecordTests {
                 {{
                     setId(2L);
                     setAmount(125.5);
-                    setCompanyId(1L);
+                    setCompanyId(companyOne.getId());
+                    setCompany(companyOne);
+                    setCreatedBy(userOne.getId());
+                    setUser(userOne);
                     setDescription("description two");
                     setInUse(true);
                 }}
@@ -115,8 +141,11 @@ public class BillingRecordTests {
         {{
             add(new RateBasedBillingRecordDataAccess()
                 {{
-                    setId(1L);
-                    setCompanyId(1L);
+                    setId(3L);
+                    setCompanyId(companyOne.getId());
+                    setCompany(companyOne);
+                    setCreatedBy(userOne.getId());
+                    setUser(userOne);
                     setDescription("description one");
                     setInUse(false);
                     setQuantity(10);
@@ -126,8 +155,11 @@ public class BillingRecordTests {
 
             add(new RateBasedBillingRecordDataAccess()
                 {{
-                    setId(2L);
-                    setCompanyId(1L);
+                    setId(4L);
+                    setCompanyId(companyOne.getId());
+                    setCompany(companyOne);
+                    setCreatedBy(userOne.getId());
+                    setUser(userOne);
                     setDescription("description two");
                     setInUse(false);
                     setQuantity(5);
@@ -157,6 +189,28 @@ public class BillingRecordTests {
 
     }
 
+    @BeforeEach
+    public void setSharedMocks(){
+
+        // registers mock on flat fee & rate base repositories for their find all stubs
+        when(this._flatFeeBillingRecordRepository.findAll()).thenReturn(this._flatFeeBillingRecordsDataAccess);
+        when(this._rateBasedBillingRecordRepository.findAll()).thenReturn(this._rateBasedBillingRecordsDataAccess);
+
+        // registers mock on all id values for every data access
+        for(final FlatFeeBillingRecordDataAccess flatFee : this._flatFeeBillingRecordsDataAccess) {
+            when(this._userRepository.findById(flatFee.getCreatedBy())).thenReturn(Optional.of(this.userOneDataAccess));
+            when(this._companyRepository.findById(flatFee.getCompanyId())).thenReturn(Optional.of(this.companyOneDataAccess));
+            when(this._flatFeeBillingRecordRepository.findById(flatFee.getId())).thenReturn(Optional.of(flatFee));
+        }
+
+        for(final RateBasedBillingRecordDataAccess rateBasedFee : this._rateBasedBillingRecordsDataAccess){
+            when(this._userRepository.findById(rateBasedFee.getCreatedBy())).thenReturn(Optional.of(this.userOneDataAccess));
+            when(this._companyRepository.findById(rateBasedFee.getCompanyId())).thenReturn(Optional.of(this.companyOneDataAccess));
+            when(this._rateBasedBillingRecordRepository.findById(rateBasedFee.getId())).thenReturn(Optional.of(rateBasedFee));
+        }
+
+    }
+
     @AfterEach
     public void resetMocks(){
         Mockito.reset(
@@ -167,10 +221,6 @@ public class BillingRecordTests {
 
     @Test
     public void testGetAllBillingRecords() throws Exception{
-
-        // registers mock on flat fee & rate base repositories for their find all stubs
-        when(this._flatFeeBillingRecordRepository.findAll()).thenReturn(this._flatFeeBillingRecordsDataAccess);
-        when(this._rateBasedBillingRecordRepository.findAll()).thenReturn(this._rateBasedBillingRecordsDataAccess);
 
         // acquires actual list from controller invocation
         final List<BillingRecord> actualBillingRecords = this._billingRecordController.getAllBillingRecords();
@@ -183,6 +233,25 @@ public class BillingRecordTests {
                 this._objectMapper.writeValueAsString(this._generalBillingRecordAmalgamation),
                 this._objectMapper.writeValueAsString(actualBillingRecords)
         );
+
+    }
+
+    @Test
+    public void testGetCompanyById() throws Exception{
+
+        // iterates over all billing records
+        for(final BillingRecord billingRecord : this._generalBillingRecordAmalgamation){
+
+            // acquires billing record from mocked billing record controller and asserts equality
+            assertEquals(
+                    this._objectMapper.writeValueAsString(billingRecord),
+                    this._objectMapper.writeValueAsString(
+                            this._billingRecordController
+                                    .getBillingRecordById(billingRecord.getId())
+                                    .orElseThrow(RuntimeException::new) // note: will never happen
+                    )
+            );
+        }
 
     }
 
