@@ -15,9 +15,6 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<Flat
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @Column(name = "billing_record_id", nullable = false)
-    private long billingRecordId;
-
     @Column(nullable = false)
     private double amount;
 
