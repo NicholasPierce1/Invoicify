@@ -91,9 +91,20 @@ public class UserControllerTest {
 
     @Test
     public void getSpecificUser() throws Exception {
-        this.mvc.perform(get("/api/user/7"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(7));
+        UserDataAccess userDataAccess = new UserDataAccess("testuser1","testpassword2");
+        User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getUsername());
+
+        when(userRepository.findById(any())).thenReturn(Optional.of(userDataAccess));
+        final User actualUser = userController.getUser(1L);
+
+        String actualUserStr = objectMapper.writeValueAsString(actualUser);
+        String expectedUserStr = objectMapper.writeValueAsString(expectedUser);
+        assertEquals(actualUserStr, expectedUserStr);
+
+
+
+        verify(userRepository, times(1)).findAll();
+
     }
 
     @Test
