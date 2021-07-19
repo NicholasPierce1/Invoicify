@@ -72,7 +72,7 @@ public class UserControllerTest {
         UserDataAccess userDataAccess = new UserDataAccess("testuser1","testpassword2");
         User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getPassword());
 
-        when(userRepository.countUsersByUserName(any())).thenReturn(0);
+        when(userRepository.countUsersByUserName(any())).thenReturn(2);
         //when(userRepository.save(any())).thenReturn(userDataAccess);
         User actualUser = null;
         try {
