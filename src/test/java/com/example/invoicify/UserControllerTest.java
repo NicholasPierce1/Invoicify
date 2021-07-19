@@ -99,6 +99,16 @@ public class UserControllerTest {
     }
 
     @Test
+    public void modifyUserCredentialsWithNonExistingUserNameAndPassword() throws Exception {
+        UserDataAccess userDataAccess = new UserDataAccess("testuser1","testpassword2");
+        User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getPassword());
+        when(userRepository.findById(any())).thenReturn(Optional.of(userDataAccess));
+        when(userRepository.save(any())).thenReturn(Optional.of(userDataAccess));
+        final User actualUser = userController.updateUser(expectedUser, 1L);
+
+    }
+
+    @Test
     public void getAllUsers() throws Exception {
         UserDataAccess user1 = new UserDataAccess("testuser1","testpassword2");
         UserDataAccess user2 = new UserDataAccess("testuser2", "testpassword2");
@@ -140,27 +150,7 @@ public class UserControllerTest {
 
     }
 
-    @Test
-    public void modifyUserCredentialsWithNonExistingUserNameAndPassword() throws Exception {
 
-        String userCredentials = "{" +
-                "    \"username\":\"admin2\"," +
-                "    \"password\":\"password2\"" +
-                "}";
-
-
-        MockHttpServletRequestBuilder request = put("/api/user/7")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(userCredentials);
-
-        System.out.println(encoder.encode("password1"));
-
-        this.mvc.perform(request)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("admin2"))
-                .andExpect(jsonPath("$.password").value(encoder.encode("password2")));
-
-    }
 
     @Test
     public void modifyUserCredentialsWithJustUserName() throws Exception {
