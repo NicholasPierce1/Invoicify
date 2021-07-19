@@ -92,7 +92,7 @@ public class UserControllerTest {
     @Test
     public void getSpecificUser() throws Exception {
         UserDataAccess userDataAccess = new UserDataAccess("testuser1","testpassword2");
-        User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getUsername());
+        User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getPassword());
 
         when(userRepository.findById(any())).thenReturn(Optional.of(userDataAccess));
         final User actualUser = userController.getUser(1L);
@@ -103,7 +103,7 @@ public class UserControllerTest {
 
 
 
-        verify(userRepository, times(1)).findAll();
+        verify(userRepository, times(1)).findById(1L);
 
     }
 
