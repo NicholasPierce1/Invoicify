@@ -67,6 +67,23 @@ public class UserControllerTest {
 
 
     @Test
+    public void createAnExistingUser() throws Exception {
+
+        UserDataAccess userDataAccess = new UserDataAccess("testuser1","testpassword2");
+        User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getPassword());
+
+        when(userRepository.countUsersByUserName(any())).thenReturn(2);
+
+        User actualUser = this.userController.createUser(expectedUser);
+
+        assertNull(actualUser);
+
+        verify(userRepository,times(1)).countUsersByUserName(any());
+
+    }
+
+
+    @Test
     public void createNewUser() throws Exception {
         UserDataAccess userDataAccess = new UserDataAccess("testuser1","testpassword2");
         User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getPassword());
@@ -198,21 +215,7 @@ public class UserControllerTest {
     }
 
 
-    @Test
-    public void createAnExistingUser() throws Exception {
 
-        String userCredentials = "{" +
-                "\"username\":\"bob\"," +
-                "\"password\":\"password2\"" +
-                "}";
-
-        MockHttpServletRequestBuilder request = post("/api/user/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(userCredentials);
-
-        this.mvc.perform(request)
-                .andExpect(status().is5xxServerError());
-    }
 
 
 
