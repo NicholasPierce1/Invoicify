@@ -124,36 +124,27 @@ public class CompanyControllerTest {
     @Test
     public void testGetCompanyById() throws Exception {
 
-        Company company =  new Company(1L);
-        when(companyController.findById(1L))
-                .thenReturn(company);
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        final CompanyDataAccess companyDataAccess = new CompanyDataAccess() {{
+            setId(1L);
+            setName("LTI");
+        }};
+
+        Company expectedCompany =
+                companyDataAccess.convertTo(Company::new);
+
+        when(companyRepository.findById(companyDataAccess.getId())).thenReturn(Optional.of(companyDataAccess));
+
+        final Company actualCompany = this.companyController.findById(companyDataAccess.getId());
+
+        Assertions.assertEquals(
+                objectMapper.writeValueAsString(expectedCompany.getId()),
+                objectMapper.writeValueAsString(actualCompany.getId())
+        );
+
 
     }
-
-//    @Test
-//    public void testGetAllCompanies() throws Exception {
-//        this.mockMvc.perform(get("/api/company/all"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$").isNotEmpty());
-//    }
-
-//    @Test
-//    public void testGetCompanyById() throws Exception {
-//
-//        Company company = new Company();
-//        company.setId(1l);
-//
-////        RequestBuilder request = get("/app/company/1");
-//        this.mockMvc.perform(get("/app/company/1"))
-//                    .andExpect(status().isOk())
-//                    .andExpect(jsonPath("$.id").value(1));
-//    }
-
-//    @Test
-//    public void testGetCompanyById() throws Exception {
-//    }
-
-
 }
 
 
