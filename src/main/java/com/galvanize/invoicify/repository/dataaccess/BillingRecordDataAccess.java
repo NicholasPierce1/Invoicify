@@ -10,9 +10,9 @@ import java.util.function.Supplier;
 abstract class BillingRecordDataAccess<T extends BillingRecord> implements IDataAccess<T> {
 
     // fields
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    public long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public long id;
 
     @Column(name = "in_use", nullable = false)
     public boolean inUse;

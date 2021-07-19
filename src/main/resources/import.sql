@@ -8,8 +8,6 @@ INSERT INTO FLAT_FEE_BILLING_RECORD VALUES(1, 1, 'flat fee billing record one de
 INSERT INTO FLAT_FEE_BILLING_RECORD VALUES(2, 1, 'flat fee billing record two desc', true, 987.65);
 INSERT INTO FLAT_FEE_BILLING_RECORD VALUES(3, 1, 'flat fee billing record three desc', false, 123.78);
 
-INSERT INTO RATE_BASED_BILLING_RECORD VALUES(1, 1, 'rate base billing record one desc', true, 5, 13);
-INSERT INTO RATE_BASED_BILLING_RECORD VALUES(2, 1, 'rate base billing record two desc', false, 10, 3.56);
-INSERT INTO RATE_BASED_BILLING_RECORD VALUES(3, 1, 'rate base billing record three desc', false, 7, 100);
-
-
+INSERT INTO RATE_BASED_BILLING_RECORD VALUES(4, 1, 'rate base billing record one desc', true, 5, 13);
+INSERT INTO RATE_BASED_BILLING_RECORD VALUES(5, 1, 'rate base billing record two desc', false, 10, 3.56);
+INSERT INTO RATE_BASED_BILLING_RECORD VALUES(6, 1, 'rate base billing record three desc', false, 7, 100);

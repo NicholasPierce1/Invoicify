@@ -11,9 +11,9 @@ import java.util.function.Supplier;
 public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<FlatFeeBillingRecord> {
 
     // fields
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    public Long id;
 
     @Column(nullable = false)
     private double amount;
