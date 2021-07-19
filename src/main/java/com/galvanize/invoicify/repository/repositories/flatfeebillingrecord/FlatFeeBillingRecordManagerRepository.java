@@ -6,6 +6,4 @@ public interface FlatFeeBillingRecordManagerRepository {
 
     // stubs
 
-    public FlatFeeBillingRecordDataAccess getFlatFeeById(final Long ID);
-
 }

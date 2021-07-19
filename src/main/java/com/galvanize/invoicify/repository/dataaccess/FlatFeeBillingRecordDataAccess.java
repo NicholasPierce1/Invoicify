@@ -13,7 +13,7 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<Flat
     // fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
+    public Long id;
 
     @Column(name = "billing_record_id", nullable = false)
     private long billingRecordId;

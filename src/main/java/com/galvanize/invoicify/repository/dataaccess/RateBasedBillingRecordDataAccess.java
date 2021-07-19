@@ -13,7 +13,7 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
+    public Long id;
 
     @Column(nullable = false)
     public double rate;
