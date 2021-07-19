@@ -5,8 +5,12 @@ import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface CompanyRepository extends JpaRepository<CompanyDataAccess, Long> {
 
 //    Company findById(Long id);
+    public Optional<CompanyDataAccess> findByName(String name);
+
 }

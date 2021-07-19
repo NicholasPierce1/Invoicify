@@ -145,6 +145,47 @@ public class CompanyControllerTest {
 
 
     }
+
+    @Test
+    public void testAddCompany() throws Exception {
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+        final CompanyDataAccess companyDataAccess2 = new CompanyDataAccess();
+
+        companyDataAccess.setId(1L);
+        companyDataAccess.setName("LTI");
+        companyDataAccess2.setId(2L);
+        companyDataAccess2.setName("Subway");
+
+        Company expectedCompany =
+                companyDataAccess.convertTo(Company::new);
+
+        Company expectedCompany2 =
+                companyDataAccess2.convertTo(Company::new);
+
+        when(companyRepository.save(companyDataAccess)).thenReturn(companyDataAccess);
+
+        // when for good case (name is unique)
+        when(this.companyRepository.findByName(companyDataAccess.getName())).thenReturn(Optional.empty());
+
+        // when for bad case (name is not unique)
+        when(this.companyRepository.findByName(companyDataAccess2.getName())).thenReturn(Optional.of(companyDataAccess2));
+
+        final Company actualCompany = this.companyController.findById(companyDataAccess.getId());
+
+        assertEquals(
+
+                objectMapper.writeValueAsString(actualCompany),
+                objectMapper.writeValueAsString(expectedCompany)
+
+        );
+
+//        if (companyController.viewAllCompanies().contains())
+
+
+    }
 }
 
 
