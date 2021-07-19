@@ -67,8 +67,8 @@ public final class UserDataAccess implements IDataAccess<User> {
     }
 
     @Override
-    public <M extends User> User convertTo(Supplier<M> supplier) {
-        User user = supplier.get();
+    public <M extends User> M convertTo(Supplier<M> supplier) {
+        M user = supplier.get();
         user.setUsername(this.username);
         user.setPassword(this.password);
         return user;
