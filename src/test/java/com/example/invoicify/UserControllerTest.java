@@ -3,7 +3,9 @@ package com.example.invoicify;
 
 import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.UserController;
+import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.adapter.Adapter;
+import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,8 +25,13 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -57,9 +64,20 @@ public class UserControllerTest {
 
     @Test
     public void getAllUsers() throws Exception {
-                this.mvc.perform(get("/api/user"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty());
+        UserDataAccess user1 = new UserDataAccess("testuser1","testpassword2");
+        UserDataAccess user2 = new UserDataAccess("testuser2", "testpassword2");
+        List<UserDataAccess> mockUserDataAccessList = new ArrayList<UserDataAccess>();
+        mockUserDataAccessList.add(user1);
+        mockUserDataAccessList.add(user2);
+        List<User> expectedUserList = mockUserDataAccessList.stream().map(userDataAccess -> userDataAccess.convertTo(User::New)).collect(Collectors.toList());
+
+        when(userRepository.findAll()).thenReturn(mockUserDataAccessList);
+        final List<User> expectedUsers = userController.getUsers();
+        assertTrue(expectedUsers.size() == 2);
+        assertTrue(expectedUsers.contains(expectedUserList.get(0)));
+        assertTrue(expectedUsers.contains(expectedUserList.get(1)));
+
+        verify(userRepository, times(2)).findAll();
     }
 
     @Test
