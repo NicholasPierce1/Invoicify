@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Company {
+public final class Company {
 
     private Long id;
 

@@ -1,0 +1,59 @@
+package com.galvanize.invoicify.repository.dataaccess;
+
+import com.galvanize.invoicify.models.BillingRecord;
+import com.galvanize.invoicify.models.RateBasedBillingRecord;
+
+import javax.persistence.*;
+import java.util.function.Supplier;
+
+@Entity(name = "RATE_BASED_BILLING_RECORD")
+public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<RateBasedBillingRecord> {
+
+    // fields
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public long id;
+
+    @Column(nullable = false)
+    public double rate;
+
+    @Column(nullable = false)
+    public double quantity;
+
+    // constructors
+
+    public RateBasedBillingRecordDataAccess(){
+
+    }
+
+    // get & set
+
+    public double getRate() {
+        return rate;
+    }
+
+    public double getQuantity() {
+        return quantity;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
+    }
+
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
+    }
+
+    // methods
+
+    @Override
+    public void createDataAccess(Object[] dbo) {
+
+    }
+
+    @Override
+    public <M extends RateBasedBillingRecord> M convertTo(Supplier<M> supplier) {
+        return super.convertTo(supplier);
+    }
+}

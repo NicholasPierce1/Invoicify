@@ -6,6 +6,6 @@ public interface IConvertible<T> {
 
     public abstract void createDataAccess(final Object[] dbo);
 
-    public abstract T convertTo(final Supplier<T> supplier);
+    public abstract <M extends T> M convertTo(final Supplier<M> supplier);
 
 }

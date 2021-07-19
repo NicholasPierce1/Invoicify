@@ -57,9 +57,9 @@ public class CompanyDataAccess implements IDataAccess<Company> {
     }
 
     @Override
-    public Company convertTo(Supplier<Company> supplier) {
+    public <M extends Company> M convertTo(Supplier<M> supplier) {
 
-        final Company company = supplier.get();
+        final M company = supplier.get();
 
         company.setId(this.getId());
         company.setName(this.getName());
