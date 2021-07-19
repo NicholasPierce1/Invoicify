@@ -37,12 +37,20 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
         return quantity;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setRate(double rate) {
         this.rate = rate;
     }
 
     public void setQuantity(double quantity) {
         this.quantity = quantity;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     // methods

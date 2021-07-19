@@ -1,9 +1,10 @@
 package com.galvanize.invoicify.repository.adapter;
 
-import com.galvanize.invoicify.models.Company;
-import com.galvanize.invoicify.models.User;
+import com.galvanize.invoicify.models.*;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
+import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
+import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,12 +24,23 @@ public class Adapter {
 
     public final  CompanyRepository _companyRepository;
 
+    public final FlatFeeBillingRecordRepository _flatFeeBillingRecordRepository;
+
+    public final RateBaseBillingRecordRepository _rateBasedBillingRecordRepository;
+
     private final PasswordEncoder _encoder;
 
     @Autowired
-    public Adapter(UserRepository userRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder){
+    public Adapter(
+            UserRepository userRepository,
+            CompanyRepository companyRepository,
+            FlatFeeBillingRecordRepository flatFeeBillingRecordRepository,
+            RateBaseBillingRecordRepository rateBaseBillingRecordRepository,
+            PasswordEncoder passwordEncoder){
         this._userRepository = userRepository;
         this._companyRepository = companyRepository;
+        this._flatFeeBillingRecordRepository = flatFeeBillingRecordRepository;
+        this._rateBasedBillingRecordRepository = rateBaseBillingRecordRepository;
         this._encoder = passwordEncoder;
     }
 
@@ -100,5 +113,34 @@ public class Adapter {
         return this._companyRepository
                 .findById(id)
                 .map(companyDataAccess -> companyDataAccess.convertTo(Company::new)).get();
+    }
+
+    public @NotNull List<BillingRecord> getAllBillingRecords(){
+
+        // holds conjoined billing records (flat fee & rate base)
+        final List<BillingRecord> billingRecords = new ArrayList<BillingRecord>();
+
+        // gets all flat fees, converts from DA -> Model, and appends to billing records
+        billingRecords.addAll(this._flatFeeBillingRecordRepository
+                .findAll()
+                .stream()
+                .map(
+                        (billingRecordDataAccess) -> billingRecordDataAccess.convertTo(FlatFeeBillingRecord::new)
+                )
+                .collect(Collectors.toList())
+        );
+
+        // gets all rate based fees, converts from DA -> Model, and appends to billing records
+        billingRecords.addAll(this._rateBasedBillingRecordRepository
+                .findAll()
+                .stream()
+                .map(
+                        (billingRecordDataAccess) -> billingRecordDataAccess.convertTo(RateBasedBillingRecord::new)
+                )
+                .collect(Collectors.toList())
+        );
+
+        return billingRecords;
+
     }
 }

@@ -30,8 +30,16 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<Flat
         return amount;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     // method/s

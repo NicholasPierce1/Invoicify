@@ -7,6 +7,8 @@ import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
+import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
+import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.json.JSONArray;
 import org.junit.jupiter.api.Assertions;
@@ -57,6 +59,12 @@ public class CompanyControllerTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private FlatFeeBillingRecordRepository _flatFeeBillingRecordRepository;
+
+    @Autowired
+    private RateBaseBillingRecordRepository _rateBasedBillingRecordRepository;
+
     private CompanyController companyController;
 
     private Adapter adapter;
@@ -66,7 +74,12 @@ public class CompanyControllerTest {
 
         this.companyRepository = Mockito.mock(CompanyRepository.class);
 
-        this.adapter = new Adapter(userRepository, companyRepository, passwordEncoder);
+        this.adapter = new Adapter(
+                userRepository,
+                companyRepository,
+                _flatFeeBillingRecordRepository,
+                _rateBasedBillingRecordRepository,
+                passwordEncoder);
 
         this.companyController = new CompanyController(adapter);
 
