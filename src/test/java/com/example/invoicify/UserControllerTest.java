@@ -2,8 +2,15 @@ package com.example.invoicify;
 
 
 import com.galvanize.invoicify.InvoicifyApplication;
+import com.galvanize.invoicify.controllers.UserController;
+import com.galvanize.invoicify.repository.adapter.Adapter;
+import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = InvoicifyApplication.class)
+@ExtendWith(MockitoExtension.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserControllerTest {
 
     @Autowired
@@ -31,6 +40,20 @@ public class UserControllerTest {
 
     @Autowired
     PasswordEncoder encoder;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private UserController userController;
+
+    private Adapter adapter;
+
+    @BeforeAll
+    public void createAdapter() {
+        this.userRepository = Mockito.mock(UserRepository.class);
+        adapter = new Adapter(userRepository, encoder);
+        this.userController = new UserController(adapter);
+    }
 
     @Test
     public void getAllUsers() throws Exception {
