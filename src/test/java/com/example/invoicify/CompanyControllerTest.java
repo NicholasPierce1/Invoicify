@@ -5,6 +5,7 @@ import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.CompanyController;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.adapter.Adapter;
+import com.galvanize.invoicify.repository.adapter.DuplicateCompanyException;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,6 +31,7 @@ import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
@@ -154,9 +157,8 @@ public class CompanyControllerTest {
         final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
         final CompanyDataAccess companyDataAccess2 = new CompanyDataAccess();
 
-        companyDataAccess.setId(1L);
         companyDataAccess.setName("LTI");
-        companyDataAccess2.setId(2L);
+
         companyDataAccess2.setName("Subway");
 
         Company expectedCompany =
@@ -173,7 +175,8 @@ public class CompanyControllerTest {
         // when for bad case (name is not unique)
         when(this.companyRepository.findByName(companyDataAccess2.getName())).thenReturn(Optional.of(companyDataAccess2));
 
-        final Company actualCompany = this.companyController.findById(companyDataAccess.getId());
+//        final Company actualCompany = this.companyController.addCompany(expectedCompany);
+        final Company actualCompany = this.companyController.addCompany(expectedCompany);
 
         assertEquals(
 
@@ -182,8 +185,13 @@ public class CompanyControllerTest {
 
         );
 
-//        if (companyController.viewAllCompanies().contains())
-
+       // test bad case (name is not unique)
+        assertThrows(
+                DuplicateCompanyException.class,
+                () ->{
+                    this.companyController.addCompany(expectedCompany2);
+                }
+        );
 
     }
 }

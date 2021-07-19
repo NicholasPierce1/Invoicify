@@ -57,9 +57,9 @@ public class CompanyDataAccess implements IDataAccess<Company> {
     }
 
     @Override
-    public Company convertTo(Supplier<Company> supplier) {
+    public <M extends Company> M convertTo(Supplier<M> supplier) {
 
-        final Company company = supplier.get();
+        final M company = supplier.get();
 
         company.setName(this.getName());
         company.setId(this.getId());
@@ -67,5 +67,28 @@ public class CompanyDataAccess implements IDataAccess<Company> {
         return company;
     }
 
+    @Override
+    public boolean equals(Object a){
+
+        if(a == this)
+            return true;
+
+        if(a == null)
+            return false;
+
+        if(!(a instanceof CompanyDataAccess))
+            return false;
+
+        final CompanyDataAccess companyDataAccess = (CompanyDataAccess)a;
+
+        final boolean baseCondition =
+                companyDataAccess.getName().equals(this.getName());
+
+        return companyDataAccess.getId() == null ?
+                baseCondition
+                :
+                baseCondition && companyDataAccess.getId().equals(this.getId());
+
+    }
 
 }

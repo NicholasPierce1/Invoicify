@@ -37,8 +37,8 @@ public class CompanyController  {
 
     }
 
-    @PostMapping("")
-    public Company addCompany(Company company) {
-        return adapter.
+    @PostMapping
+    public Company addCompany(@RequestBody Company company) {
+        return adapter.createCompany(company);
     }
 }
