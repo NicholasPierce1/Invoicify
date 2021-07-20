@@ -224,6 +224,29 @@ public class CompanyControllerTest {
 
 
     }
+
+    @Test
+    public void testModifyCompanyName() throws Exception {
+
+        CompanyDataAccess existingCompanyToBeUpdated = new CompanyDataAccess(1L,"LTI");
+        CompanyDataAccess savedUpdatedCompany = new CompanyDataAccess(1L,"LTI2");
+
+        Company expectedCompany= new Company(1L,"LTI2");
+
+        when(companyRepository.findById(1L)).thenReturn(Optional.of(existingCompanyToBeUpdated));
+        when(companyRepository.save(any())).thenReturn(savedUpdatedCompany);
+
+        Company actualCompany = companyController.updateCompany( expectedCompany, 1L);
+
+        assertEquals(actualCompany.getName(), "LTI2");
+        assertEquals(actualCompany.getId(), 1L);
+
+        verify(companyRepository, times(1)).findById(any());
+        verify(companyRepository, times(1)).save(any());
+
+
+    }
+
 }
 
 

@@ -50,4 +50,12 @@ public class CompanyController  {
     public Optional<Company> deleteCompanyById(@PathVariable Long id) {
          return adapter.deleteCompany(id);
     }
+
+    @PutMapping(
+            value = {"/{id}"},
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Company updateCompany(@RequestBody Company company, @PathVariable Long id) throws Exception {
+        return adapter.updateCompany(company, id);
+    }
 }
