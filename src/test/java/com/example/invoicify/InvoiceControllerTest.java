@@ -3,6 +3,7 @@ package com.example.invoicify;
 import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.InvoiceController;
 import com.galvanize.invoicify.repository.adapter.Adapter;
+import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -36,10 +39,11 @@ public class InvoiceControllerTest {
 
     @Test
     public void createInvoice() throws Exception {
+        InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess();
+        when(invoiceRepository.save(any())).thenReturn(invoiceDataAccess);
+
 
     }
-
-
 
 
 

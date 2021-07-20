@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -116,8 +117,12 @@ public class Adapter {
                 .map(companyDataAccess -> companyDataAccess.convertTo(Company::new)).get();
     }
 
-    public Invoice createInvoice(Invoice invoice, long companyId) {
+    public Invoice createInvoice(Invoice invoice, long companyId, User user) {
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess();
+        invoiceDataAccess.setCompanyId(companyId);
+        invoiceDataAccess.setCreatedOn(new Date());
+        invoiceDataAccess.setCreatedBy(user.getId());
+        invoiceDataAccess.setDescription(invoice.getInvoiceDescription());
 
         return this._invoiceRepository.save(invoiceDataAccess).convertTo(Invoice::new);
     }
