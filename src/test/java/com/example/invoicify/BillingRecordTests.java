@@ -294,7 +294,7 @@ public class BillingRecordTests {
     @Test
     public void testAddNewRateBasedFee() throws Exception {
 
-        // creates flat fee w/o id
+        // creates rate based fee w/o id
         final RateBasedBillingRecord rateBasedBillingRecord = this._rateBasedBillingRecords.get(0);
         rateBasedBillingRecord.setId(null);
 
