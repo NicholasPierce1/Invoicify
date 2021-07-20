@@ -1,9 +1,13 @@
 package com.galvanize.invoicify.repository.adapter;
 
 import com.galvanize.invoicify.models.Company;
+import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.models.User;
+import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
+
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
+import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +23,26 @@ import java.util.stream.Collectors;
 public class Adapter {
 
     public final UserRepository _userRepository;
-
     public final  CompanyRepository _companyRepository;
+    public final InvoiceRepository _invoiceRepository;
 
     private final PasswordEncoder _encoder;
 
     @Autowired
-    public Adapter(UserRepository userRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder){
+    public Adapter(UserRepository userRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder, InvoiceRepository invoiceRepository){
         this._userRepository = userRepository;
         this._companyRepository = companyRepository;
         this._encoder = passwordEncoder;
+        this._invoiceRepository = invoiceRepository;
+
     }
 
     public Adapter(UserRepository userRepository, PasswordEncoder encoder) {
-        this(userRepository, null, encoder);
+        this(userRepository, null, encoder, null);
+    }
+
+    public Adapter(InvoiceRepository invoiceRepository) {
+        this(null,null,null,invoiceRepository);
     }
 
 
@@ -104,5 +114,11 @@ public class Adapter {
         return this._companyRepository
                 .findById(id)
                 .map(companyDataAccess -> companyDataAccess.convertTo(Company::new)).get();
+    }
+
+    public Invoice createInvoice(Invoice invoice, long companyId) {
+        InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess();
+
+        return this._invoiceRepository.save(invoiceDataAccess).convertTo(Invoice::new);
     }
 }
