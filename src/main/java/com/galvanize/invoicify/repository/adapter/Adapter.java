@@ -38,7 +38,7 @@ public final class Adapter {
         return this._companyRepository
                 .findAll()
                 .stream()
-                .map( (companyDataAccess) -> companyDataAccess.convertTo(Company::new) )
+                .map( (companyDataAccess) -> companyDataAccess.convertToModel(Company::new) )
                 .collect(Collectors.toList());
     }
 
@@ -46,7 +46,7 @@ public final class Adapter {
 
         return this._companyRepository
                 .findById(id)
-                .map(companyDataAccess -> companyDataAccess.convertTo(Company::new)).get();
+                .map(companyDataAccess -> companyDataAccess.convertToModel(Company::new)).get();
     }
 
     public Company createCompany(Company company) throws DuplicateCompanyException{
@@ -61,12 +61,12 @@ public final class Adapter {
 
         return _companyRepository
                         .save(companyDataAccess)
-                        .convertTo(Company::new);
+                        .convertToModel(Company::new);
 
     }
     public Optional<Company> deleteCompany(Long id)  {
 
-    final Optional<Company> company = this._companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertTo(Company::new));
+    final Optional<Company> company = this._companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertToModel(Company::new));
 
     if(company.isPresent())
         _companyRepository.deleteById(id);
@@ -85,6 +85,6 @@ public final class Adapter {
             }
             currentCompanyData.setName(company.getName());
         }
-        return _companyRepository.save(currentCompanyData).convertTo((Company::new));
+        return _companyRepository.save(currentCompanyData).convertToModel((Company::new));
     }
 }

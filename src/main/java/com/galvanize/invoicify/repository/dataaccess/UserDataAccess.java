@@ -33,8 +33,13 @@ public final class UserDataAccess implements IDataAccess<User> {
     }
 
     @Override
-    public <M extends User> M convertTo(Supplier<M> supplier) {
+    public <M extends User> M convertToModel(Supplier<M> supplier) {
         return null;
+    }
+
+    @Override
+    public void convertToDataAccess(User modelObject) {
+
     }
 
 }

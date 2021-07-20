@@ -100,7 +100,7 @@ public class CompanyControllerTest {
         List<Company> expectedCompanies =
                 companyDataAccesses
                         .stream()
-                        .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) )
+                        .map( (companyDataAccess -> companyDataAccess.convertToModel(Company::new)) )
                         .collect(Collectors.toList());
 
         when(companyRepository.findAll()).thenReturn(companyDataAccesses);
@@ -136,7 +136,7 @@ public class CompanyControllerTest {
         }};
 
         Company expectedCompany =
-                companyDataAccess.convertTo(Company::new);
+                companyDataAccess.convertToModel(Company::new);
 
         when(companyRepository.findById(companyDataAccess.getId())).thenReturn(Optional.of(companyDataAccess));
 
@@ -163,10 +163,10 @@ public class CompanyControllerTest {
         companyDataAccess2.setName("Subway");
 
         Company expectedCompany =
-                companyDataAccess.convertTo(Company::new);
+                companyDataAccess.convertToModel(Company::new);
 
         Company expectedCompany2 =
-                companyDataAccess2.convertTo(Company::new);
+                companyDataAccess2.convertToModel(Company::new);
 
         when(companyRepository.save(companyDataAccess)).thenReturn(companyDataAccess);
 
@@ -207,7 +207,7 @@ public class CompanyControllerTest {
         companyDataAccess.setId(1L);
 
         Company expectedCompany =
-                companyDataAccess.convertTo(Company::new);
+                companyDataAccess.convertToModel(Company::new);
 
         when(this.companyRepository.findById(companyDataAccess.getId())).thenReturn(Optional.of(companyDataAccess));
 
