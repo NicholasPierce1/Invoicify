@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/app/company")
@@ -46,7 +47,7 @@ public class CompanyController  {
             value = {"/{id}"},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Company deleteCompanyById(@PathVariable Long id) {
+    public Optional<Company> deleteCompanyById(@PathVariable Long id) {
          return adapter.deleteCompany(id);
     }
 }

@@ -10,10 +10,7 @@ import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.json.JSONArray;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
@@ -31,7 +28,7 @@ import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
@@ -39,7 +36,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -63,6 +59,11 @@ public class CompanyControllerTest {
     private CompanyController companyController;
 
     private Adapter adapter;
+
+    @AfterEach
+    public void resetMocks(){
+        Mockito.reset(this.companyRepository);
+    }
 
     @BeforeAll
     public void createAdapter(){
@@ -203,18 +204,20 @@ public class CompanyControllerTest {
         final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
 
         companyDataAccess.setName("LTI");
+        companyDataAccess.setId(1L);
 
         Company expectedCompany =
                 companyDataAccess.convertTo(Company::new);
 
-        when(this.companyRepository.findByName(companyDataAccess.getName())).thenReturn(Optional.of(companyDataAccess));
+        when(this.companyRepository.findById(companyDataAccess.getId())).thenReturn(Optional.of(companyDataAccess));
 
-        final Company actualCompany = this.companyController.deleteCompanyById(expectedCompany.getId());
+        final Optional<Company> actualCompany = this.companyController.deleteCompanyById(expectedCompany.getId());
+
+        assertTrue(actualCompany.isPresent());
 
         assertEquals(
-
-                objectMapper.writeValueAsString(actualCompany),
-                objectMapper.writeValueAsString(expectedCompany)
+                objectMapper.writeValueAsString(expectedCompany),
+                objectMapper.writeValueAsString(actualCompany.orElseThrow(RuntimeException::new))
 
         );
 

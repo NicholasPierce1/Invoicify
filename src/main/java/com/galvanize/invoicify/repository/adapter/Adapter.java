@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,13 +64,15 @@ public final class Adapter {
                         .convertTo(Company::new);
 
     }
-    public Company deleteCompany(Long id)  {
+    public Optional<Company> deleteCompany(Long id)  {
 
-    Company companyToDelete = _companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertTo(Company::new)).get();
-    _companyRepository.deleteById(id);
+    final Optional<Company> company = this._companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertTo(Company::new));
+
+    if(company.isPresent())
+        _companyRepository.deleteById(id);
 
 
-        return companyToDelete;
+    return company;
 
     }
 }
