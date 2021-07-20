@@ -3,13 +3,12 @@ package com.galvanize.invoicify.repository.dataaccess;
 import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.function.Supplier;
 
+@Entity
+@Table(name = "invoice_line_item")
 public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItemDataAccess> {
 
     @Id
