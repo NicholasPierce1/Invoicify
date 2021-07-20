@@ -1,27 +1,34 @@
 package com.galvanize.invoicify.repository.adapter;
 
+import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
+import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public final class Adapter {
+public class Adapter {
 
-    private final UserRepository _userRepository;
+    public final UserRepository _userRepository;
+
+    public final  CompanyRepository _companyRepository;
+
     private final PasswordEncoder _encoder;
 
     @Autowired
-    public Adapter(UserRepository userRepository, PasswordEncoder encoder){
+    public Adapter(UserRepository userRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder){
         this._userRepository = userRepository;
-        this._encoder = encoder;
+        this._companyRepository = companyRepository;
+        this._encoder = passwordEncoder;
     }
 
 
@@ -77,5 +84,21 @@ public final class Adapter {
 
     public User findUser(Long id) {
         return _userRepository.findById(id).map(userDataAccess -> userDataAccess.convertTo(User::new)).get();
+    }
+
+    public List<Company> findAllCompaniesBasic(){
+
+        return this._companyRepository
+                .findAll()
+                .stream()
+                .map( (companyDataAccess) -> companyDataAccess.convertTo(Company::new) )
+                .collect(Collectors.toList());
+    }
+
+    public Company findCompanyById(@PathVariable long id) {
+
+        return this._companyRepository
+                .findById(id)
+                .map(companyDataAccess -> companyDataAccess.convertTo(Company::new)).get();
     }
 }

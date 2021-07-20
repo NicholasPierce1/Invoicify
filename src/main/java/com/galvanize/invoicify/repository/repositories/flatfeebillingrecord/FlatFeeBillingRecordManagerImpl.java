@@ -11,19 +11,13 @@ import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.Flat
 @Component
 public class FlatFeeBillingRecordManagerImpl implements FlatFeeBillingRecordManagerRepository {
 
-    private final EntityManagerFactory _entityManagerFactory;
-
     private final EntityManager _entityManager;
 
     @Autowired
     public FlatFeeBillingRecordManagerImpl(EntityManagerFactory entityManager){
-        this._entityManagerFactory = entityManager;
+        final EntityManagerFactory entityManagerFactory = entityManager;
 
-        this._entityManager = this._entityManagerFactory.createEntityManager();
+        this._entityManager = entityManagerFactory.createEntityManager();
     }
 
-    @Override
-    public FlatFeeBillingRecordDataAccess getFlatFeeById(Long ID) {
-        return null;
-    }
 }
