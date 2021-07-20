@@ -31,6 +31,10 @@ public class Adapter {
         this._encoder = passwordEncoder;
     }
 
+    public Adapter(UserRepository userRepository, PasswordEncoder encoder) {
+        this(userRepository, null, encoder);
+    }
+
 
     // ...stubs go below
     // add your method signatures to complete your user stories here
