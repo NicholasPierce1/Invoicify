@@ -36,7 +36,7 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess{
     }
 
     @Override
-    public void convertToModel(BillingRecord modelObject) {
+    public void convertTo(BillingRecord modelObject) {
 
     }
 
