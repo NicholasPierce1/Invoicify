@@ -67,7 +67,7 @@ public final class UserDataAccess implements IDataAccess<User> {
     }
 
     @Override
-    public <M extends User> M convertTo(Supplier<M> supplier) {
+    public <M extends User> M convertToModel(Supplier<M> supplier) {
         M user = supplier.get();
         user.setId(this.getId());
         user.setUsername(this.getUsername());
@@ -76,7 +76,7 @@ public final class UserDataAccess implements IDataAccess<User> {
     }
 
     @Override
-    public void convertToModel(User modelObject) {
+    public void convertToDataAccess(User modelObject) {
 
     }
 

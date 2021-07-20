@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.models.*;
 import com.galvanize.invoicify.repository.dataaccess.FlatFeeBillingRecordDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
-import com.galvanize.invoicify.controllers.CompanyController;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
@@ -16,7 +15,6 @@ import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +59,7 @@ public final class Adapter {
 
         final Optional<UserDataAccess> userDataAccessOptional = this._userRepository.findByUsername(username);
 
-        return userDataAccessOptional.map(userDataAccess -> userDataAccess.convertTo(User::new));
+        return userDataAccessOptional.map(userDataAccess -> userDataAccess.convertToModel(User::new));
 
     }
 
@@ -81,7 +79,7 @@ public final class Adapter {
             currentUserData.setPassword(_encoder.encode(user.getPassword()));
         }
 
-        return _userRepository.save(currentUserData).convertTo((User::new));
+        return _userRepository.save(currentUserData).convertToModel((User::new));
     }
 
     public User createUser(User user) throws DuplicateUserException {
@@ -91,7 +89,7 @@ public final class Adapter {
         UserDataAccess userDataAccess = new UserDataAccess();
         userDataAccess.setUsername(user.getUsername());
         userDataAccess.setPassword(_encoder.encode(user.getPassword()));
-        return _userRepository.save(userDataAccess).convertTo((User::new));
+        return _userRepository.save(userDataAccess).convertToModel((User::new));
     }
 
     private boolean isUserExists(String userName) throws DuplicateUserException {
@@ -101,11 +99,11 @@ public final class Adapter {
 
 
     public List<User> findAll() {
-        return _userRepository.findAll().stream().map(userDataAccess -> userDataAccess.convertTo(User::new)).collect(Collectors.toList());
+        return _userRepository.findAll().stream().map(userDataAccess -> userDataAccess.convertToModel(User::new)).collect(Collectors.toList());
     }
 
     public User findUser(Long id) {
-        return _userRepository.findById(id).map(userDataAccess -> userDataAccess.convertTo(User::new)).get();
+        return _userRepository.findById(id).map(userDataAccess -> userDataAccess.convertToModel(User::new)).get();
     }
 
     public List<Company> findAllCompaniesBasic(){
@@ -113,7 +111,7 @@ public final class Adapter {
         return this._companyRepository
                 .findAll()
                 .stream()
-                .map( (companyDataAccess) -> companyDataAccess.convertTo(Company::new) )
+                .map( (companyDataAccess) -> companyDataAccess.convertToModel(Company::new) )
                 .collect(Collectors.toList());
     }
 
@@ -121,7 +119,7 @@ public final class Adapter {
 
         return this._companyRepository
                 .findById(id)
-                .map(companyDataAccess -> companyDataAccess.convertTo(Company::new)).get();
+                .map(companyDataAccess -> companyDataAccess.convertToModel(Company::new)).get();
     }
 
     public @NotNull List<BillingRecord> getAllBillingRecords(){
@@ -151,7 +149,7 @@ public final class Adapter {
                             flatFeeBillingRecordDataAccess.setCompany(companyUserPair.get().getValue0());
                             flatFeeBillingRecordDataAccess.setUser(companyUserPair.get().getValue1());
 
-                            return flatFeeBillingRecordDataAccess.convertTo(FlatFeeBillingRecord::new);
+                            return flatFeeBillingRecordDataAccess.convertToModel(FlatFeeBillingRecord::new);
                         }
                 )
                 .collect(Collectors.toList())
@@ -179,7 +177,7 @@ public final class Adapter {
                             rateBasedBillingRecordDataAccess.setCompany(companyUserPair.get().getValue0());
                             rateBasedBillingRecordDataAccess.setUser(companyUserPair.get().getValue1());
 
-                            return rateBasedBillingRecordDataAccess.convertTo(RateBasedBillingRecord::new);
+                            return rateBasedBillingRecordDataAccess.convertToModel(RateBasedBillingRecord::new);
                         }
                 )
                 .collect(Collectors.toList())
@@ -215,7 +213,7 @@ public final class Adapter {
                             flatFeeBillingRecordDataAccess.setCompany(companyUserPair.get().getValue0());
                             flatFeeBillingRecordDataAccess.setUser(companyUserPair.get().getValue1());
 
-                            return flatFeeBillingRecordDataAccess.convertTo(FlatFeeBillingRecord::new);
+                            return flatFeeBillingRecordDataAccess.convertToModel(FlatFeeBillingRecord::new);
                         }
                 );
 
@@ -245,7 +243,7 @@ public final class Adapter {
                             rateBasedBillingRecordDataAccess.setCompany(companyUserPair.get().getValue0());
                             rateBasedBillingRecordDataAccess.setUser(companyUserPair.get().getValue1());
 
-                            return rateBasedBillingRecordDataAccess.convertTo(RateBasedBillingRecord::new);
+                            return rateBasedBillingRecordDataAccess.convertToModel(RateBasedBillingRecord::new);
                         }
                 );
 
@@ -255,7 +253,7 @@ public final class Adapter {
 
         // convert to data access object
         final FlatFeeBillingRecordDataAccess flatFeeBillingRecordDataAccess = new FlatFeeBillingRecordDataAccess();
-        flatFeeBillingRecordDataAccess.convertToModel(flatFeeBillingRecord);
+        flatFeeBillingRecordDataAccess.convertToDataAccess(flatFeeBillingRecord);
 
         final ObjectMapper objectMapper = new ObjectMapper();
         System.out.println(objectMapper.writeValueAsString(flatFeeBillingRecordDataAccess));
@@ -277,12 +275,12 @@ public final class Adapter {
 
         return _companyRepository
                 .save(companyDataAccess)
-                .convertTo(Company::new);
+                .convertToModel(Company::new);
 
     }
     public Optional<Company> deleteCompany(Long id)  {
 
-        final Optional<Company> company = this._companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertTo(Company::new));
+        final Optional<Company> company = this._companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertToModel(Company::new));
 
         if(company.isPresent())
             _companyRepository.deleteById(id);
@@ -318,7 +316,7 @@ public final class Adapter {
                     ._adapter
                     ._userRepository
                     .findById(clientId)
-                    .map( (userDataAccess -> userDataAccess.convertTo(User::new)) );
+                    .map( (userDataAccess -> userDataAccess.convertToModel(User::new)) );
         }
 
         public Optional<Company> getCompanyById(final long companyId){
@@ -326,7 +324,7 @@ public final class Adapter {
                     ._adapter
                     ._companyRepository
                     .findById(companyId)
-                    .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) );
+                    .map( (companyDataAccess -> companyDataAccess.convertToModel(Company::new)) );
         }
 
     }

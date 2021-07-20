@@ -4,7 +4,6 @@ package com.example.invoicify;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.BillingRecordController;
-import com.galvanize.invoicify.controllers.CompanyController;
 import com.galvanize.invoicify.models.*;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
@@ -15,7 +14,6 @@ import com.galvanize.invoicify.repository.repositories.companyrepository.Company
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
-import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -171,14 +169,14 @@ public class BillingRecordTests {
         this._flatFeeBillingRecords = this._flatFeeBillingRecordsDataAccess
                 .stream()
                 .map(
-                        (flatFeeBillingRecordDataAccess -> flatFeeBillingRecordDataAccess.convertTo(FlatFeeBillingRecord::new))
+                        (flatFeeBillingRecordDataAccess -> flatFeeBillingRecordDataAccess.convertToModel(FlatFeeBillingRecord::new))
                 )
                 .collect(Collectors.toList());
 
         this._rateBasedBillingRecords = this._rateBasedBillingRecordsDataAccess
                 .stream()
                 .map(
-                        (flatFeeBillingRecordDataAccess -> flatFeeBillingRecordDataAccess.convertTo(RateBasedBillingRecord::new))
+                        (flatFeeBillingRecordDataAccess -> flatFeeBillingRecordDataAccess.convertToModel(RateBasedBillingRecord::new))
                 )
                 .collect(Collectors.toList());
 

@@ -57,7 +57,7 @@ public class CompanyDataAccess implements IDataAccess<Company> {
     }
 
     @Override
-    public <M extends Company> M convertTo(Supplier<M> supplier) {
+    public <M extends Company> M convertToModel(Supplier<M> supplier) {
 
         final M company = supplier.get();
 
@@ -69,7 +69,7 @@ public class CompanyDataAccess implements IDataAccess<Company> {
     }
 
     @Override
-    public void convertToModel(Company modelObject) {
+    public void convertToDataAccess(Company modelObject) {
 
     }
 

@@ -116,7 +116,7 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
 
 
     @Override
-    public <M extends T> M convertTo(Supplier<M> supplier) {
+    public <M extends T> M convertToModel(Supplier<M> supplier) {
 
 //        System.out.println(this.getCompany().getName());
 //        System.out.println(this.getUser().getUsername());
@@ -137,7 +137,7 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
     }
 
     @Override
-    public <M extends T> void convertToModel(M modelObject) {
+    public <M extends T> void convertToDataAccess(M modelObject) {
         this.setCreatedBy(modelObject.getCreatedBy().getId());
         this.setUser(modelObject.getCreatedBy());
         this.setCompany(modelObject.getClient());

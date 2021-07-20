@@ -1,6 +1,5 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
-import com.galvanize.invoicify.models.BillingRecord;
 import com.galvanize.invoicify.models.RateBasedBillingRecord;
 
 import javax.persistence.*;
@@ -61,9 +60,9 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
     }
 
     @Override
-    public <M extends RateBasedBillingRecord> M convertTo(Supplier<M> supplier) {
+    public <M extends RateBasedBillingRecord> M convertToModel(Supplier<M> supplier) {
 
-        final M rateBaseBillingRecord = super.convertTo(supplier);
+        final M rateBaseBillingRecord = super.convertToModel(supplier);
 
         rateBaseBillingRecord.setQuantity(this.getQuantity());
         rateBaseBillingRecord.setRate(this.getRate());
@@ -72,8 +71,8 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
     }
 
     @Override
-    public <M extends RateBasedBillingRecord> void convertToModel(M modelObject) {
-        super.convertToModel(modelObject);
+    public <M extends RateBasedBillingRecord> void convertToDataAccess(M modelObject) {
+        super.convertToDataAccess(modelObject);
         this.setQuantity(modelObject.getQuantity());
         this.setRate(modelObject.getRate());
     }

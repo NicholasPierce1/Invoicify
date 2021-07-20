@@ -1,8 +1,6 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
-import com.galvanize.invoicify.models.BillingRecord;
 import com.galvanize.invoicify.models.FlatFeeBillingRecord;
-import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
 import javax.persistence.*;
 import java.util.function.Supplier;
@@ -42,9 +40,9 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<Flat
     }
 
     @Override
-    public <M extends FlatFeeBillingRecord> M convertTo(Supplier<M> supplier) {
+    public <M extends FlatFeeBillingRecord> M convertToModel(Supplier<M> supplier) {
 
-        final M flatFeeBillingRecord = super.convertTo(supplier);
+        final M flatFeeBillingRecord = super.convertToModel(supplier);
         flatFeeBillingRecord.setAmount(this.getAmount());
 
         return flatFeeBillingRecord;
@@ -52,8 +50,8 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<Flat
     }
 
     @Override
-    public <M extends FlatFeeBillingRecord> void convertToModel(M modelObject) {
-        super.convertToModel(modelObject);
+    public <M extends FlatFeeBillingRecord> void convertToDataAccess(M modelObject) {
+        super.convertToDataAccess(modelObject);
         this.setAmount(modelObject.getAmount());
     }
 
