@@ -2,6 +2,7 @@ package com.galvanize.invoicify.repository.adapter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.models.*;
+import com.galvanize.invoicify.repository.dataaccess.FlatFeeBillingRecordDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.controllers.CompanyController;
 import com.galvanize.invoicify.models.Company;
@@ -250,9 +251,14 @@ public final class Adapter {
 
     }
 
-    public @NotNull Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(@NotNull FlatFeeBillingRecord flatFeeBillingRecord){
+    public @NotNull Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(@NotNull FlatFeeBillingRecord flatFeeBillingRecord) throws Exception{
 
-        //
+        // convert to data access object
+        final FlatFeeBillingRecordDataAccess flatFeeBillingRecordDataAccess = new FlatFeeBillingRecordDataAccess();
+        flatFeeBillingRecordDataAccess.convertTo(flatFeeBillingRecord);
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println(objectMapper.writeValueAsString(flatFeeBillingRecordDataAccess));
 
         return Optional.empty();
 
