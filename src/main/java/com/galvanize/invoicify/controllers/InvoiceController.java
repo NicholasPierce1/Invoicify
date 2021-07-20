@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/invoice/")
+@RequestMapping("/api/invoice")
 public class InvoiceController {
     private Adapter adapter;
 
@@ -20,8 +20,8 @@ public class InvoiceController {
         "invoiceDescription":"new invoice",
             "recordIds":[1,2]
     }*/
-    @PostMapping
-    public Invoice createInvoice(Authentication auth, @RequestBody InvoiceRequest invoiceRequest, @RequestParam long companyId) {
+    @PostMapping("/{companyId}")
+    public Invoice createInvoice(Authentication auth, @RequestBody InvoiceRequest invoiceRequest, @PathVariable long companyId) {
         String userName = "";
         if (auth != null) {
              User user = (User) auth.getPrincipal();
