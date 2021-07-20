@@ -249,17 +249,53 @@ public final class Adapter {
 
     }
 
-    public @NotNull Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(@NotNull FlatFeeBillingRecord flatFeeBillingRecord) throws Exception{
+    public @NotNull Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(@NotNull final FlatFeeBillingRecord flatFeeBillingRecord) throws Exception{
 
         // convert to data access object
-        final FlatFeeBillingRecordDataAccess flatFeeBillingRecordDataAccess = new FlatFeeBillingRecordDataAccess();
+        FlatFeeBillingRecordDataAccess flatFeeBillingRecordDataAccess = new FlatFeeBillingRecordDataAccess();
         flatFeeBillingRecordDataAccess.convertToDataAccess(flatFeeBillingRecord);
 
-        final ObjectMapper objectMapper = new ObjectMapper();
-        System.out.println(objectMapper.writeValueAsString(flatFeeBillingRecordDataAccess));
+        // acquires client & company
+        final Optional<User> user = this
+                ._userRepository
+                .findById(
+                        flatFeeBillingRecord
+                                .getCreatedBy()
+                                .getId()
+                )
+                .map(
+                        (userDataAccess -> userDataAccess.convertToModel(User::new))
+                );
 
-        return Optional.empty();
+        final Optional<Company> company = this
+                ._companyRepository
+                .findById(
+                        flatFeeBillingRecord
+                                .getCreatedBy()
+                                .getId()
+                )
+                .map(
+                        (companyDataAccess -> companyDataAccess.convertToModel(Company::new))
+                );
 
+        // verifies that user and company exist
+        if(!user.isPresent() || !company.isPresent() || flatFeeBillingRecord.getId() != null)
+            return Optional.empty();
+
+        // save flat fee object
+        flatFeeBillingRecord.setId(
+                this.
+                        _flatFeeBillingRecordRepository
+                        .save(flatFeeBillingRecordDataAccess)
+                        .getId()
+        );
+
+        // sets client and company
+        flatFeeBillingRecord.setClient(company.get());
+        flatFeeBillingRecord.setCreatedBy(user.get());
+
+        // saves flat fee
+        return Optional.of(flatFeeBillingRecord);
     }
 
 

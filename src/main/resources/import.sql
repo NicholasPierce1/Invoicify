@@ -1,4 +1,4 @@
-INSERT INTO APP_USER(id,username,password) VALUES(5,'admin1','password1');
+INSERT INTO APP_USER(id,username,password) VALUES(1,'admin1','password1');
 
 INSERT INTO COMPANY VALUES(1, 'Subway');
 INSERT INTO COMPANY VALUES(2, 'KFC');

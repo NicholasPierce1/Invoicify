@@ -253,4 +253,42 @@ public class BillingRecordTests {
 
     }
 
+    @Test
+    public void testAddNewFlatFee() throws Exception {
+
+        // creates flat fee w/o id
+        final FlatFeeBillingRecord flatFeeBillingRecord = this._flatFeeBillingRecords.get(0);
+        flatFeeBillingRecord.setId(null);
+
+        final FlatFeeBillingRecordDataAccess flatFeeBillingRecordDataAccess = this._flatFeeBillingRecordsDataAccess.get(0);
+
+        final FlatFeeBillingRecord expectedFlatFeeBillingRecord = flatFeeBillingRecordDataAccess.convertToModel(FlatFeeBillingRecord::new);
+
+        // registers save mock & pre-req mocks
+        when(
+                this._flatFeeBillingRecordRepository
+                        .save(any(FlatFeeBillingRecordDataAccess.class))
+        )
+                .thenReturn(flatFeeBillingRecordDataAccess);
+
+        when(
+                this._companyRepository.findById(flatFeeBillingRecord.getClient().getId())
+        )
+                .thenReturn(Optional.of(this.companyOneDataAccess));
+
+        when(
+                this._userRepository.findById(flatFeeBillingRecord.getCreatedBy().getId())
+        )
+                .thenReturn(Optional.of(this.userOneDataAccess));
+
+        assertEquals(
+                this._objectMapper.writeValueAsString(expectedFlatFeeBillingRecord),
+                this._objectMapper.writeValueAsString(
+                        this._billingRecordController.saveFlatFeeBillingRecord(flatFeeBillingRecord)
+                                .orElseThrow(RuntimeException::new)
+                )
+        );
+
+    }
+
 }
