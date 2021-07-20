@@ -10,6 +10,7 @@ import com.galvanize.invoicify.repository.adapter.DuplicateUserException;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
+import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -55,6 +56,9 @@ public class UserControllerTest {
     private RateBaseBillingRecordRepository _rateBasedBillingRecordRepository;
 
     @Autowired
+    private InvoiceRepository _invoiceRepository;
+
+    @Autowired
     private CompanyRepository _companyRepository;
 
     private UserRepository userRepository;
@@ -76,6 +80,7 @@ public class UserControllerTest {
                 _companyRepository,
                 _flatFeeBillingRecordRepository,
                 _rateBasedBillingRecordRepository,
+                _invoiceRepository,
                 _passwordEncoder);
         this.userController = new UserController(adapter);
     }

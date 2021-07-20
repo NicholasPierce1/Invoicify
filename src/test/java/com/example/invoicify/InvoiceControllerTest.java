@@ -5,7 +5,11 @@ import com.galvanize.invoicify.controllers.InvoiceController;
 import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
+import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
+import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
+import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
+import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -16,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -30,7 +35,22 @@ import static org.mockito.Mockito.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class InvoiceControllerTest {
 
-    private InvoiceRepository invoiceRepository;
+    @Autowired
+    private FlatFeeBillingRecordRepository _flatFeeBillingRecordRepository;
+
+    @Autowired
+    private RateBaseBillingRecordRepository _rateBasedBillingRecordRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
+    @Autowired
+    private UserRepository _userRepository;
+
+    @Autowired
+    private PasswordEncoder _passwordEncoder;
+
+    private InvoiceRepository _invoiceRepository;
     private Adapter adapter;
     private InvoiceController invoiceController;
 
@@ -39,8 +59,14 @@ public class InvoiceControllerTest {
 
     @BeforeAll
     public void createAdapter() {
-        this.invoiceRepository = Mockito.mock(InvoiceRepository.class);
-        adapter = new Adapter(invoiceRepository);
+        this._invoiceRepository = Mockito.mock(InvoiceRepository.class);
+        adapter = new Adapter(
+                _userRepository,
+                companyRepository,
+                _flatFeeBillingRecordRepository,
+                _rateBasedBillingRecordRepository,
+                _invoiceRepository,
+                _passwordEncoder);
         this.invoiceController = new InvoiceController(adapter);
     }
 
@@ -48,9 +74,9 @@ public class InvoiceControllerTest {
     public void createInvoice() throws Exception {
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess();
         Invoice invoice = new Invoice();
-        when(invoiceRepository.save(any())).thenReturn(invoiceDataAccess);
+        when(_invoiceRepository.save(any())).thenReturn(invoiceDataAccess);
         this.invoiceController.createInvoice(auth, invoice, 1);
-        verify(invoiceRepository, times(1)).save(any());
+        verify(_invoiceRepository, times(1)).save(any());
     }
 
 

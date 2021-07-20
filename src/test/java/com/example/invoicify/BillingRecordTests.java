@@ -13,11 +13,13 @@ import com.galvanize.invoicify.repository.dataaccess.RateBasedBillingRecordDataA
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
+import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +73,9 @@ public class BillingRecordTests {
 
     private CompanyDataAccess companyOneDataAccess;
 
+    @Autowired
+    private InvoiceRepository _invoiceRepository;
+
     @BeforeAll
     public void createAdapter(){
 
@@ -80,12 +85,14 @@ public class BillingRecordTests {
         this._rateBasedBillingRecordRepository = Mockito.mock(RateBaseBillingRecordRepository.class);
         this._userRepository = Mockito.mock(UserRepository.class);
         this._companyRepository = Mockito.mock(CompanyRepository.class);
+        this._invoiceRepository = Mockito.mock(InvoiceRepository.class);
 
         this._adapter = new Adapter(
                 _userRepository,
                 _companyRepository,
                 _flatFeeBillingRecordRepository,
                 _rateBasedBillingRecordRepository,
+                _invoiceRepository,
                 _passwordEncoder);
 
         this._billingRecordController = new BillingRecordController(_adapter);

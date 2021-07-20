@@ -1,16 +1,25 @@
 package com.galvanize.invoicify.repository.adapter;
 
-import com.galvanize.invoicify.models.Company;
-import com.galvanize.invoicify.models.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.galvanize.invoicify.models.*;
+import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
+import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
+import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
+import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import com.sun.istack.NotNull;
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +46,7 @@ public class Adapter {
             CompanyRepository companyRepository,
             FlatFeeBillingRecordRepository flatFeeBillingRecordRepository,
             RateBaseBillingRecordRepository rateBaseBillingRecordRepository,
+            InvoiceRepository invoiceRepository,
             PasswordEncoder passwordEncoder){
         this._userRepository = userRepository;
         this._companyRepository = companyRepository;
@@ -44,6 +54,7 @@ public class Adapter {
         this._rateBasedBillingRecordRepository = rateBaseBillingRecordRepository;
         this._encoder = passwordEncoder;
         this._billingRecordParentHelper = new BillingRecordParentHelper(this);
+        this._invoiceRepository = invoiceRepository;
     }
 
     // ...stubs go below
