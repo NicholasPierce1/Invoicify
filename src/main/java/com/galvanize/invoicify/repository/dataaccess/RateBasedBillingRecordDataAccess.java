@@ -70,4 +70,11 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
 
         return rateBaseBillingRecord;
     }
+
+    @Override
+    public void convertTo(RateBasedBillingRecord modelObject) {
+        super.convertTo(modelObject);
+        this.setQuantity(modelObject.getQuantity());
+        this.setRate(modelObject.getRate());
+    }
 }

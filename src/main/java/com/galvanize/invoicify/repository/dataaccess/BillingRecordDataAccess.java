@@ -135,4 +135,15 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
     public void createDataAccess(Object[] dbo) {
 
     }
+
+    @Override
+    public void convertTo(BillingRecord modelObject){
+        this.setCreatedBy(modelObject.getCreatedBy().getId());
+        this.setUser(modelObject.getCreatedBy());
+        this.setCompany(modelObject.getClient());
+        this.setCompanyId(modelObject.getClient().getId());
+        this.setDescription(modelObject.getDescription());
+        if(modelObject.getId() != null)
+            this.setId(modelObject.getId());
+    }
 }
