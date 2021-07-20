@@ -37,4 +37,9 @@ public final class UserDataAccess implements IDataAccess<User> {
         return null;
     }
 
+    @Override
+    public void convertTo(User modelObject) {
+
+    }
+
 }
