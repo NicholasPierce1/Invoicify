@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-interface FlatFeeBillingRecordRepository extends JpaRepository<FlatFeeBillingRecordDataAccess, Long> {
+public interface FlatFeeBillingRecordRepository extends JpaRepository<FlatFeeBillingRecordDataAccess, Long> {
 }

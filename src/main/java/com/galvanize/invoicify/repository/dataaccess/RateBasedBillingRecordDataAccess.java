@@ -11,9 +11,9 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
 
     // fields
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    public Long id;
 
     @Column(nullable = false)
     public double rate;
@@ -37,12 +37,20 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
         return quantity;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setRate(double rate) {
         this.rate = rate;
     }
 
     public void setQuantity(double quantity) {
         this.quantity = quantity;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     // methods
@@ -54,6 +62,12 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
 
     @Override
     public <M extends RateBasedBillingRecord> M convertTo(Supplier<M> supplier) {
-        return super.convertTo(supplier);
+
+        final M rateBaseBillingRecord = super.convertTo(supplier);
+
+        rateBaseBillingRecord.setQuantity(this.getQuantity());
+        rateBaseBillingRecord.setRate(this.getRate());
+
+        return rateBaseBillingRecord;
     }
 }

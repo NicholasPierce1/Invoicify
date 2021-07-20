@@ -11,12 +11,9 @@ import java.util.function.Supplier;
 public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<FlatFeeBillingRecord> {
 
     // fields
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-
-    @Column(name = "billing_record_id", nullable = false)
-    private long billingRecordId;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    public Long id;
 
     @Column(nullable = false)
     private double amount;
@@ -46,7 +43,12 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<Flat
 
     @Override
     public <M extends FlatFeeBillingRecord> M convertTo(Supplier<M> supplier) {
-        return null;
+
+        final M flatFeeBillingRecord = super.convertTo(supplier);
+        flatFeeBillingRecord.setAmount(this.getAmount());
+
+        return flatFeeBillingRecord;
+
     }
 
 

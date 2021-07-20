@@ -8,7 +8,11 @@ import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.adapter.DuplicateUserException;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
+import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
+import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
+import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -45,13 +49,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
 
     @Autowired
-    MockMvc mvc;
+    private FlatFeeBillingRecordRepository _flatFeeBillingRecordRepository;
 
     @Autowired
-    PasswordEncoder encoder;
+    private RateBaseBillingRecordRepository _rateBasedBillingRecordRepository;
 
     @Autowired
+    private CompanyRepository _companyRepository;
+
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder _passwordEncoder;
 
     private UserController userController;
 
@@ -62,8 +71,18 @@ public class UserControllerTest {
     @BeforeAll
     public void createAdapter() {
         this.userRepository = Mockito.mock(UserRepository.class);
-        adapter = new Adapter(userRepository, encoder);
+        this.adapter = new Adapter(
+                userRepository,
+                _companyRepository,
+                _flatFeeBillingRecordRepository,
+                _rateBasedBillingRecordRepository,
+                _passwordEncoder);
         this.userController = new UserController(adapter);
+    }
+
+    @AfterEach
+    public void resetMocks(){
+        Mockito.reset(this.userRepository);
     }
 
 
@@ -217,12 +236,5 @@ public class UserControllerTest {
         verify(userRepository, times(1)).findById(any());
         verify(userRepository, times(1)).countUsersByUserName(any());
     }
-
-
-
-
-
-
-
 
 }

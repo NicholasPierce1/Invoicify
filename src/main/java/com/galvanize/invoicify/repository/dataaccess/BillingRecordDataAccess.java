@@ -1,18 +1,20 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
 import com.galvanize.invoicify.models.BillingRecord;
+import com.galvanize.invoicify.models.Company;
+import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
 import javax.persistence.*;
 import java.util.function.Supplier;
 
 @MappedSuperclass()
-abstract class BillingRecordDataAccess<T extends BillingRecord> implements IDataAccess<T> {
+public abstract class BillingRecordDataAccess<T extends BillingRecord> implements IDataAccess<T> {
 
     // fields
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    public long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long id;
 
     @Column(name = "in_use", nullable = false)
     public boolean inUse;
@@ -23,6 +25,14 @@ abstract class BillingRecordDataAccess<T extends BillingRecord> implements IData
     @Column(name = "company_id", nullable = false)
     public long companyId;
 
+    @Column(name = "created_by", nullable = false)
+    public long createdBy;
+
+    @Transient
+    public User user;
+
+    @Transient
+    public Company company;
 
     // constructor/s
 
@@ -33,16 +43,40 @@ abstract class BillingRecordDataAccess<T extends BillingRecord> implements IData
     // get & set
 
 
+    public boolean isInUse() {
+        return inUse;
+    }
+
+    public boolean getInUse(){
+        return this.isInUse();
+    }
+
+    public long getCreatedBy() {
+        return createdBy;
+    }
+
     public String getDescription() {
         return description;
     }
 
-//    public Long getId() {
+    public User getUser() {
+        return user;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    //    public Long getId() {
 //        return id;
 //    }
 
     public Long getCompanyId() {
         return companyId;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public void setDescription(String description) {
@@ -53,12 +87,29 @@ abstract class BillingRecordDataAccess<T extends BillingRecord> implements IData
         this.inUse = inUse;
     }
 
-//    public void setId(Long id) {
+    public void setCreatedBy(long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    //    public void setId(Long id) {
 //        this.id = id;
 //    }
 
-    public void setCompanyId(Long companyId) {
+
+    public void setCompanyId(long companyId) {
         this.companyId = companyId;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     // method/s
@@ -66,7 +117,18 @@ abstract class BillingRecordDataAccess<T extends BillingRecord> implements IData
 
     @Override
     public <M extends T> M convertTo(Supplier<M> supplier) {
-        return null;
+
+//        System.out.println(this.getCompany().getName());
+//        System.out.println(this.getUser().getUsername());
+
+        final M billingRecord = supplier.get();
+        billingRecord.setClient(this.getCompany());
+        billingRecord.setDescription(this.getDescription());
+        billingRecord.setInUse(this.getInUse());
+        billingRecord.setId(this.getId());
+        billingRecord.setCreatedBy(this.getUser());
+
+        return billingRecord;
     }
 
     @Override

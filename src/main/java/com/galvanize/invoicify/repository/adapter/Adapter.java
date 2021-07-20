@@ -1,14 +1,9 @@
 package com.galvanize.invoicify.repository.adapter;
 
 import com.galvanize.invoicify.models.Company;
-import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.models.User;
-import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
-import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
-
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
-import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,28 +19,32 @@ import java.util.stream.Collectors;
 public class Adapter {
 
     public final UserRepository _userRepository;
+
     public final  CompanyRepository _companyRepository;
     public final InvoiceRepository _invoiceRepository;
 
+    public final FlatFeeBillingRecordRepository _flatFeeBillingRecordRepository;
+
+    public final RateBaseBillingRecordRepository _rateBasedBillingRecordRepository;
+
     private final PasswordEncoder _encoder;
 
+    private final BillingRecordParentHelper _billingRecordParentHelper;
+
     @Autowired
-    public Adapter(UserRepository userRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder, InvoiceRepository invoiceRepository){
+    public Adapter(
+            UserRepository userRepository,
+            CompanyRepository companyRepository,
+            FlatFeeBillingRecordRepository flatFeeBillingRecordRepository,
+            RateBaseBillingRecordRepository rateBaseBillingRecordRepository,
+            PasswordEncoder passwordEncoder){
         this._userRepository = userRepository;
         this._companyRepository = companyRepository;
+        this._flatFeeBillingRecordRepository = flatFeeBillingRecordRepository;
+        this._rateBasedBillingRecordRepository = rateBaseBillingRecordRepository;
         this._encoder = passwordEncoder;
-        this._invoiceRepository = invoiceRepository;
-
+        this._billingRecordParentHelper = new BillingRecordParentHelper(this);
     }
-
-    public Adapter(UserRepository userRepository, PasswordEncoder encoder) {
-        this(userRepository, null, encoder, null);
-    }
-
-    public Adapter(InvoiceRepository invoiceRepository) {
-        this(null,null,null,invoiceRepository);
-    }
-
 
     // ...stubs go below
     // add your method signatures to complete your user stories here
@@ -111,11 +109,204 @@ public class Adapter {
                 .collect(Collectors.toList());
     }
 
-    public Company findCompanyById(@PathVariable long id) {
+    public Company findCompanyById(long id) {
 
         return this._companyRepository
                 .findById(id)
                 .map(companyDataAccess -> companyDataAccess.convertTo(Company::new)).get();
+    }
+
+    public @NotNull List<BillingRecord> getAllBillingRecords(){
+
+        // holds conjoined billing records (flat fee & rate base)
+        final List<BillingRecord> billingRecords = new ArrayList<BillingRecord>();
+
+        // gets all flat fees, converts from DA -> Model, and appends to billing records
+        billingRecords.addAll(this._flatFeeBillingRecordRepository
+                .findAll()
+                .stream()
+                .map(
+                        (flatFeeBillingRecordDataAccess) -> {
+
+                            // gets user and company
+                            // note: assumes user and company exist in this circumstance
+                            final Optional<Pair<Company, User>> companyUserPair = this
+                                    ._billingRecordParentHelper
+                                    .getCompanyAndClient(
+                                            flatFeeBillingRecordDataAccess.getCompanyId(),
+                                            flatFeeBillingRecordDataAccess.getCreatedBy()
+                                    );
+
+                            if(!companyUserPair.isPresent())
+                                throw new RuntimeException("company or user don't exist for this billing record. Was it deleted?");
+
+                            flatFeeBillingRecordDataAccess.setCompany(companyUserPair.get().getValue0());
+                            flatFeeBillingRecordDataAccess.setUser(companyUserPair.get().getValue1());
+
+                            return flatFeeBillingRecordDataAccess.convertTo(FlatFeeBillingRecord::new);
+                        }
+                )
+                .collect(Collectors.toList())
+        );
+
+        // gets all rate based fees, converts from DA -> Model, and appends to billing records
+        billingRecords.addAll(this._rateBasedBillingRecordRepository
+                .findAll()
+                .stream()
+                .map(
+                        (rateBasedBillingRecordDataAccess) -> {
+
+                            // gets user and company
+                            // note: assumes user and company exist in this circumstance
+                            final Optional<Pair<Company, User>> companyUserPair = this
+                                    ._billingRecordParentHelper
+                                    .getCompanyAndClient(
+                                            rateBasedBillingRecordDataAccess.getCompanyId(),
+                                            rateBasedBillingRecordDataAccess.getCreatedBy()
+                                    );
+
+                            if(!companyUserPair.isPresent())
+                                throw new RuntimeException("company or user don't exist for this billing record. Was it deleted?");
+
+                            rateBasedBillingRecordDataAccess.setCompany(companyUserPair.get().getValue0());
+                            rateBasedBillingRecordDataAccess.setUser(companyUserPair.get().getValue1());
+
+                            return rateBasedBillingRecordDataAccess.convertTo(RateBasedBillingRecord::new);
+                        }
+                )
+                .collect(Collectors.toList())
+        );
+
+        return billingRecords;
+
+    }
+
+    public @NotNull Optional<BillingRecord> getBillingRecordById(@NotNull final Long id){
+        final ObjectMapper objectMapper = new ObjectMapper();
+        // note: billing record may be in Flat, Rate, or none
+        Optional<BillingRecord> billingRecord;
+
+        // checking if flat fee retains billing record
+        billingRecord = this.
+                _flatFeeBillingRecordRepository.findById(id)
+                .map(
+                        (flatFeeBillingRecordDataAccess) -> {
+
+                            // gets user and company
+                            // note: assumes user and company exist in this circumstance
+                            final Optional<Pair<Company, User>> companyUserPair = this
+                                    ._billingRecordParentHelper
+                                    .getCompanyAndClient(
+                                            flatFeeBillingRecordDataAccess.getCompanyId(),
+                                            flatFeeBillingRecordDataAccess.getCreatedBy()
+                                    );
+
+                            if(!companyUserPair.isPresent())
+                                throw new RuntimeException("company or user don't exist for this billing record. Was it deleted?");
+
+                            flatFeeBillingRecordDataAccess.setCompany(companyUserPair.get().getValue0());
+                            flatFeeBillingRecordDataAccess.setUser(companyUserPair.get().getValue1());
+
+                            return flatFeeBillingRecordDataAccess.convertTo(FlatFeeBillingRecord::new);
+                        }
+                );
+
+        if(billingRecord.isPresent())
+            return billingRecord;
+
+        // check if rate base retains billing record
+        // returns regardless if present or not
+        return this.
+                _rateBasedBillingRecordRepository
+                .findById(id)
+                .map(
+                        (rateBasedBillingRecordDataAccess) -> {
+
+                            // gets user and company
+                            // note: assumes user and company exist in this circumstance
+                            final Optional<Pair<Company, User>> companyUserPair = this
+                                    ._billingRecordParentHelper
+                                    .getCompanyAndClient(
+                                            rateBasedBillingRecordDataAccess.getCompanyId(),
+                                            rateBasedBillingRecordDataAccess.getCreatedBy()
+                                    );
+
+                            if(!companyUserPair.isPresent())
+                                throw new RuntimeException("company or user don't exist for this billing record. Was it deleted?");
+
+                            rateBasedBillingRecordDataAccess.setCompany(companyUserPair.get().getValue0());
+                            rateBasedBillingRecordDataAccess.setUser(companyUserPair.get().getValue1());
+
+                            return rateBasedBillingRecordDataAccess.convertTo(RateBasedBillingRecord::new);
+                        }
+                );
+
+    }
+
+    private static class BillingRecordParentHelper{
+
+        private final Adapter _adapter;
+
+        public BillingRecordParentHelper(@NotNull final Adapter adapter){
+            this._adapter = adapter;
+        }
+
+        public Optional<Pair<Company, User>> getCompanyAndClient(final long companyId, final long userId){
+
+            final Optional<User> user = this.getUserById(userId);
+
+            final Optional<Company> company = this.getCompanyById(companyId);
+
+            return user.isPresent() && company.isPresent() ?
+                    Optional.of(new Pair<Company, User>(company.get(), user.get()))
+                    :
+                    Optional.empty();
+
+        }
+
+        public Optional<User> getUserById(final long clientId){
+            return this
+                    ._adapter
+                    ._userRepository
+                    .findById(clientId)
+                    .map( (userDataAccess -> userDataAccess.convertTo(User::new)) );
+        }
+
+        public Optional<Company> getCompanyById(final long companyId){
+            return this
+                    ._adapter
+                    ._companyRepository
+                    .findById(companyId)
+                    .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) );
+        }
+
+    }
+
+    public Company createCompany(Company company) throws DuplicateCompanyException{
+
+        if (this._companyRepository.findByName(company.getName()).isPresent()) {
+            throw new DuplicateCompanyException ("Sorry " + company.getName() + " already exists. Give it another name");
+
+        }
+
+        CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+        companyDataAccess.setName(company.getName());
+
+        return _companyRepository
+                .save(companyDataAccess)
+                .convertTo(Company::new);
+
+    }
+    public Optional<Company> deleteCompany(Long id)  {
+
+        final Optional<Company> company = this._companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertTo(Company::new));
+
+        if(company.isPresent())
+            _companyRepository.deleteById(id);
+
+
+        return company;
+
     }
 
     public Invoice createInvoice(Invoice invoice, long companyId, User user) {
