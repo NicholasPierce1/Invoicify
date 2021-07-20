@@ -2,6 +2,7 @@ package com.galvanize.invoicify.controllers;
 
 import com.galvanize.invoicify.models.BillingRecord;
 import com.galvanize.invoicify.models.FlatFeeBillingRecord;
+import com.galvanize.invoicify.models.RateBasedBillingRecord;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +48,19 @@ public class BillingRecordController {
     )
     public Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(
             @NotNull final @RequestBody FlatFeeBillingRecord flatFeeBillingRecord
-    )throws Exception{
+    ){
         return this._adapter.saveFlatFeeBillingRecord(flatFeeBillingRecord);
+    }
+
+    @RequestMapping(
+            value = {"/rate-based", "/rate-based/"},
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Optional<RateBasedBillingRecord> saveRateBasedBillingRecord(
+            @NotNull final @RequestBody RateBasedBillingRecord rateBasedBillingRecord
+    ){
+        return this._adapter.saveRateBasedFeeBillingRecord(rateBasedBillingRecord);
     }
 
 }

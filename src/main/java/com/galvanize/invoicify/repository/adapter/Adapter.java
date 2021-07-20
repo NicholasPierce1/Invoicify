@@ -3,6 +3,7 @@ package com.galvanize.invoicify.repository.adapter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.models.*;
 import com.galvanize.invoicify.repository.dataaccess.FlatFeeBillingRecordDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.RateBasedBillingRecordDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
@@ -249,7 +250,8 @@ public final class Adapter {
 
     }
 
-    public @NotNull Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(@NotNull final FlatFeeBillingRecord flatFeeBillingRecord) throws Exception{
+    public @NotNull Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(
+            @NotNull final FlatFeeBillingRecord flatFeeBillingRecord){
 
         // convert to data access object
         FlatFeeBillingRecordDataAccess flatFeeBillingRecordDataAccess = new FlatFeeBillingRecordDataAccess();
@@ -296,6 +298,56 @@ public final class Adapter {
 
         // saves flat fee
         return Optional.of(flatFeeBillingRecord);
+    }
+
+    public @NotNull Optional<RateBasedBillingRecord> saveRateBasedFeeBillingRecord(
+            @NotNull final RateBasedBillingRecord rateBasedBillingRecord){
+
+        // convert to data access object
+        RateBasedBillingRecordDataAccess rateBasedBillingRecordDataAccess = new RateBasedBillingRecordDataAccess();
+        rateBasedBillingRecordDataAccess.convertToDataAccess(rateBasedBillingRecord);
+
+        // acquires client & company
+        final Optional<User> user = this
+                ._userRepository
+                .findById(
+                        rateBasedBillingRecord
+                                .getCreatedBy()
+                                .getId()
+                )
+                .map(
+                        (userDataAccess -> userDataAccess.convertToModel(User::new))
+                );
+
+        final Optional<Company> company = this
+                ._companyRepository
+                .findById(
+                        rateBasedBillingRecord
+                                .getCreatedBy()
+                                .getId()
+                )
+                .map(
+                        (companyDataAccess -> companyDataAccess.convertToModel(Company::new))
+                );
+
+        // verifies that user and company exist
+        if(!user.isPresent() || !company.isPresent() || rateBasedBillingRecord.getId() != null)
+            return Optional.empty();
+
+        // save flat fee object
+        rateBasedBillingRecord.setId(
+                this.
+                        _rateBasedBillingRecordRepository
+                        .save(rateBasedBillingRecordDataAccess)
+                        .getId()
+        );
+
+        // sets client and company
+        rateBasedBillingRecord.setClient(company.get());
+        rateBasedBillingRecord.setCreatedBy(user.get());
+
+        // saves flat fee
+        return Optional.of(rateBasedBillingRecord);
     }
 
 
