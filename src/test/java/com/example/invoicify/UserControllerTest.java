@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -51,7 +52,6 @@ public class UserControllerTest {
 
     private UserRepository userRepository;
 
-    @Autowired
     private PasswordEncoder _passwordEncoder;
 
     private UserController userController;
@@ -63,6 +63,7 @@ public class UserControllerTest {
     @BeforeAll
     public void createAdapter() {
         this.userRepository = Mockito.mock(UserRepository.class);
+        this._passwordEncoder = Mockito.mock(BCryptPasswordEncoder.class);
         this.adapter = new Adapter(
                 userRepository,
                 _companyRepository,
@@ -216,17 +217,29 @@ public class UserControllerTest {
     @Test
     public void modifyUserCredentialsWithAnotherUsernameThatAlreadyExists() throws Exception {
         UserDataAccess existingUserToBeUpdated = new UserDataAccess("testuser1","testpassword2");
+        existingUserToBeUpdated.setId(1L);
+
+        UserDataAccess existingUserToBeUpdatedResult = new UserDataAccess("bob","newPassword1");
+        existingUserToBeUpdatedResult.setId(1L);
+
         //bob is already existing in the database so don't do anything
         User expectedUser = new User("bob","newPassword1");
+        expectedUser.setId(1L);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserToBeUpdated));
-        when(userRepository.countUsersByUserName(any())).thenReturn(2);
-        assertThrows(DuplicateUserException.class, () -> {
-            userController.updateUser(null, expectedUser, 1L);
-        });
+        when(userRepository.findById(existingUserToBeUpdated.getId())).thenReturn(Optional.of(existingUserToBeUpdated));
+        when(userRepository.save(any(UserDataAccess.class))).thenReturn(existingUserToBeUpdatedResult);
+        when(this._passwordEncoder.encode(existingUserToBeUpdated.getPassword()))
+                .thenReturn(existingUserToBeUpdated.getPassword());
+
+        assertEquals(
+                this.objectMapper.writeValueAsString(expectedUser),
+                this.objectMapper.writeValueAsString(
+                        this.userController.updateUser(null, expectedUser,1L)
+                )
+        );
+
 
         verify(userRepository, times(1)).findById(any());
-        verify(userRepository, times(1)).countUsersByUserName(any());
     }
 
 }

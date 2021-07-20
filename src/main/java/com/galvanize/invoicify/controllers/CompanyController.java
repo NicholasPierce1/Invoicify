@@ -21,7 +21,7 @@ public class CompanyController  {
         this.adapter = adapter;
     }
 
-    @GetMapping("/all")
+    @GetMapping(value = {"/", ""})
     public List<Company> viewAllCompanies() {
         System.out.println("Before");
         return adapter.findAllCompaniesBasic();

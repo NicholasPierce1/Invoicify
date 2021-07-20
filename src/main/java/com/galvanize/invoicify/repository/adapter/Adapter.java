@@ -66,13 +66,10 @@ public final class Adapter {
 
 
     public User updateUser(User user, Long id) throws DuplicateUserException {
+        // getting user by id --- user exists in database guaranteed
         UserDataAccess currentUserData = this._userRepository.findById(id).get();
 
         if (user.getUsername() != null && !user.getUsername().equals("")) {
-            //check if there's another user with the given username and prevent duplication of user ids.
-            if (isUserExists(user.getUsername())){
-                throw new DuplicateUserException("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
-            }
             currentUserData.setUsername(user.getUsername());
         }
 

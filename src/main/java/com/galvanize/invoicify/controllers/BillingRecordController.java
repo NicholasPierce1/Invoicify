@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = {"/api/billingRecord/", "/api/billingRecord"})
+@RequestMapping(value = {"/api/billing-record/", "/api/billing-record"})
 public class BillingRecordController {
 
     private final Adapter _adapter;
