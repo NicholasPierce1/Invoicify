@@ -6,6 +6,7 @@ import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.UserController;
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.adapter.Adapter;
+import com.galvanize.invoicify.repository.adapter.DuplicateUserException;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -74,14 +75,9 @@ public class UserControllerTest {
 
         when(userRepository.countUsersByUserName(any())).thenReturn(2);
         when(userRepository.save(any())).thenReturn(userDataAccess);
-        User actualUser = null;
-        try {
-            actualUser = this.userController.createUser(expectedUser);
-            //we shouldn't be hitting this assert equals. if this test complains about 1 not being equal to 0 then that means this test failed and a user was actually created.
-            assertEquals(1,0, "you don't want to hit this assert. Please check your create user endpoint and make sure it doesn't allow creating a user with an existing username.");
-        } catch (Exception e ) {
-            assertNull(actualUser);
-        }
+        assertThrows(DuplicateUserException.class, () -> {
+            this.userController.createUser(expectedUser);
+        });
         verify(userRepository,times(1)).countUsersByUserName(any());
     }
 
@@ -214,17 +210,12 @@ public class UserControllerTest {
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserToBeUpdated));
         when(userRepository.countUsersByUserName(any())).thenReturn(2);
-        User actualUser = null;
-        try {
-            actualUser = userController.updateUser(null, expectedUser, 1L);
-            assertEquals(1,0, "you don't want to hit this assert. Please check your update user and make sure it doesn't allow updating an existing user with the same username.");
-        } catch (Exception e) {
-            assertNull(actualUser);
-        }
+        assertThrows(DuplicateUserException.class, () -> {
+            userController.updateUser(null, expectedUser, 1L);
+        });
+
         verify(userRepository, times(1)).findById(any());
         verify(userRepository, times(1)).countUsersByUserName(any());
-
-
     }
 
 
