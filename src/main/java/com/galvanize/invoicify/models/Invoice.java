@@ -1,27 +1,47 @@
 package com.galvanize.invoicify.models;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-import javax.persistence.Transient;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 public class Invoice {
-
+    private long id;
+    private Company company;
+    private Date createdOn;
+    private User createdBy;
     private String invoiceDescription;
+    private ArrayList<BillingRecord> lineItems;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @Transient
-    private List<String> recordIds = new ArrayList<String>();
-
-    public List<String> getRecordIds() {
-        return recordIds;
+    public long getId() {
+        return id;
     }
 
-    public void setRecordIds(List<String> recordIds) {
-        this.recordIds = recordIds;
+    public void setId(long id) {
+        this.id = id;
     }
 
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
 
     public String getInvoiceDescription() {
         return invoiceDescription;
@@ -30,4 +50,14 @@ public class Invoice {
     public void setInvoiceDescription(String invoiceDescription) {
         this.invoiceDescription = invoiceDescription;
     }
+
+    public ArrayList<BillingRecord> getLineItems() {
+        return lineItems;
+    }
+
+    public void setLineItems(ArrayList<BillingRecord> lineItems) {
+        this.lineItems = lineItems;
+    }
+
+
 }

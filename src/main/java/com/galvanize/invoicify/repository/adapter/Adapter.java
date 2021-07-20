@@ -8,6 +8,7 @@ import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
+import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceLineItemRepository;
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
@@ -16,7 +17,6 @@ import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +31,7 @@ public class Adapter {
 
     public final  CompanyRepository _companyRepository;
     public final InvoiceRepository _invoiceRepository;
+    public final InvoiceLineItemRepository _invoiceLineItemRepository;
 
     public final FlatFeeBillingRecordRepository _flatFeeBillingRecordRepository;
 
@@ -47,6 +48,7 @@ public class Adapter {
             FlatFeeBillingRecordRepository flatFeeBillingRecordRepository,
             RateBaseBillingRecordRepository rateBaseBillingRecordRepository,
             InvoiceRepository invoiceRepository,
+            InvoiceLineItemRepository invoiceLineItemRepository,
             PasswordEncoder passwordEncoder){
         this._userRepository = userRepository;
         this._companyRepository = companyRepository;
@@ -55,6 +57,7 @@ public class Adapter {
         this._encoder = passwordEncoder;
         this._billingRecordParentHelper = new BillingRecordParentHelper(this);
         this._invoiceRepository = invoiceRepository;
+        this._invoiceLineItemRepository = invoiceLineItemRepository;
     }
 
     // ...stubs go below
@@ -320,18 +323,46 @@ public class Adapter {
 
     }
 
-    public Invoice createInvoice(Invoice invoice, long companyId, User user) {
+    public Invoice createInvoice(InvoiceRequest invoiceRequest, long companyId, String userName) {
+        //todo: make sure ids are valid before saving.
+        long createdById = getUserByUserName(userName).get().getId();
+        InvoiceDataAccess savedInvoiceDataAccess = saveInvoiceToDb(invoiceRequest, companyId, createdById);
+        long invoiceId = savedInvoiceDataAccess.getId();
+        saveInvoiceItemsToDb(invoiceId, invoiceRequest.getRecordIds(), createdById);
+
+        //todo: build invoice response obj
+
+        //return buildInvoice(invoiceDataAccess);
+        return new Invoice();
+    }
+
+    private void saveInvoiceItemsToDb(long invoiceId, List<Long> recordIds, long createdById) {
+        for(Long billingRecordId : recordIds) {
+            InvoiceLineItemDataAccess invoiceLineItemDataAccess = new InvoiceLineItemDataAccess(billingRecordId, new Date(), createdById, invoiceId);
+            _invoiceLineItemRepository.save(invoiceLineItemDataAccess);
+        }
+    }
+
+    private InvoiceDataAccess saveInvoiceToDb(InvoiceRequest invoiceRequest, long companyId, long createdById) {
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess();
         invoiceDataAccess.setCompanyId(companyId);
         invoiceDataAccess.setCreatedOn(new Date());
-        //invoiceDataAccess.setCreatedBy(user.getId());
-        invoiceDataAccess.setDescription(invoice.getInvoiceDescription());
-
-        createInvoiceItem(invoice.getRecordIds());
-        return this._invoiceRepository.save(invoiceDataAccess).convertTo(Invoice::new);
+        invoiceDataAccess.setCreatedBy(createdById);
+        invoiceDataAccess.setDescription(invoiceRequest.getInvoiceDescription());
+        this._invoiceRepository.save(invoiceDataAccess).convertTo(InvoiceRequest::new);
+        return invoiceDataAccess;
     }
 
-    private void createInvoiceItem(List<String> recordIds) {
-        InvoiceLineItemDataAccess invoiceLineItemDataAccess = new InvoiceLineItemDataAccess();
+    private Invoice buildInvoice(InvoiceDataAccess invoiceDataAccess) {
+        Invoice invoice = new Invoice();
+        invoice.setId(invoiceDataAccess.getId());
+        invoice.setCompany(findCompanyById(invoiceDataAccess.getCompanyId()));
+        invoice.setCreatedOn(invoiceDataAccess.getCreatedOn());
+        invoice.setCreatedBy(findUser(invoiceDataAccess.getCreatedBy()));
+        invoice.setInvoiceDescription(invoiceDataAccess.getDescription());
+        //todo: fetch saved invoice line items for each record ids passed in.
+        invoice.setLineItems(null);
+        return invoice;
     }
+
 }

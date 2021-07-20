@@ -1,6 +1,6 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
-import com.galvanize.invoicify.models.Invoice;
+import com.galvanize.invoicify.models.InvoiceRequest;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
 import javax.persistence.*;
@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 @Entity
 @Table(name = "invoice")
-public class InvoiceDataAccess implements IDataAccess<Invoice> {
+public class InvoiceDataAccess implements IDataAccess<InvoiceRequest> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +22,16 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
     private long createdBy;
     @Column(name = "description", nullable = false)
     private String description;
+
+    public InvoiceDataAccess() {
+
+    }
+    public InvoiceDataAccess(long companyId, Date createdOn, long createdBy, String description) {
+        this.companyId = companyId;
+        this.createdOn = createdOn;
+        this.createdBy = createdBy;
+        this.description = description;
+    }
 
     public long getId() {
         return id;
@@ -67,7 +77,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
 
     @Override
-    public <M extends Invoice> M convertTo(Supplier<M> supplier) {
+    public <M extends InvoiceRequest> M convertTo(Supplier<M> supplier) {
         final M invoice = supplier.get();
         return invoice;
     }

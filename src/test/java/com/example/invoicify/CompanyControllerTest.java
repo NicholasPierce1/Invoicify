@@ -9,6 +9,7 @@ import com.galvanize.invoicify.repository.adapter.DuplicateCompanyException;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
+import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceLineItemRepository;
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
@@ -59,8 +60,9 @@ public class CompanyControllerTest {
 
     private UserRepository _userRepository;
 
-    @Autowired
+
     private InvoiceRepository _invoiceRepository;
+    private InvoiceLineItemRepository _invoiceLineItemRepository;
 
     @Autowired
     private PasswordEncoder _passwordEncoder;
@@ -85,6 +87,7 @@ public class CompanyControllerTest {
                 _flatFeeBillingRecordRepository,
                 _rateBasedBillingRecordRepository,
                 _invoiceRepository,
+                _invoiceLineItemRepository,
                 _passwordEncoder);
 
         this.companyController = new CompanyController(adapter);
