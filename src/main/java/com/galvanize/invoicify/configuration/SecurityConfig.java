@@ -50,9 +50,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/user").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/").permitAll()
-                .antMatchers("/h2-console/**").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/console/**").permitAll()
+                //.anyRequest().authenticated()
                 .and().csrf().disable().cors().configurationSource(request -> corsConfiguration);
+
+        http.headers().frameOptions().disable();
     }
 
 }

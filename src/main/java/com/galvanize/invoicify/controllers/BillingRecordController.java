@@ -1,5 +1,6 @@
 package com.galvanize.invoicify.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.models.BillingRecord;
 import com.galvanize.invoicify.models.FlatFeeBillingRecord;
 import com.galvanize.invoicify.models.RateBasedBillingRecord;
@@ -48,7 +49,9 @@ public class BillingRecordController {
     )
     public Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(
             @NotNull final @RequestBody FlatFeeBillingRecord flatFeeBillingRecord
-    ){
+    )throws Exception{
+        final ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println(objectMapper.writeValueAsString(flatFeeBillingRecord));
         return this._adapter.saveFlatFeeBillingRecord(flatFeeBillingRecord);
     }
 
