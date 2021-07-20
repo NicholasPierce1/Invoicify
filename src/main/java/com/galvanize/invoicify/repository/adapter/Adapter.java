@@ -34,11 +34,8 @@ public final class Adapter {
     private final PasswordEncoder _encoder;
 
     private final BillingRecordParentHelper _billingRecordParentHelper;
+
     public final UserRepository _userRepository;
-
-    public final  CompanyRepository _companyRepository;
-
-    private final PasswordEncoder _encoder;
 
     @Autowired
     public Adapter(

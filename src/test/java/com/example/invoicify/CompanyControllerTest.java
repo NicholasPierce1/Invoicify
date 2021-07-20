@@ -8,6 +8,8 @@ import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.adapter.DuplicateCompanyException;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
+import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
+import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.json.JSONArray;
 import org.junit.jupiter.api.*;
@@ -48,13 +50,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class CompanyControllerTest {
 
+    private FlatFeeBillingRecordRepository _flatFeeBillingRecordRepository;
+
+    private RateBaseBillingRecordRepository _rateBasedBillingRecordRepository;
+
     private CompanyRepository companyRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private UserRepository _userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder _passwordEncoder;
 
     private CompanyController companyController;
 
@@ -70,7 +75,12 @@ public class CompanyControllerTest {
 
         this.companyRepository = Mockito.mock(CompanyRepository.class);
 
-        this.adapter = new Adapter(userRepository, companyRepository, passwordEncoder);
+        this.adapter = new Adapter(
+                _userRepository,
+                companyRepository,
+                _flatFeeBillingRecordRepository,
+                _rateBasedBillingRecordRepository,
+                _passwordEncoder);
 
         this.companyController = new CompanyController(adapter);
 
