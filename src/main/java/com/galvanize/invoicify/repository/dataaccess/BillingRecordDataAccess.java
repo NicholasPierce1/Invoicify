@@ -137,7 +137,7 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
     }
 
     @Override
-    public void convertTo(BillingRecord modelObject){
+    public <M extends T> void convertToModel(M modelObject) {
         this.setCreatedBy(modelObject.getCreatedBy().getId());
         this.setUser(modelObject.getCreatedBy());
         this.setCompany(modelObject.getClient());

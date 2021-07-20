@@ -52,8 +52,8 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<Flat
     }
 
     @Override
-    public void convertTo(FlatFeeBillingRecord modelObject) {
-        super.convertTo(modelObject);
+    public <M extends FlatFeeBillingRecord> void convertToModel(M modelObject) {
+        super.convertToModel(modelObject);
         this.setAmount(modelObject.getAmount());
     }
 

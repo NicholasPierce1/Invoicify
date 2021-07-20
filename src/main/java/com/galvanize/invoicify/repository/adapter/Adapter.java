@@ -255,7 +255,7 @@ public final class Adapter {
 
         // convert to data access object
         final FlatFeeBillingRecordDataAccess flatFeeBillingRecordDataAccess = new FlatFeeBillingRecordDataAccess();
-        flatFeeBillingRecordDataAccess.convertTo(flatFeeBillingRecord);
+        flatFeeBillingRecordDataAccess.convertToModel(flatFeeBillingRecord);
 
         final ObjectMapper objectMapper = new ObjectMapper();
         System.out.println(objectMapper.writeValueAsString(flatFeeBillingRecordDataAccess));

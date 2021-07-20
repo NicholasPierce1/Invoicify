@@ -8,6 +8,6 @@ public interface IConvertible<T> {
 
     public abstract <M extends T> M convertTo(final Supplier<M> supplier);
 
-    public abstract void convertToModel(final T modelObject);
+    public abstract <M extends T> void convertToModel(final M modelObject);
 
 }

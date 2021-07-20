@@ -69,6 +69,11 @@ public class CompanyDataAccess implements IDataAccess<Company> {
     }
 
     @Override
+    public void convertToModel(Company modelObject) {
+
+    }
+
+    @Override
     public boolean equals(Object a){
 
         if(a == this)
