@@ -250,6 +250,42 @@ public final class Adapter {
 
     }
 
+    public @NotNull Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(@NotNull FlatFeeBillingRecord flatFeeBillingRecord){
+
+        //
+
+        return Optional.empty();
+
+    }
+
+
+    public Company createCompany(Company company) throws DuplicateCompanyException{
+
+        if (this._companyRepository.findByName(company.getName()).isPresent()) {
+            throw new DuplicateCompanyException ("Sorry " + company.getName() + " already exists. Give it another name");
+
+        }
+
+        CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+        companyDataAccess.setName(company.getName());
+
+        return _companyRepository
+                .save(companyDataAccess)
+                .convertTo(Company::new);
+
+    }
+    public Optional<Company> deleteCompany(Long id)  {
+
+        final Optional<Company> company = this._companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertTo(Company::new));
+
+        if(company.isPresent())
+            _companyRepository.deleteById(id);
+
+
+        return company;
+
+    }
+
     private static class BillingRecordParentHelper{
 
         private final Adapter _adapter;
@@ -289,30 +325,4 @@ public final class Adapter {
 
     }
 
-    public Company createCompany(Company company) throws DuplicateCompanyException{
-
-        if (this._companyRepository.findByName(company.getName()).isPresent()) {
-            throw new DuplicateCompanyException ("Sorry " + company.getName() + " already exists. Give it another name");
-
-        }
-
-        CompanyDataAccess companyDataAccess = new CompanyDataAccess();
-        companyDataAccess.setName(company.getName());
-
-        return _companyRepository
-                        .save(companyDataAccess)
-                        .convertTo(Company::new);
-
-    }
-    public Optional<Company> deleteCompany(Long id)  {
-
-    final Optional<Company> company = this._companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertTo(Company::new));
-
-    if(company.isPresent())
-        _companyRepository.deleteById(id);
-
-
-    return company;
-
-    }
 }
