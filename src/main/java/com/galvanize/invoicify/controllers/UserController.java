@@ -16,9 +16,11 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class UserController {
 
-	@Autowired
 	private Adapter adapter;
 
+	public UserController(Adapter adapter) {
+		this.adapter = adapter;
+	}
 
 
 	@PutMapping("{id}")

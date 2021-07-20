@@ -63,9 +63,9 @@ public class Adapter {
 
 
     public User updateUser(User user, Long id) throws DuplicateUserException {
-        UserDataAccess currentUserData = this._userRepository.findById(id).get();//orElseThrow(DuplicateUserException::new);
+        UserDataAccess currentUserData = this._userRepository.findById(id).get();
 
-        if (user.getUsername() != null || !user.getUsername().equals("")) {
+        if (user.getUsername() != null && !user.getUsername().equals("")) {
             //check if there's another user with the given username and prevent duplication of user ids.
             if (isUserExists(user.getUsername())){
                 throw new DuplicateUserException("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
@@ -73,9 +73,10 @@ public class Adapter {
             currentUserData.setUsername(user.getUsername());
         }
 
-        if (user.getPassword() != null || !user.getPassword().equals("")) {
+        if (user.getPassword() != null && !user.getPassword().equals("")) {
             currentUserData.setPassword(_encoder.encode(user.getPassword()));
         }
+
         return _userRepository.save(currentUserData).convertTo((User::new));
     }
 
@@ -91,7 +92,6 @@ public class Adapter {
 
     private boolean isUserExists(String userName) throws DuplicateUserException {
         int userCountByUsername = this._userRepository.countUsersByUserName(userName);
-
         return userCountByUsername > 0;
     }
 
