@@ -4,6 +4,7 @@ import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
@@ -121,9 +122,14 @@ public class Adapter {
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess();
         invoiceDataAccess.setCompanyId(companyId);
         invoiceDataAccess.setCreatedOn(new Date());
-        invoiceDataAccess.setCreatedBy(user.getId());
+        //invoiceDataAccess.setCreatedBy(user.getId());
         invoiceDataAccess.setDescription(invoice.getInvoiceDescription());
 
+        createInvoiceItem(invoice.getRecordIds());
         return this._invoiceRepository.save(invoiceDataAccess).convertTo(Invoice::new);
+    }
+
+    private void createInvoiceItem(List<String> recordIds) {
+        InvoiceLineItemDataAccess invoiceLineItemDataAccess = new InvoiceLineItemDataAccess();
     }
 }

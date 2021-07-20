@@ -24,7 +24,10 @@ public class InvoiceController {
     }*/
     @PostMapping
     public Invoice createInvoice(Authentication auth, @RequestBody Invoice invoice, @RequestParam long companyId) {
-        User user = (User) auth.getPrincipal();
+        User user = new User();
+        if (auth != null) {
+             user = (User) auth.getPrincipal();
+        }
         return adapter.createInvoice(invoice, companyId, user);
     }
 
