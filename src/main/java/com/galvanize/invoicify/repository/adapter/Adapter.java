@@ -3,6 +3,9 @@ package com.galvanize.invoicify.repository.adapter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.models.*;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
+import com.galvanize.invoicify.controllers.CompanyController;
+import com.galvanize.invoicify.models.Company;
+import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
@@ -20,9 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class Adapter {
-
-    public final UserRepository _userRepository;
+public final class Adapter {
 
     public final  CompanyRepository _companyRepository;
 
@@ -33,6 +34,11 @@ public class Adapter {
     private final PasswordEncoder _encoder;
 
     private final BillingRecordParentHelper _billingRecordParentHelper;
+    public final UserRepository _userRepository;
+
+    public final  CompanyRepository _companyRepository;
+
+    private final PasswordEncoder _encoder;
 
     @Autowired
     public Adapter(
@@ -113,7 +119,7 @@ public class Adapter {
                 .collect(Collectors.toList());
     }
 
-    public Company findCompanyById(@PathVariable long id) {
+    public Company findCompanyById(long id) {
 
         return this._companyRepository
                 .findById(id)
@@ -283,6 +289,33 @@ public class Adapter {
                     .findById(companyId)
                     .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) );
         }
+
+    }
+
+    public Company createCompany(Company company) throws DuplicateCompanyException{
+
+        if (this._companyRepository.findByName(company.getName()).isPresent()) {
+            throw new DuplicateCompanyException ("Sorry " + company.getName() + " already exists. Give it another name");
+
+        }
+
+        CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+        companyDataAccess.setName(company.getName());
+
+        return _companyRepository
+                        .save(companyDataAccess)
+                        .convertTo(Company::new);
+
+    }
+    public Optional<Company> deleteCompany(Long id)  {
+
+    final Optional<Company> company = this._companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertTo(Company::new));
+
+    if(company.isPresent())
+        _companyRepository.deleteById(id);
+
+
+    return company;
 
     }
 }

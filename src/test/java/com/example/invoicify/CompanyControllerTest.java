@@ -5,20 +5,16 @@ import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.CompanyController;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.adapter.Adapter;
+import com.galvanize.invoicify.repository.adapter.DuplicateCompanyException;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
-import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
-import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.json.JSONArray;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,13 +28,14 @@ import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -47,8 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = InvoicifyApplication.class)
-@ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(MockitoExtension.class)
 public class CompanyControllerTest {
 
     private CompanyRepository companyRepository;
@@ -59,27 +56,21 @@ public class CompanyControllerTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private FlatFeeBillingRecordRepository _flatFeeBillingRecordRepository;
-
-    @Autowired
-    private RateBaseBillingRecordRepository _rateBasedBillingRecordRepository;
-
     private CompanyController companyController;
 
     private Adapter adapter;
+
+    @AfterEach
+    public void resetMocks(){
+        Mockito.reset(this.companyRepository);
+    }
 
     @BeforeAll
     public void createAdapter(){
 
         this.companyRepository = Mockito.mock(CompanyRepository.class);
 
-        this.adapter = new Adapter(
-                userRepository,
-                companyRepository,
-                _flatFeeBillingRecordRepository,
-                _rateBasedBillingRecordRepository,
-                passwordEncoder);
+        this.adapter = new Adapter(userRepository, companyRepository, passwordEncoder);
 
         this.companyController = new CompanyController(adapter);
 
@@ -134,28 +125,105 @@ public class CompanyControllerTest {
 
     }
 
-//    @Test
-//    public void testGetAllCompanies() throws Exception {
-//        this.mockMvc.perform(get("/api/company"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$").isNotEmpty());
-//    }
+    @Test
+    public void testGetCompanyById() throws Exception {
 
-//    @Test
-//    public void testGetCompanyById() throws Exception {
-//
-//        Company company = new Company();
-//        company.setId(1l);
-//
-////        RequestBuilder request = get("/app/company/1");
-//        this.mockMvc.perform(get("/app/company/1"))
-//                    .andExpect(status().isOk())
-//                    .andExpect(jsonPath("$.id").value(1));
-//    }
+        final ObjectMapper objectMapper = new ObjectMapper();
 
-//    @Test
-//    public void testGetCompanyById() throws Exception {
-//    }
+        final CompanyDataAccess companyDataAccess = new CompanyDataAccess() {{
+            setId(1L);
+            setName("LTI");
+        }};
+
+        Company expectedCompany =
+                companyDataAccess.convertTo(Company::new);
+
+        when(companyRepository.findById(companyDataAccess.getId())).thenReturn(Optional.of(companyDataAccess));
+
+        final Company actualCompany = this.companyController.findById(companyDataAccess.getId());
+
+        Assertions.assertEquals(
+                objectMapper.writeValueAsString(expectedCompany.getId()),
+                objectMapper.writeValueAsString(actualCompany.getId())
+        );
+
+
+    }
+
+    @Test
+    public void testAddCompany() throws Exception {
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+        final CompanyDataAccess companyDataAccess2 = new CompanyDataAccess();
+
+        companyDataAccess.setName("LTI");
+
+        companyDataAccess2.setName("Subway");
+
+        Company expectedCompany =
+                companyDataAccess.convertTo(Company::new);
+
+        Company expectedCompany2 =
+                companyDataAccess2.convertTo(Company::new);
+
+        when(companyRepository.save(companyDataAccess)).thenReturn(companyDataAccess);
+
+        // when for good case (name is unique)
+        when(this.companyRepository.findByName(companyDataAccess.getName())).thenReturn(Optional.empty());
+
+        // when for bad case (name is not unique)
+        when(this.companyRepository.findByName(companyDataAccess2.getName())).thenReturn(Optional.of(companyDataAccess2));
+
+//        final Company actualCompany = this.companyController.addCompany(expectedCompany);
+        final Company actualCompany = this.companyController.addCompany(expectedCompany);
+
+        assertEquals(
+
+                objectMapper.writeValueAsString(actualCompany),
+                objectMapper.writeValueAsString(expectedCompany)
+
+        );
+
+       // test bad case (name is not unique)
+        assertThrows(
+                DuplicateCompanyException.class,
+                () ->{
+                    this.companyController.addCompany(expectedCompany2);
+                }
+        );
+
+    }
+
+    @Test
+    public void testDeleteCompanyById() throws Exception {
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+
+        companyDataAccess.setName("LTI");
+        companyDataAccess.setId(1L);
+
+        Company expectedCompany =
+                companyDataAccess.convertTo(Company::new);
+
+        when(this.companyRepository.findById(companyDataAccess.getId())).thenReturn(Optional.of(companyDataAccess));
+
+        final Optional<Company> actualCompany = this.companyController.deleteCompanyById(expectedCompany.getId());
+
+        assertTrue(actualCompany.isPresent());
+
+        assertEquals(
+                objectMapper.writeValueAsString(expectedCompany),
+                objectMapper.writeValueAsString(actualCompany.orElseThrow(RuntimeException::new))
+
+        );
+
+
+
+    }
 }
 
 
