@@ -69,11 +69,6 @@ public class CompanyDataAccess implements IDataAccess<Company> {
     }
 
     @Override
-    public void convertToDataAccess(Company modelObject) {
-
-    }
-
-    @Override
     public <M extends Company> void convertToDataAccess(M modelObject) {
         this.setId(modelObject.getId());
         this.setName(modelObject.getName());
