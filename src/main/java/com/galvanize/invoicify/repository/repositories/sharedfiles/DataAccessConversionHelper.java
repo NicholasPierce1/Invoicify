@@ -119,7 +119,7 @@ public final class DataAccessConversionHelper {
             @NotNull final T dataAccess,
             @NotNull final Supplier<M> modelSupplier
     ){
-        return dataAccess.convertTo(modelSupplier);
+        return dataAccess.convertToModel(modelSupplier);
     }
 
 }

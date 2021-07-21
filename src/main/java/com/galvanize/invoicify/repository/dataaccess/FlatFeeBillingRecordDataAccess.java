@@ -31,8 +31,13 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess{
     }
 
     @Override
-    public <M extends BillingRecord> M convertTo(Supplier<M> supplier) {
+    public <M extends BillingRecord> M convertToModel(Supplier<M> supplier) {
         return null;
+    }
+
+    @Override
+    public void convertToDataAccess(BillingRecord modelObject) {
+
     }
 
 
