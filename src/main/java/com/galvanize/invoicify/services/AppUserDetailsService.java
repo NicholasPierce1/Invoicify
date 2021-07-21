@@ -22,7 +22,7 @@ public class AppUserDetailsService implements UserDetailsService {
 		final Optional<User> user = this._adapter.getUserByUserName(username);
 
 		return user.orElseThrow( () -> new UsernameNotFoundException(username) );
-		//return null;
+
 	}
 
 }
