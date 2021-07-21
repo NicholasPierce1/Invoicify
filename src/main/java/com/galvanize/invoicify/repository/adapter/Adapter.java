@@ -32,7 +32,7 @@ public final class Adapter {
 
         final Optional<UserDataAccess> userDataAccessOptional = this._userRepository.findByUsername(username);
 
-        return userDataAccessOptional.map(userDataAccess -> userDataAccess.convertTo(User::new));
+        return userDataAccessOptional.map(userDataAccess -> userDataAccess.convertToModel(User::new));
 
     }
 
@@ -52,7 +52,7 @@ public final class Adapter {
             currentUserData.setPassword(_encoder.encode(user.getPassword()));
         }
 
-        return _userRepository.save(currentUserData).convertTo((User::new));
+        return _userRepository.save(currentUserData).convertToModel((User::new));
     }
 
     public User createUser(User user) throws DuplicateUserException {
@@ -62,7 +62,7 @@ public final class Adapter {
         UserDataAccess userDataAccess = new UserDataAccess();
         userDataAccess.setUsername(user.getUsername());
         userDataAccess.setPassword(_encoder.encode(user.getPassword()));
-        return _userRepository.save(userDataAccess).convertTo((User::new));
+        return _userRepository.save(userDataAccess).convertToModel((User::new));
     }
 
     private boolean isUserExists(String userName) throws DuplicateUserException {
@@ -72,10 +72,10 @@ public final class Adapter {
 
 
     public List<User> findAll() {
-        return _userRepository.findAll().stream().map(userDataAccess -> userDataAccess.convertTo(User::new)).collect(Collectors.toList());
+        return _userRepository.findAll().stream().map(userDataAccess -> userDataAccess.convertToModel(User::new)).collect(Collectors.toList());
     }
 
     public User findUser(Long id) {
-        return _userRepository.findById(id).map(userDataAccess -> userDataAccess.convertTo(User::new)).get();
+        return _userRepository.findById(id).map(userDataAccess -> userDataAccess.convertToModel(User::new)).get();
     }
 }

@@ -32,6 +32,7 @@ public final class UserDataAccess implements IDataAccess<User> {
     }
 
 
+
     // get & set
 
     public Long getId() {
@@ -68,12 +69,18 @@ public final class UserDataAccess implements IDataAccess<User> {
 
     @Override
     public <M extends User> M convertToModel(Supplier<M> supplier) {
-        return null;
+        final M user = supplier.get();
+
+        user.setId(this.getId());
+        user.setUsername(this.getUsername());
+
+        return user;
     }
 
     @Override
-    public void convertToDataAccess(User modelObject) {
-
+    public <M extends User> void convertToDataAccess(M modelObject) {
+        this.setId(modelObject.getId());
+        this.setUsername(modelObject.getUsername());
     }
 
 }

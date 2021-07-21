@@ -109,7 +109,7 @@ public class UserControllerTest {
         List<UserDataAccess> mockUserDataAccessList = new ArrayList<UserDataAccess>();
         mockUserDataAccessList.add(user1);
         mockUserDataAccessList.add(user2);
-        List<User> expectedUsers = mockUserDataAccessList.stream().map(userDataAccess -> userDataAccess.convertTo(User::new)).collect(Collectors.toList());
+        List<User> expectedUsers = mockUserDataAccessList.stream().map(userDataAccess -> userDataAccess.convertToModel(User::new)).collect(Collectors.toList());
 
         when(userRepository.findAll()).thenReturn(mockUserDataAccessList);
         final List<User> actualUsers = userController.getUsers();
