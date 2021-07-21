@@ -2,10 +2,14 @@ package com.galvanize.invoicify.repository.adapter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.models.*;
+import com.galvanize.invoicify.repository.dataaccess.FlatFeeBillingRecordDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
+import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.RateBasedBillingRecordDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceLineItemRepository;
@@ -25,9 +29,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class Adapter {
-
-    public final UserRepository _userRepository;
+public final class Adapter {
 
     public final  CompanyRepository _companyRepository;
     public final InvoiceRepository _invoiceRepository;
@@ -40,6 +42,8 @@ public class Adapter {
     private final PasswordEncoder _encoder;
 
     private final BillingRecordParentHelper _billingRecordParentHelper;
+
+    public final UserRepository _userRepository;
 
     @Autowired
     public Adapter(
@@ -60,6 +64,7 @@ public class Adapter {
         this._invoiceLineItemRepository = invoiceLineItemRepository;
     }
 
+
     // ...stubs go below
     // add your method signatures to complete your user stories here
 
@@ -67,19 +72,16 @@ public class Adapter {
 
         final Optional<UserDataAccess> userDataAccessOptional = this._userRepository.findByUsername(username);
 
-        return userDataAccessOptional.map(userDataAccess -> userDataAccess.convertTo(User::new));
+        return userDataAccessOptional.map(userDataAccess -> userDataAccess.convertToModel(User::new));
 
     }
 
 
     public User updateUser(User user, Long id) throws DuplicateUserException {
+        // getting user by id --- user exists in database guaranteed
         UserDataAccess currentUserData = this._userRepository.findById(id).get();
 
         if (user.getUsername() != null && !user.getUsername().equals("")) {
-            //check if there's another user with the given username and prevent duplication of user ids.
-            if (isUserExists(user.getUsername())){
-                throw new DuplicateUserException("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
-            }
             currentUserData.setUsername(user.getUsername());
         }
 
@@ -87,7 +89,7 @@ public class Adapter {
             currentUserData.setPassword(_encoder.encode(user.getPassword()));
         }
 
-        return _userRepository.save(currentUserData).convertTo((User::new));
+        return _userRepository.save(currentUserData).convertToModel((User::new));
     }
 
     public User createUser(User user) throws DuplicateUserException {
@@ -97,7 +99,7 @@ public class Adapter {
         UserDataAccess userDataAccess = new UserDataAccess();
         userDataAccess.setUsername(user.getUsername());
         userDataAccess.setPassword(_encoder.encode(user.getPassword()));
-        return _userRepository.save(userDataAccess).convertTo((User::new));
+        return _userRepository.save(userDataAccess).convertToModel((User::new));
     }
 
     private boolean isUserExists(String userName) throws DuplicateUserException {
@@ -107,19 +109,18 @@ public class Adapter {
 
 
     public List<User> findAll() {
-        return _userRepository.findAll().stream().map(userDataAccess -> userDataAccess.convertTo(User::new)).collect(Collectors.toList());
+        return _userRepository.findAll().stream().map(userDataAccess -> userDataAccess.convertToModel(User::new)).collect(Collectors.toList());
     }
 
     public User findUser(Long id) {
-        return _userRepository.findById(id).map(userDataAccess -> userDataAccess.convertTo(User::new)).get();
+        return _userRepository.findById(id).map(userDataAccess -> userDataAccess.convertToModel(User::new)).get();
     }
 
     public List<Company> findAllCompaniesBasic(){
-
         return this._companyRepository
                 .findAll()
                 .stream()
-                .map( (companyDataAccess) -> companyDataAccess.convertTo(Company::new) )
+                .map( (companyDataAccess) -> companyDataAccess.convertToModel(Company::new) )
                 .collect(Collectors.toList());
     }
 
@@ -127,7 +128,7 @@ public class Adapter {
 
         return this._companyRepository
                 .findById(id)
-                .map(companyDataAccess -> companyDataAccess.convertTo(Company::new)).get();
+                .map(companyDataAccess -> companyDataAccess.convertToModel(Company::new)).get();
     }
 
     public @NotNull List<BillingRecord> getAllBillingRecords(){
@@ -157,7 +158,7 @@ public class Adapter {
                             flatFeeBillingRecordDataAccess.setCompany(companyUserPair.get().getValue0());
                             flatFeeBillingRecordDataAccess.setUser(companyUserPair.get().getValue1());
 
-                            return flatFeeBillingRecordDataAccess.convertTo(FlatFeeBillingRecord::new);
+                            return flatFeeBillingRecordDataAccess.convertToModel(FlatFeeBillingRecord::new);
                         }
                 )
                 .collect(Collectors.toList())
@@ -185,7 +186,7 @@ public class Adapter {
                             rateBasedBillingRecordDataAccess.setCompany(companyUserPair.get().getValue0());
                             rateBasedBillingRecordDataAccess.setUser(companyUserPair.get().getValue1());
 
-                            return rateBasedBillingRecordDataAccess.convertTo(RateBasedBillingRecord::new);
+                            return rateBasedBillingRecordDataAccess.convertToModel(RateBasedBillingRecord::new);
                         }
                 )
                 .collect(Collectors.toList())
@@ -221,7 +222,7 @@ public class Adapter {
                             flatFeeBillingRecordDataAccess.setCompany(companyUserPair.get().getValue0());
                             flatFeeBillingRecordDataAccess.setUser(companyUserPair.get().getValue1());
 
-                            return flatFeeBillingRecordDataAccess.convertTo(FlatFeeBillingRecord::new);
+                            return flatFeeBillingRecordDataAccess.convertToModel(FlatFeeBillingRecord::new);
                         }
                 );
 
@@ -251,10 +252,150 @@ public class Adapter {
                             rateBasedBillingRecordDataAccess.setCompany(companyUserPair.get().getValue0());
                             rateBasedBillingRecordDataAccess.setUser(companyUserPair.get().getValue1());
 
-                            return rateBasedBillingRecordDataAccess.convertTo(RateBasedBillingRecord::new);
+                            return rateBasedBillingRecordDataAccess.convertToModel(RateBasedBillingRecord::new);
                         }
                 );
 
+    }
+
+    public @NotNull Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(
+            @NotNull final FlatFeeBillingRecord flatFeeBillingRecord){
+
+        // convert to data access object
+        FlatFeeBillingRecordDataAccess flatFeeBillingRecordDataAccess = new FlatFeeBillingRecordDataAccess();
+        flatFeeBillingRecordDataAccess.convertToDataAccess(flatFeeBillingRecord);
+
+        // acquires client & company
+        final Optional<User> user = this
+                ._userRepository
+                .findById(
+                        flatFeeBillingRecord
+                                .getCreatedBy()
+                                .getId()
+                )
+                .map(
+                        (userDataAccess -> userDataAccess.convertToModel(User::new))
+                );
+
+        final Optional<Company> company = this
+                ._companyRepository
+                .findById(
+                        flatFeeBillingRecord
+                                .getCreatedBy()
+                                .getId()
+                )
+                .map(
+                        (companyDataAccess -> companyDataAccess.convertToModel(Company::new))
+                );
+
+        // verifies that user and company exist
+        if(!user.isPresent() || !company.isPresent() || flatFeeBillingRecord.getId() != null)
+            return Optional.empty();
+
+        // save flat fee object
+        flatFeeBillingRecord.setId(
+                this.
+                        _flatFeeBillingRecordRepository
+                        .save(flatFeeBillingRecordDataAccess)
+                        .getId()
+        );
+
+        // sets client and company
+        flatFeeBillingRecord.setClient(company.get());
+        flatFeeBillingRecord.setCreatedBy(user.get());
+
+        // saves flat fee
+        return Optional.of(flatFeeBillingRecord);
+    }
+
+    public @NotNull Optional<RateBasedBillingRecord> saveRateBasedFeeBillingRecord(
+            @NotNull final RateBasedBillingRecord rateBasedBillingRecord){
+
+        // convert to data access object
+        RateBasedBillingRecordDataAccess rateBasedBillingRecordDataAccess = new RateBasedBillingRecordDataAccess();
+        rateBasedBillingRecordDataAccess.convertToDataAccess(rateBasedBillingRecord);
+
+        // acquires client & company
+        final Optional<User> user = this
+                ._userRepository
+                .findById(
+                        rateBasedBillingRecord
+                                .getCreatedBy()
+                                .getId()
+                )
+                .map(
+                        (userDataAccess -> userDataAccess.convertToModel(User::new))
+                );
+
+        final Optional<Company> company = this
+                ._companyRepository
+                .findById(
+                        rateBasedBillingRecord
+                                .getCreatedBy()
+                                .getId()
+                )
+                .map(
+                        (companyDataAccess -> companyDataAccess.convertToModel(Company::new))
+                );
+
+        // verifies that user and company exist
+        if(!user.isPresent() || !company.isPresent() || rateBasedBillingRecord.getId() != null)
+            return Optional.empty();
+
+        // save flat fee object
+        rateBasedBillingRecord.setId(
+                this.
+                        _rateBasedBillingRecordRepository
+                        .save(rateBasedBillingRecordDataAccess)
+                        .getId()
+        );
+
+        // sets client and company
+        rateBasedBillingRecord.setClient(company.get());
+        rateBasedBillingRecord.setCreatedBy(user.get());
+
+        // saves flat fee
+        return Optional.of(rateBasedBillingRecord);
+    }
+
+
+    public Company createCompany(Company company) throws DuplicateCompanyException{
+
+        if (this._companyRepository.findByName(company.getName()).isPresent()) {
+            throw new DuplicateCompanyException ("Sorry " + company.getName() + " already exists. Give it another name");
+
+        }
+
+        CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+        companyDataAccess.setName(company.getName());
+
+        return _companyRepository
+                .save(companyDataAccess)
+                .convertToModel(Company::new);
+
+    }
+    public Optional<Company> deleteCompany(Long id)  {
+
+        final Optional<Company> company = this._companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertToModel(Company::new));
+
+        if(company.isPresent())
+            _companyRepository.deleteById(id);
+
+
+        return company;
+
+    }
+
+    public Company updateCompany(Company company, Long id) {
+        CompanyDataAccess currentCompanyData = this._companyRepository.findById(id).get();
+
+        if(company.getName() != null && !company.getName().equals("")){
+            if(this._companyRepository.findByName(company.getName()).isPresent()){
+                throw new DuplicateCompanyException("Company " + company.getName() + "is an existing company name. Please choose a different name.");
+            }
+            currentCompanyData.setName(company.getName());
+        }
+        return _companyRepository.save(currentCompanyData).convertToModel((Company::new));
     }
 
     private static class BillingRecordParentHelper{
@@ -283,7 +424,7 @@ public class Adapter {
                     ._adapter
                     ._userRepository
                     .findById(clientId)
-                    .map( (userDataAccess -> userDataAccess.convertTo(User::new)) );
+                    .map( (userDataAccess -> userDataAccess.convertToModel(User::new)) );
         }
 
         public Optional<Company> getCompanyById(final long companyId){
@@ -291,35 +432,8 @@ public class Adapter {
                     ._adapter
                     ._companyRepository
                     .findById(companyId)
-                    .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) );
+                    .map( (companyDataAccess -> companyDataAccess.convertToModel(Company::new)) );
         }
-
-    }
-
-    public Company createCompany(Company company) throws DuplicateCompanyException{
-
-        if (this._companyRepository.findByName(company.getName()).isPresent()) {
-            throw new DuplicateCompanyException ("Sorry " + company.getName() + " already exists. Give it another name");
-
-        }
-
-        CompanyDataAccess companyDataAccess = new CompanyDataAccess();
-        companyDataAccess.setName(company.getName());
-
-        return _companyRepository
-                .save(companyDataAccess)
-                .convertTo(Company::new);
-
-    }
-    public Optional<Company> deleteCompany(Long id)  {
-
-        final Optional<Company> company = this._companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertTo(Company::new));
-
-        if(company.isPresent())
-            _companyRepository.deleteById(id);
-
-
-        return company;
 
     }
 
@@ -349,7 +463,7 @@ public class Adapter {
         invoiceDataAccess.setCreatedOn(new Date());
         invoiceDataAccess.setCreatedBy(createdById);
         invoiceDataAccess.setDescription(invoiceRequest.getInvoiceDescription());
-        this._invoiceRepository.save(invoiceDataAccess).convertTo(InvoiceRequest::new);
+        //this._invoiceRepository.save(invoiceDataAccess).convertTo(InvoiceRequest::new);
         return invoiceDataAccess;
     }
 

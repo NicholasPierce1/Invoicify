@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/app/company")
+@RequestMapping("/api/company")
 public class CompanyController  {
 
 //    @Autowired
@@ -21,7 +21,7 @@ public class CompanyController  {
         this.adapter = adapter;
     }
 
-    @GetMapping("/all")
+    @GetMapping(value = {"/", ""})
     public List<Company> viewAllCompanies() {
         System.out.println("Before");
         return adapter.findAllCompaniesBasic();
@@ -49,5 +49,13 @@ public class CompanyController  {
     )
     public Optional<Company> deleteCompanyById(@PathVariable Long id) {
          return adapter.deleteCompany(id);
+    }
+
+    @PutMapping(
+            value = {"/{id}"},
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Company updateCompany(@RequestBody Company company, @PathVariable Long id) throws Exception {
+        return adapter.updateCompany(company, id);
     }
 }

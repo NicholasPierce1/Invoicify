@@ -4,7 +4,6 @@ package com.example.invoicify;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.BillingRecordController;
-import com.galvanize.invoicify.controllers.CompanyController;
 import com.galvanize.invoicify.models.*;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
@@ -17,7 +16,6 @@ import com.galvanize.invoicify.repository.repositories.invoicerepository.Invoice
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
-import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -182,14 +180,14 @@ public class BillingRecordTests {
         this._flatFeeBillingRecords = this._flatFeeBillingRecordsDataAccess
                 .stream()
                 .map(
-                        (flatFeeBillingRecordDataAccess -> flatFeeBillingRecordDataAccess.convertTo(FlatFeeBillingRecord::new))
+                        (flatFeeBillingRecordDataAccess -> flatFeeBillingRecordDataAccess.convertToModel(FlatFeeBillingRecord::new))
                 )
                 .collect(Collectors.toList());
 
         this._rateBasedBillingRecords = this._rateBasedBillingRecordsDataAccess
                 .stream()
                 .map(
-                        (flatFeeBillingRecordDataAccess -> flatFeeBillingRecordDataAccess.convertTo(RateBasedBillingRecord::new))
+                        (flatFeeBillingRecordDataAccess -> flatFeeBillingRecordDataAccess.convertToModel(RateBasedBillingRecord::new))
                 )
                 .collect(Collectors.toList());
 
@@ -263,6 +261,82 @@ public class BillingRecordTests {
                     )
             );
         }
+
+    }
+
+    @Test
+    public void testAddNewFlatFee() throws Exception {
+
+        // creates flat fee w/o id
+        final FlatFeeBillingRecord flatFeeBillingRecord = this._flatFeeBillingRecords.get(0);
+        flatFeeBillingRecord.setId(null);
+
+        final FlatFeeBillingRecordDataAccess flatFeeBillingRecordDataAccess = this._flatFeeBillingRecordsDataAccess.get(0);
+
+        final FlatFeeBillingRecord expectedFlatFeeBillingRecord = flatFeeBillingRecordDataAccess.convertToModel(FlatFeeBillingRecord::new);
+
+        // registers save mock & pre-req mocks
+        when(
+                this._flatFeeBillingRecordRepository
+                        .save(any(FlatFeeBillingRecordDataAccess.class))
+        )
+                .thenReturn(flatFeeBillingRecordDataAccess);
+
+        when(
+                this._companyRepository.findById(flatFeeBillingRecord.getClient().getId())
+        )
+                .thenReturn(Optional.of(this.companyOneDataAccess));
+
+        when(
+                this._userRepository.findById(flatFeeBillingRecord.getCreatedBy().getId())
+        )
+                .thenReturn(Optional.of(this.userOneDataAccess));
+
+        assertEquals(
+                this._objectMapper.writeValueAsString(expectedFlatFeeBillingRecord),
+                this._objectMapper.writeValueAsString(
+                        this._billingRecordController.saveFlatFeeBillingRecord(flatFeeBillingRecord)
+                                .orElseThrow(RuntimeException::new)
+                )
+        );
+
+    }
+
+    @Test
+    public void testAddNewRateBasedFee() throws Exception {
+
+        // creates rate based fee w/o id
+        final RateBasedBillingRecord rateBasedBillingRecord = this._rateBasedBillingRecords.get(0);
+        rateBasedBillingRecord.setId(null);
+
+        final RateBasedBillingRecordDataAccess rateBasedBillingRecordDataAccess = this._rateBasedBillingRecordsDataAccess.get(0);
+
+        final RateBasedBillingRecord expectedRateBaseBillingRecord = rateBasedBillingRecordDataAccess.convertToModel(RateBasedBillingRecord::new);
+
+        // registers save mock & pre-req mocks
+        when(
+                this._rateBasedBillingRecordRepository
+                        .save(any(RateBasedBillingRecordDataAccess.class))
+        )
+                .thenReturn(rateBasedBillingRecordDataAccess);
+
+        when(
+                this._companyRepository.findById(rateBasedBillingRecord.getClient().getId())
+        )
+                .thenReturn(Optional.of(this.companyOneDataAccess));
+
+        when(
+                this._userRepository.findById(rateBasedBillingRecord.getCreatedBy().getId())
+        )
+                .thenReturn(Optional.of(this.userOneDataAccess));
+
+        assertEquals(
+                this._objectMapper.writeValueAsString(expectedRateBaseBillingRecord),
+                this._objectMapper.writeValueAsString(
+                        this._billingRecordController.saveRateBasedBillingRecord(rateBasedBillingRecord)
+                                .orElseThrow(RuntimeException::new)
+                )
+        );
 
     }
 

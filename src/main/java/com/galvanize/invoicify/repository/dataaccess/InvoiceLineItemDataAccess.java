@@ -79,7 +79,14 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItemDat
     }
 
     @Override
-    public <M extends InvoiceLineItemDataAccess> M convertTo(Supplier<M> supplier) {
+    public <M extends InvoiceLineItemDataAccess> M convertToModel(Supplier<M> supplier) {
         return null;
     }
+
+    @Override
+    public <M extends InvoiceLineItemDataAccess> void convertToDataAccess(M modelObject) {
+
+    }
+
+
 }

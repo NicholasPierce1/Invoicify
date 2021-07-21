@@ -13,11 +13,8 @@ import com.galvanize.invoicify.repository.repositories.invoicerepository.Invoice
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
-import org.json.JSONArray;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +22,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.util.Assert;
-
-import javax.servlet.http.HttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -42,7 +33,6 @@ import java.util.stream.Collectors;
 
 //import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //@WebMvcTest(CompanyController.class)
 @SpringBootTest
@@ -118,7 +108,7 @@ public class CompanyControllerTest {
         List<Company> expectedCompanies =
                 companyDataAccesses
                         .stream()
-                        .map( (companyDataAccess -> companyDataAccess.convertTo(Company::new)) )
+                        .map( (companyDataAccess -> companyDataAccess.convertToModel(Company::new)) )
                         .collect(Collectors.toList());
 
         when(companyRepository.findAll()).thenReturn(companyDataAccesses);
@@ -154,7 +144,7 @@ public class CompanyControllerTest {
         }};
 
         Company expectedCompany =
-                companyDataAccess.convertTo(Company::new);
+                companyDataAccess.convertToModel(Company::new);
 
         when(companyRepository.findById(companyDataAccess.getId())).thenReturn(Optional.of(companyDataAccess));
 
@@ -181,10 +171,10 @@ public class CompanyControllerTest {
         companyDataAccess2.setName("Subway");
 
         Company expectedCompany =
-                companyDataAccess.convertTo(Company::new);
+                companyDataAccess.convertToModel(Company::new);
 
         Company expectedCompany2 =
-                companyDataAccess2.convertTo(Company::new);
+                companyDataAccess2.convertToModel(Company::new);
 
         when(companyRepository.save(companyDataAccess)).thenReturn(companyDataAccess);
 
@@ -225,7 +215,7 @@ public class CompanyControllerTest {
         companyDataAccess.setId(1L);
 
         Company expectedCompany =
-                companyDataAccess.convertTo(Company::new);
+                companyDataAccess.convertToModel(Company::new);
 
         when(this.companyRepository.findById(companyDataAccess.getId())).thenReturn(Optional.of(companyDataAccess));
 
@@ -242,6 +232,29 @@ public class CompanyControllerTest {
 
 
     }
+
+    @Test
+    public void testModifyCompanyName() throws Exception {
+
+        CompanyDataAccess existingCompanyToBeUpdated = new CompanyDataAccess(1L,"LTI");
+        CompanyDataAccess savedUpdatedCompany = new CompanyDataAccess(1L,"LTI2");
+
+        Company expectedCompany= new Company(1L,"LTI2");
+
+        when(companyRepository.findById(1L)).thenReturn(Optional.of(existingCompanyToBeUpdated));
+        when(companyRepository.save(any())).thenReturn(savedUpdatedCompany);
+
+        Company actualCompany = companyController.updateCompany( expectedCompany, 1L);
+
+        assertEquals(actualCompany.getName(), "LTI2");
+        assertEquals(actualCompany.getId(), 1L);
+
+        verify(companyRepository, times(1)).findById(any());
+        verify(companyRepository, times(1)).save(any());
+
+
+    }
+
 }
 
 

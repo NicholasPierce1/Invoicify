@@ -76,14 +76,24 @@ public class InvoiceDataAccess implements IDataAccess<InvoiceRequest> {
 
 
 
-    @Override
+    /*@Override
     public <M extends InvoiceRequest> M convertTo(Supplier<M> supplier) {
         final M invoice = supplier.get();
         return invoice;
-    }
+    }*/
 
     @Override
     public void createDataAccess(Object[] dbo) {
+
+    }
+
+    @Override
+    public <M extends InvoiceRequest> M convertToModel(Supplier<M> supplier) {
+        return null;
+    }
+
+    @Override
+    public <M extends InvoiceRequest> void convertToDataAccess(M modelObject) {
 
     }
 

@@ -1,20 +1,20 @@
 package com.galvanize.invoicify.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.models.BillingRecord;
+import com.galvanize.invoicify.models.FlatFeeBillingRecord;
+import com.galvanize.invoicify.models.RateBasedBillingRecord;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = {"/api/billingRecord/", "/api/billingRecord"})
+@RequestMapping(value = {"/api/billing-record/", "/api/billing-record"})
 public class BillingRecordController {
 
     private final Adapter _adapter;
@@ -40,6 +40,30 @@ public class BillingRecordController {
     )
     public @NotNull Optional<BillingRecord> getBillingRecordById(@NotNull final @PathVariable(value = "id") Long billingRecordId){
         return this._adapter.getBillingRecordById(billingRecordId);
+    }
+
+    @RequestMapping(
+            value = {"/flat-fee", "/flat-fee/"},
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(
+            @NotNull final @RequestBody FlatFeeBillingRecord flatFeeBillingRecord
+    )throws Exception{
+        final ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println(objectMapper.writeValueAsString(flatFeeBillingRecord));
+        return this._adapter.saveFlatFeeBillingRecord(flatFeeBillingRecord);
+    }
+
+    @RequestMapping(
+            value = {"/rate-based", "/rate-based/"},
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Optional<RateBasedBillingRecord> saveRateBasedBillingRecord(
+            @NotNull final @RequestBody RateBasedBillingRecord rateBasedBillingRecord
+    ){
+        return this._adapter.saveRateBasedFeeBillingRecord(rateBasedBillingRecord);
     }
 
 }
