@@ -3,7 +3,6 @@ package com.galvanize.invoicify.repository.dataaccess;
 
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
-import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.util.function.Supplier;
