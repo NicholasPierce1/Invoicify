@@ -11,9 +11,10 @@ import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.RateBasedBillingRecordDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
-import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceLineItemRepository;
+import com.galvanize.invoicify.repository.repositories.invoicelineitemrepository.InvoiceLineItemRepository;
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
+import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepositoryImpl;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import com.sun.istack.NotNull;
 import org.javatuples.Pair;
@@ -446,6 +447,8 @@ public final class Adapter {
 
         //todo: build invoice response obj
 
+        this._invoiceRepository.fetchInvoice(invoiceId, invoiceRequest.getRecordIds());//.convertToModel(Invoice::new);
+
         //return buildInvoice(invoiceDataAccess);
         return new Invoice();
     }
@@ -479,7 +482,7 @@ public final class Adapter {
         invoiceDataAccess.setCreatedOn(new Date());
         invoiceDataAccess.setCreatedBy(createdById);
         invoiceDataAccess.setDescription(invoiceRequest.getInvoiceDescription());
-        this._invoiceRepository.save(invoiceDataAccess).convertToModel(InvoiceRequest::new);
+        this._invoiceRepository.save(invoiceDataAccess).convertToModel(Invoice::new);
         return invoiceDataAccess;
     }
 

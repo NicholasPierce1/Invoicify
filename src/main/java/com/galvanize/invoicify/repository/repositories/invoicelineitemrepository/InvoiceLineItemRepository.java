@@ -1,4 +1,4 @@
-package com.galvanize.invoicify.repository.repositories.invoicerepository;
+package com.galvanize.invoicify.repository.repositories.invoicelineitemrepository;
 
 import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
 import org.springframework.data.jpa.repository.JpaRepository;

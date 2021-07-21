@@ -1,5 +1,6 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
+import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.models.InvoiceRequest;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
@@ -11,7 +12,7 @@ import java.util.function.Supplier;
 
 @Entity
 @Table(name = "invoice")
-public class InvoiceDataAccess implements IDataAccess<InvoiceRequest> {
+public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,27 +78,21 @@ public class InvoiceDataAccess implements IDataAccess<InvoiceRequest> {
 
 
 
-
-    /*@Override
-    public <M extends InvoiceRequest> M convertTo(Supplier<M> supplier) {
-        final M invoice = supplier.get();
-        return invoice;
-    }*/
-
     @Override
     public void createDataAccess(Object[] dbo) {
 
     }
 
     @Override
-    public <M extends InvoiceRequest> M convertToModel(Supplier<M> supplier) {
+    public <M extends Invoice> M convertToModel(Supplier<M> supplier) {
         return null;
     }
 
     @Override
-    public <M extends InvoiceRequest> void convertToDataAccess(M modelObject) {
+    public <M extends Invoice> void convertToDataAccess(M modelObject) {
 
     }
+
 
 
 }

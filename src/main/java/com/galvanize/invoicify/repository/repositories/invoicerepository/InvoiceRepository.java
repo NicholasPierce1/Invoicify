@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface InvoiceRepository extends JpaRepository<InvoiceDataAccess, Long> {
+public interface InvoiceRepository extends JpaRepository<InvoiceDataAccess, Long>, InvoiceRepositoryCustom {
 
 
 }
