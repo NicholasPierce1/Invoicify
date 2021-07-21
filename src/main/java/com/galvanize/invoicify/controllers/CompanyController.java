@@ -2,10 +2,12 @@ package com.galvanize.invoicify.controllers;
 
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.adapter.Adapter;
+import com.galvanize.invoicify.repository.adapter.DuplicateCompanyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,9 +39,20 @@ public class CompanyController  {
     }
 
     @GetMapping("/all")
-    public List<Company> viewAllCompanies() {
-        System.out.println("Before");
-        return adapter.findAllCompaniesBasic();
+    public Optional<List<Company>>
+    viewAllCompanies() {
+//        System.out.println("Before");
+       try{
+
+           return Optional.of(adapter.findAllCompaniesBasic());
+
+       } catch (Exception e) {
+
+           System.out.println(e.getMessage());
+
+           return Optional.empty();
+
+       }
 
     }
 
@@ -47,15 +60,35 @@ public class CompanyController  {
             value = {"/{id}"},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Company findById(@PathVariable Long id) {
+    public Optional<Company> findById(@PathVariable Long id) {
 
-        return adapter.findCompanyById(id);
+        try{
+
+            return Optional.of(adapter.findCompanyById(id));
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+
+            return Optional.empty();
+
+        }
 
     }
 
     @PostMapping
-    public Company addCompany(@RequestBody Company company) {
-        return adapter.createCompany(company);
+    public Optional<Company> addCompany(@RequestBody Company company) {
+
+        try {
+
+            return Optional.of(adapter.createCompany(company));
+
+        } catch (Exception e) {
+
+            System.out.println(e.getLocalizedMessage());
+
+            return Optional.empty();
+        }
     }
 
     @DeleteMapping(
@@ -63,14 +96,33 @@ public class CompanyController  {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public Optional<Company> deleteCompanyById(@PathVariable Long id) {
-         return adapter.deleteCompany(id);
+
+        try{
+
+            return (adapter.deleteCompany(id));
+
+        } catch (Exception e) {
+
+            System.out.println(e.getLocalizedMessage());
+
+            return Optional.empty();
+        }
     }
 
     @PutMapping(
             value = {"/{id}"},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Company updateCompany(@RequestBody Company company, @PathVariable Long id) throws Exception {
-        return adapter.updateCompany(company, id);
+    public Optional<Company> updateCompany(@RequestBody Company company, @PathVariable Long id) throws Exception {
+        try {
+
+            return Optional.of(adapter.updateCompany(company, id));
+
+        } catch (Exception e) {
+
+            System.out.println(e.getLocalizedMessage());
+
+            return Optional.empty();
+        }
     }
 }
