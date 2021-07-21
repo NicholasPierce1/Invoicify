@@ -160,7 +160,7 @@ public class CompanyControllerTest {
     }
 
     @Test
-    public void testAddCompany() throws Exception {
+    public void testAddCompany() throws Exception, DuplicateCompanyException {
 
         final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -186,8 +186,10 @@ public class CompanyControllerTest {
         when(this.companyRepository.findByName(companyDataAccess2.getName())).thenReturn(Optional.of(companyDataAccess2));
 
 //        final Company actualCompany = this.companyController.addCompany(expectedCompany);
-        final Optional<Company> actualCompany = this.companyController.addCompany(expectedCompany);
+        final Optional<Company> actualCompanyOptional = this.companyController.addCompany(expectedCompany);
 
+        assertTrue(actualCompanyOptional.isPresent());
+        final Company actualCompany = actualCompanyOptional.get();
         assertEquals(
 
                 objectMapper.writeValueAsString(actualCompany),
@@ -196,7 +198,10 @@ public class CompanyControllerTest {
         );
 
        // test bad case (name is not unique)
+        //There is a AssertionFailedError: Expected java.lang.Exception to be thrown, but nothing was thrown that is shown when we run this. If removed, it works.
+        //How do you test a failed test case
         assertThrows(
+
                 DuplicateCompanyException.class,
                 () ->{
                     this.companyController.addCompany(expectedCompany2);
