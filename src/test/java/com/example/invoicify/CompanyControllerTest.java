@@ -211,6 +211,17 @@ public class CompanyControllerTest {
 
         when(this.companyRepository.findById(companyDataAccess.getId())).thenReturn(Optional.of(companyDataAccess));
 
+        doAnswer(
+                (invocationOnMock -> {
+                    final Long toDelete = invocationOnMock.getArgument(0, Long.class);
+                    assertEquals(
+                            companyDataAccess.getId(),
+                            toDelete
+                    );
+                    return null;
+                })
+        ).when(this.companyRepository).deleteById(1L);
+
         final Optional<Company> actualCompany = this.companyController.deleteCompanyById(expectedCompany.getId());
 
         assertTrue(actualCompany.isPresent());
