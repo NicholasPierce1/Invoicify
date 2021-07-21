@@ -1,7 +1,9 @@
 package com.galvanize.invoicify.models;
 
+import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.Date;
+
 
 public class Invoice {
     private long id;

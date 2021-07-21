@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 @Service
 public final class Adapter {
 
+
     public final  CompanyRepository _companyRepository;
     public final InvoiceRepository _invoiceRepository;
     public final InvoiceLineItemRepository _invoiceLineItemRepository;
@@ -437,7 +438,7 @@ public final class Adapter {
     }
 
     public Invoice createInvoice(InvoiceRequest invoiceRequest, long companyId, String userName) throws InvalidRequestException {
-        validateRequestCompanyIDandRecordIds(companyId, invoiceRequest.getRecordIds());
+        //validateRequestCompanyIDandRecordIds(companyId, invoiceRequest.getRecordIds());
         long createdById = getUserByUserName(userName).get().getId();
         InvoiceDataAccess savedInvoiceDataAccess = saveInvoiceToDb(invoiceRequest, companyId, createdById);
         long invoiceId = savedInvoiceDataAccess.getId();
@@ -456,7 +457,8 @@ public final class Adapter {
             throw new InvalidRequestException("Company ID " + companyId + "not found.");
         }
         for (long id : recordIds) {
-            isBillingRecordIdValid = getBillingRecordById(id).isPresent();
+            //isBillingRecordIdValid = getBillingRecordById(id).isPresent();
+            isBillingRecordIdValid = _flatFeeBillingRecordRepository.existsById(id) || _rateBasedBillingRecordRepository.existsById(id);
             if (!isBillingRecordIdValid) {
                 throw new InvalidRequestException("Record ID " + id + " not found.");
             }
