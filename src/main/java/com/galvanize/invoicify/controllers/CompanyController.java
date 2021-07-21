@@ -13,7 +13,6 @@ import java.util.Optional;
 @RequestMapping("/api/company")
 public class CompanyController  {
 
-//    @Autowired
     private final Adapter adapter;
 
     @Autowired
