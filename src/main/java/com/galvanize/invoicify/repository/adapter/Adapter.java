@@ -8,7 +8,6 @@ import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
-import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.RateBasedBillingRecordDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
@@ -437,8 +436,8 @@ public final class Adapter {
 
     }
 
-    public Invoice createInvoice(InvoiceRequest invoiceRequest, long companyId, String userName) {
-        //todo: make sure ids are valid before saving.
+    public Invoice createInvoice(InvoiceRequest invoiceRequest, long companyId, String userName) throws InvalidRequestException {
+        validateRequestCompanyIDandRecordIds(companyId, invoiceRequest.getRecordIds());
         long createdById = getUserByUserName(userName).get().getId();
         InvoiceDataAccess savedInvoiceDataAccess = saveInvoiceToDb(invoiceRequest, companyId, createdById);
         long invoiceId = savedInvoiceDataAccess.getId();
@@ -449,6 +448,21 @@ public final class Adapter {
         //return buildInvoice(invoiceDataAccess);
         return new Invoice();
     }
+
+    private void validateRequestCompanyIDandRecordIds(long companyId, List<Long> recordIds) throws InvalidRequestException {
+        boolean isBillingRecordIdValid = false;
+        boolean isCompanyValid = _companyRepository.findById(companyId).isPresent();
+        if (!isCompanyValid) {
+            throw new InvalidRequestException("Company ID " + companyId + "not found.");
+        }
+        for (long id : recordIds) {
+            isBillingRecordIdValid = getBillingRecordById(id).isPresent();
+            if (!isBillingRecordIdValid) {
+                throw new InvalidRequestException("Record ID " + id + " not found.");
+            }
+        }
+    }
+
 
     private void saveInvoiceItemsToDb(long invoiceId, List<Long> recordIds, long createdById) {
         for(Long billingRecordId : recordIds) {
@@ -463,7 +477,7 @@ public final class Adapter {
         invoiceDataAccess.setCreatedOn(new Date());
         invoiceDataAccess.setCreatedBy(createdById);
         invoiceDataAccess.setDescription(invoiceRequest.getInvoiceDescription());
-        //this._invoiceRepository.save(invoiceDataAccess).convertTo(InvoiceRequest::new);
+        this._invoiceRepository.save(invoiceDataAccess).convertToModel(InvoiceRequest::new);
         return invoiceDataAccess;
     }
 
