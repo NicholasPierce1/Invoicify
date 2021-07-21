@@ -11,6 +11,7 @@ import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user")
@@ -29,8 +30,13 @@ public class UserController {
 	}
 
 	@PostMapping
-	public User createUser(@RequestBody User user) {
-		return adapter.createUser(user);
+	public Optional<User> createUser(@RequestBody User user) {
+		try{
+			return Optional.of(adapter.createUser(user));
+		} catch (Exception e) {
+			System.out.println(e.getLocalizedMessage());
+			return Optional.empty();
+		}
 	}
 
 	@GetMapping

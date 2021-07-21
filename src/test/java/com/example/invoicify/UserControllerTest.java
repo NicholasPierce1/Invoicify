@@ -88,7 +88,10 @@ public class UserControllerTest {
         User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getPassword());
 
         when(userRepository.save(any())).thenReturn(userDataAccess);
-        User actualUser = this.userController.createUser(expectedUser);
+        Optional<User> actualUserOptional = this.userController.createUser(expectedUser);
+        assertTrue(actualUserOptional.isPresent());
+        User actualUser = actualUserOptional.get();
+
 
         String actualUserStr = objectMapper.writeValueAsString(actualUser);
         String expectedUserStr = objectMapper.writeValueAsString(expectedUser);
