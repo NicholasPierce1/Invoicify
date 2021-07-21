@@ -76,7 +76,15 @@ public final class Adapter {
 
     }
 
+    /**
+     *
+     * @param company
+     * @param id
+     * @return
+     * @throws DuplicateCompanyException if blah blah
+     */
     public Company updateCompany(Company company, Long id) {
+        //todo: add comments
         CompanyDataAccess currentCompanyData = this._companyRepository.findById(id).get();
 
         if(company.getName() != null && !company.getName().equals("")){

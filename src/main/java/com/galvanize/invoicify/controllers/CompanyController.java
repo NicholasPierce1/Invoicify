@@ -9,12 +9,28 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * <h2>
+ *     todo: describe here
+ * </h2>
+ */
 @RestController
 @RequestMapping("/api/company")
 public class CompanyController  {
 
+    /**
+     * <p>
+     *     todo: describe here
+     * </p>
+     */
     private final Adapter adapter;
 
+    /**
+     * <p>
+     *  todo: describe here
+     * </p>
+     * @param adapter
+     */
     @Autowired
     public CompanyController(Adapter adapter){
         this.adapter = adapter;
