@@ -50,60 +50,61 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
 
         String invoiceQueryStr = getInvoiceSelectQuery();
-        invoiceQueryStr = invoiceQueryStr.replace("f_ids",flatFeeBillingRecordWhereClause);
-        invoiceQueryStr = invoiceQueryStr.replace("r_ids",rateBasedBillingRecordWhereClause);
+        // invoiceQueryStr = invoiceQueryStr.replace("f_ids",flatFeeBillingRecordWhereClause);
+        // invoiceQueryStr = invoiceQueryStr.replace("r_ids",rateBasedBillingRecordWhereClause);
 
         System.out.println("\n\n\n" + invoiceQueryStr + "\n\n\n");
 
         Query invoiceQuery = em.createNativeQuery(invoiceQueryStr);
-        invoiceQuery.setParameter(1, invoiceId);
-        invoiceQuery.setParameter(2, invoiceId);
+        // invoiceQuery.setParameter(1, invoiceId);
+        // invoiceQuery.setParameter(2, invoiceId);
 
         List<Object[]> invoices = invoiceQuery.getResultList();
         List<InvoiceDataAccess> invoiceResultList = new ArrayList<InvoiceDataAccess>();
 
-        System.out.println(invoices);
+        invoices.forEach(
+                (objects ->
+                    {
+                        for (final Object object : objects)
+                            System.out.println(object);
+                    }
+                )
+        );
 
-        DataAccessConversionHelper dataAccessConversionHelper = new DataAccessConversionHelper();
-        dataAccessConversionHelper.createDataAccessObjects(invoices,invoiceResultList, InvoiceDataAccess::new);
+        //DataAccessConversionHelper dataAccessConversionHelper = new DataAccessConversionHelper();
+        //dataAccessConversionHelper.createDataAccessObjects(invoices,invoiceResultList, InvoiceDataAccess::new);
 
         System.out.println(invoiceResultList);
         return invoiceResultList;
     }
 
     private String getInvoiceSelectQuery() {
-        StringBuffer stringBuffer = new StringBuffer("select " +
-                "i.id, " +
-                "(select id from company where id = i.company_id ) company_id, " +
-                 "(select name from company where id = i.company_id) company_name, " +
-                 "i.created_on  invoice_created_on, " +
-                 "(select id from app_user where id = i.created_by) invoice_user_id,  " +
-                 "(select username from app_user where id = i.created_by ) invoice_user_created_by, " +
-                 "(select password from app_user where id = i.created_by ) invoice_user_password, " +
-                 "i.description, " +
-                 "line_items.* " +
-                 "from invoice i, ( " +
-                 "with flat_billing_records as ( " +
-                 "select f.id , " +
-                 "f.created_by, " +
-                 "u.username, " +
-                 "u.password " +
-                 "from flat_fee_billing_Record f join app_user u on (f.created_by = u.id) " +
-                 "where f_ids " +
-                 " ), rate_based_billing_records as ( " +
-                 "select r.id, " +
-                 "r.created_by, " +
-                 "u.username, " +
-                 "u.password " +
-                 "from rate_based_billing_record r join app_user u on (r.created_by = u.id) " +
-                 "where r_ids " +
-                 ") " +
-                 "select * from flat_billing_records " +
-                 "union all  " +
-                 "select * from rate_based_billing_records " +
-                 ") line_items "+
-                 "where (i.id = ? or ? is null) " +
-                 "and exists (select 1 from invoice_line_item ili where ili.invoice_id = i.id and billing_record_id = line_items.id);");
+        StringBuffer stringBuffer = new StringBuffer(
+                  "select c_i.*, unionTable.* " +
+                  "from " +
+                  "( select a.*, c.*, i.* " +
+                  "from app_user a, company c, invoice i " +
+                  "where i.invoice_company_id = c.company_id " +
+                  "and i.created_by = a.user_id) as c_i, " +
+                  "( " +
+                  " (select a.*, i.*, users.user_id as rate_user, users.password as rate_pwd, users.username as rate_userName, c.*, r.id, r.billing_record_company_id, r.billing_record_created_by, r.description, r.in_use, null as amount, r.quantity, r.rate " +
+                  " from invoice_line_item i, rate_based_billing_record r, company c, app_user a, " +
+                  " (select * from app_user) as users " +
+                  " where i.billing_record_id = r.id " +
+                  " and r.billing_record_company_id = c.company_id " +
+                  " and i.created_by = a.user_id " +
+                  " and users.user_id = r.billing_record_created_by) " +
+                  "union " +
+                  " (select a.*, i.*, users.user_id as rate_user, users.password as rate_pwd, users.username as rate_userName, c.*, f.*, null as quantity, null as rate " +
+                  " from invoice_line_item i, flat_fee_billing_record f, company c, app_user a, " +
+                  " (select * from app_user) as users " +
+                  " where i.billing_record_id = f.id " +
+                  " and f.billing_record_company_id = c.company_id " +
+                  " and i.created_by = a.user_id " +
+                  " and users.user_id = f.billing_record_created_by) " +
+                  ") as unionTable " +
+                  "where " +
+                  "c_i.invoice_id = unionTable.invoice_id;");
         return stringBuffer.toString();
     }
 
