@@ -5,6 +5,7 @@ import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
+import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public final class Adapter {
     // ...stubs go below
     // add your method signatures to complete your user stories here
 
-    public List<Company> findAllCompaniesBasic(){
+    public @NotNull List<Company> findAllCompaniesBasic(){
         return this._companyRepository
                 .findAll()
                 .stream()
@@ -42,14 +43,14 @@ public final class Adapter {
                 .collect(Collectors.toList());
     }
 
-    public Company findCompanyById(long id) {
+    public @NotNull Company findCompanyById(@NotNull final long id) {
 
         return this._companyRepository
                 .findById(id)
                 .map(companyDataAccess -> companyDataAccess.convertToModel(Company::new)).get();
     }
 
-    public Company createCompany(Company company) throws DuplicateCompanyException{
+    public @NotNull Company createCompany(@NotNull final Company company) throws DuplicateCompanyException{
 
         if (this._companyRepository.findByName(company.getName()).isPresent()) {
             throw new DuplicateCompanyException ("Sorry " + company.getName() + " already exists. Give it another name");
@@ -64,7 +65,7 @@ public final class Adapter {
                         .convertToModel(Company::new);
 
     }
-    public Optional<Company> deleteCompany(Long id)  {
+    public @NotNull Optional<Company> deleteCompany(@NotNull final Long id)  {
 
     final Optional<Company> company = this._companyRepository.findById(id).map(companyDataAccess -> companyDataAccess.convertToModel(Company::new));
 
@@ -83,7 +84,7 @@ public final class Adapter {
      * @return
      * @throws DuplicateCompanyException if blah blah
      */
-    public Company updateCompany(Company company, Long id) {
+    public @NotNull Company updateCompany(@NotNull final Company company, Long id) {
         //todo: add comments
         CompanyDataAccess currentCompanyData = this._companyRepository.findById(id).get();
 
