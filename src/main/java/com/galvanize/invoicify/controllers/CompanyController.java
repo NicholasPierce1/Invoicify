@@ -41,7 +41,7 @@ public class CompanyController  {
     @GetMapping("/all")
     public Optional<List<Company>>
     viewAllCompanies() {
-//        System.out.println("Before");
+
        try{
 
            return Optional.of(adapter.findAllCompaniesBasic());
