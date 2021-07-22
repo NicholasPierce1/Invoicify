@@ -18,7 +18,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "invoice_id")
     private long id;
-    @Column(name = "company_id", nullable = false)
+    @Column(name = "invoice_company_id", nullable = false)
     private long companyId;
     @Column(name = "created_on",nullable = false)
     private Date createdOn;
