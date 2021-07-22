@@ -60,7 +60,7 @@ public class CompanyController  {
             value = {"/{id}"},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public @NotNull Optional<Company> findById(@PathVariable Long id) {
+    public @NotNull Optional<Company> findById(@NotNull final @PathVariable Long id) {
 
         try{
 
@@ -77,7 +77,7 @@ public class CompanyController  {
     }
 
     @PostMapping
-    public @NotNull Optional<Company> addCompany(@RequestBody Company company) {
+    public @NotNull Optional<Company> addCompany(@NotNull final @RequestBody Company company) {
 
         try {
 
@@ -95,7 +95,7 @@ public class CompanyController  {
             value = {"/{id}"},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public @NotNull Optional<Company> deleteCompanyById(@PathVariable Long id) {
+    public @NotNull Optional<Company> deleteCompanyById(@NotNull final @PathVariable Long id) {
 
         try{
 
@@ -113,7 +113,7 @@ public class CompanyController  {
             value = {"/{id}"},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Optional<Company> updateCompany(@RequestBody Company company, @PathVariable Long id) throws Exception {
+    public @NotNull Optional<Company> updateCompany(@NotNull final @RequestBody Company company, @PathVariable Long id) throws Exception {
         try {
 
             return Optional.of(adapter.updateCompany(company, id));

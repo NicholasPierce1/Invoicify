@@ -124,7 +124,7 @@ public class CompanyControllerTest {
                     objectMapper.writeValueAsString(expectedCompanies.get(i)), // converts company object to json string
                     objectMapper.writeValueAsString(actualCompanyList.get(i)) // extracts json string from json array
             );
-        
+
         verify(companyRepository, times(2)).findAll();
 
     }
