@@ -124,8 +124,7 @@ public class CompanyControllerTest {
                     objectMapper.writeValueAsString(expectedCompanies.get(i)), // converts company object to json string
                     objectMapper.writeValueAsString(actualCompanyList.get(i)) // extracts json string from json array
             );
-
-
+        
         verify(companyRepository, times(2)).findAll();
 
     }
@@ -140,7 +139,7 @@ public class CompanyControllerTest {
             setName("LTI");
         }};
 
-        Company expectedCompany =
+        final Company expectedCompany =
                 companyDataAccess.convertToModel(Company::new);
 
         when(companyRepository.findById(companyDataAccess.getId())).thenReturn(Optional.of(companyDataAccess));
@@ -149,10 +148,7 @@ public class CompanyControllerTest {
 
         assertTrue(actualCompanyOptional.isPresent());
 
-
         final Company actualCompany = this.companyController.findById(companyDataAccess.getId()).get();
-
-
 
         Assertions.assertEquals(
                 objectMapper.writeValueAsString(expectedCompany.getId()),
@@ -237,30 +233,24 @@ public class CompanyControllerTest {
 
         );
 
-
-
     }
 
     @Test
     public void testModifyCompanyName() throws Exception {
 
-        CompanyDataAccess existingCompanyToBeUpdated = new CompanyDataAccess(1L,"LTI");
-        CompanyDataAccess savedUpdatedCompany = new CompanyDataAccess(1L,"LTI2");
+        final CompanyDataAccess existingCompanyToBeUpdated = new CompanyDataAccess(1L,"LTI");
+        final CompanyDataAccess savedUpdatedCompany = new CompanyDataAccess(1L,"LTI2");
 
-        Company expectedCompany= new Company(1L,"LTI2");
+       final Company expectedCompany= new Company(1L,"LTI2");
 
         when(companyRepository.findById(1L)).thenReturn(Optional.of(existingCompanyToBeUpdated));
         when(companyRepository.save(any())).thenReturn(savedUpdatedCompany);
 
-
-
-        Optional<Company> actualCompanyOptional = companyController.updateCompany( expectedCompany, 1L);
+        final Optional<Company> actualCompanyOptional = companyController.updateCompany( expectedCompany, 1L);
 
         assertTrue(actualCompanyOptional.isPresent());
 
         Company actualCompany = actualCompanyOptional.get();
-
-
 
         assertEquals(actualCompany.getName(), "LTI2");
         assertEquals(actualCompany.getId(), 1L);
@@ -268,7 +258,6 @@ public class CompanyControllerTest {
         // revisit this verify
         verify(companyRepository, times(1)).findById(any());
         verify(companyRepository, times(1)).save(any());
-
 
     }
 
