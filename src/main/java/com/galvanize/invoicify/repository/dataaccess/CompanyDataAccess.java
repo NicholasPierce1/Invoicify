@@ -1,5 +1,6 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.galvanize.invoicify.models.BillingRecord;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
@@ -17,6 +18,7 @@ public class CompanyDataAccess implements IDataAccess<Company> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "company_id")
+    @JsonProperty(value = "company_id")
     public Long id;
 
     @Column(nullable = false)

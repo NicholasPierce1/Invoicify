@@ -1,6 +1,7 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 import com.sun.istack.NotNull;
@@ -15,6 +16,7 @@ public final class UserDataAccess implements IDataAccess<User> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
+    @JsonProperty("user_id")
     public Long id;
 
     @Column(nullable = false)

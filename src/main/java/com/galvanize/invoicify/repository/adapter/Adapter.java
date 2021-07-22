@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -449,8 +450,6 @@ public final class Adapter {
         //todo: build invoice response obj
 
         this._invoiceRepository.fetchInvoice(invoiceId, invoice.getRecordIds());//.convertToModel(Invoice::new);
-
-        //return buildInvoice(invoiceDataAccess);
         return new Invoice();
     }
 
@@ -480,23 +479,12 @@ public final class Adapter {
     private InvoiceDataAccess saveInvoiceToDb(Invoice invoiceRequest, long companyId, long createdById) {
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess();
         invoiceDataAccess.setCompanyId(companyId);
-        invoiceDataAccess.setCreatedOn(new Date());
+        invoiceDataAccess.setCreatedOn(LocalDate.now());
         invoiceDataAccess.setCreatedBy(createdById);
         invoiceDataAccess.setDescription(invoiceRequest.getInvoiceDescription());
         this._invoiceRepository.save(invoiceDataAccess).convertToModel(Invoice::new);
         return invoiceDataAccess;
     }
 
-    private Invoice buildInvoice(InvoiceDataAccess invoiceDataAccess) {
-        Invoice invoice = new Invoice();
-        invoice.setId(invoiceDataAccess.getId());
-        invoice.setCompany(findCompanyById(invoiceDataAccess.getCompanyId()));
-        invoice.setCreatedOn(invoiceDataAccess.getCreatedOn());
-        invoice.setCreatedBy(findUser(invoiceDataAccess.getCreatedBy()));
-        invoice.setInvoiceDescription(invoiceDataAccess.getDescription());
-        //todo: fetch saved invoice line items for each record ids passed in.
-        invoice.setLineItems(null);
-        return invoice;
-    }
 
 }

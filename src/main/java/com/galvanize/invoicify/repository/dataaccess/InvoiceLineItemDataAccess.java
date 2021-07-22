@@ -1,5 +1,6 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
@@ -14,15 +15,23 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItemDat
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "invoice_line_item_id")
+    @JsonProperty("invoice_line_item_id")
     private long id;
+
     @Column(name = "billing_record_id", nullable = false)
+    @JsonProperty("billing_record_id")
     private long billingRecordId;
+
     @Column(name = "created_on", nullable = false)
+    @JsonProperty("created_on")
     private Date createdOn;
 
     @Column(name = "created_by", nullable = false)
+    @JsonProperty("created_by")
     private long createdBy;
+
     @Column(name = "invoice_id", nullable = false)
+    @JsonProperty("invoice_id")
     private long invoiceId;
 
     public InvoiceLineItemDataAccess(long billingRecordId, Date createdOn, long createdBy, long invoiceId) {

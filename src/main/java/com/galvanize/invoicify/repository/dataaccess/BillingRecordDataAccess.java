@@ -25,9 +25,11 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
     public String description;
 
     @Column(name = "billing_record_company_id", nullable = false)
+    @JsonProperty(value = "billing_record_company_id")
     public long companyId;
 
     @Column(name = "billing_record_created_by", nullable = false)
+    @JsonProperty(value = "billing_record_created_by")
     public long createdBy;
 
     @Transient

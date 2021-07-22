@@ -26,7 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,7 +85,8 @@ public class InvoiceControllerTest {
     public void createInvoice() throws Exception {
         long companyId = 1L;
         long userId = 1L;
-        InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess(companyId, new Date(),userId, "invoice_test_description");
+        final LocalDate now = LocalDate.now();
+        InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess(companyId, now, userId, "invoice_test_description");
         Invoice expectedInvoice = new Invoice();
 
         UserDataAccess userDataAccess = new UserDataAccess("bob", "password");
