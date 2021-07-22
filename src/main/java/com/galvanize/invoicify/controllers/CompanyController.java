@@ -33,9 +33,9 @@ public class CompanyController  {
 
     /**
      * <p>
-     *      This constructor takes in the Adapter and injects into the CompanyController class.
+     *      Autowired constructor that takes in the Adapter bean and renders a bean of type CompanyController.
      * </p>
-     * @param adapter
+     * @param adapter -> preexisting bean injection servicing the remote data store
      */
     @Autowired
     public CompanyController(Adapter adapter){
@@ -49,9 +49,10 @@ public class CompanyController  {
      *      the rendered list of companies that the DataAccessObject retrieves. Important to note that if there
      *      is no companies present, the application will not crash.
      * </p>
-     * @return : <List<Company>
+     * @return : List<Company> : a compiled list of all the present companies
      */
-    @GetMapping
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public @NotNull Optional<List<Company>> viewAllCompanies() {
 
        try{
@@ -76,7 +77,7 @@ public class CompanyController  {
      *      application
      * </p>
      * @param id -> requires an id @PathVariable in order to search for the requested company
-     * @return : Company
+     * @return : Optional<Company> if that Company exists with the id, null otherwise
      */
     @GetMapping(
             value = {"/{id}"},
@@ -126,7 +127,10 @@ public class CompanyController  {
 
     /**
      * <p>
-     *      A Delete request is sent to: http://localhost:8080/api/company/{id} for searching 
+     *      A Delete request is sent to: http://localhost:8080/api/company/{id} for searching up a particular
+     *        company to remove out of the company table. The request is passed on to the adapter to lookup
+     *        the database to see if that company does not exist first, then proceeds to pull out that particular
+     *        entry.
      * </p>
      * @param id -> requires an id @PathVariable in order to search for the requested company to delete
      * @return : the company that was removed; should be null
@@ -149,11 +153,22 @@ public class CompanyController  {
         }
     }
 
+    /**
+     *<p>
+     *     A Put request is sent to http://localhost:8080/api/company/{companyId} to administer a need for
+     *       modifying an existing Company. This companyController calls the adapter to confirm that the
+     *       data being sent from the client does not exist in the database already, then makes the
+     *       adjustments as collected from the user.
+     *</p>
+     * @param company -> requires a Company type company from the body of the request preliminarily
+     * @param id -> requires an id in the PathVariable to find the company
+     * @return : the updated Company
+     */
     @PutMapping(
             value = {"/{id}"},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public @NotNull Optional<Company> updateCompany(@NotNull final @RequestBody Company company, @PathVariable Long id) throws Exception {
+    public @NotNull Optional<Company> updateCompany(@NotNull final @RequestBody Company company, final @PathVariable Long id)  {
         try {
 
             return Optional.of(adapter.updateCompany(company, id));

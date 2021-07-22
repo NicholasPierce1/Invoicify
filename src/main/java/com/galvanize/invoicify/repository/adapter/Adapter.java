@@ -93,6 +93,7 @@ public final class Adapter {
             }
             currentCompanyData.setName(company.getName());
         }
+
         return _companyRepository.save(currentCompanyData).convertToModel((Company::new));
     }
 }
