@@ -201,7 +201,7 @@ public class CompanyControllerTest {
         );
 
                 final ObjectMapper objectMapper = new ObjectMapper();
-                
+
         assertEquals(
 
                 objectMapper.writeValueAsString(expectedCompany),
@@ -211,56 +211,6 @@ public class CompanyControllerTest {
 
     }
 
-//    @Test
-//    public void testAddCompany() throws Exception{
-//
-//        final ObjectMapper objectMapper = new ObjectMapper();
-//
-//        final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
-//        final CompanyDataAccess companyDataAccess2 = new CompanyDataAccess();
-//
-//        companyDataAccess.setName("Subway");
-//
-//        companyDataAccess2.setName("LTI");
-//
-//        Company expectedCompany =
-//                companyDataAccess.convertToModel(Company::new);
-//
-//        Company expectedCompany2 =
-//                companyDataAccess2.convertToModel(Company::new);
-//
-//        when(companyRepository.save(companyDataAccess)).thenReturn(companyDataAccess);
-//
-//        // when for good case (name is unique)
-//        when(this.companyRepository.findByName(companyDataAccess.getName())).thenReturn(Optional.empty());
-//
-//        // when for bad case (name is not unique)
-//        when(this.companyRepository.findByName(companyDataAccess2.getName())).thenReturn(Optional.of(companyDataAccess2));
-//
-////        final Company actualCompany = this.companyController.addCompany(expectedCompany);
-//        final Optional<Company> actualCompanyOptional = this.companyController.addCompany(expectedCompany);
-//
-//        assertTrue(actualCompanyOptional.isPresent());
-//        final Company actualCompany = actualCompanyOptional.get();
-//        assertEquals(
-//
-//                objectMapper.writeValueAsString(actualCompany),
-//                objectMapper.writeValueAsString(expectedCompany)
-//
-//        );
-//
-//       // test bad case (name is not unique)
-//        //There is a AssertionFailedError: Expected java.lang.Exception to be thrown, but nothing was thrown that is shown when we run this. If removed, it works.
-//        //How do you test a failed test case
-////        assertThrows(
-////
-////                DuplicateCompanyException.class,
-////                () ->{
-////                    this.companyController.addCompany(expectedCompany2);
-////                }
-////        );
-//
-//    }
 
     @Test
     public void testDeleteCompanyById() throws Exception {

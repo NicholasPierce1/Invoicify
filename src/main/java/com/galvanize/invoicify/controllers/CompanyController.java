@@ -3,6 +3,7 @@ package com.galvanize.invoicify.controllers;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.adapter.DuplicateCompanyException;
+import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +40,7 @@ public class CompanyController  {
     }
 
     @GetMapping("/all")
-    public Optional<List<Company>>
-    viewAllCompanies() {
+    public @NotNull Optional<List<Company>> viewAllCompanies() {
 
        try{
 
