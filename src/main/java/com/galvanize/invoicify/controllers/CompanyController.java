@@ -60,7 +60,7 @@ public class CompanyController  {
             value = {"/{id}"},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Optional<Company> findById(@PathVariable Long id) {
+    public @NotNull Optional<Company> findById(@PathVariable Long id) {
 
         try{
 
@@ -77,7 +77,7 @@ public class CompanyController  {
     }
 
     @PostMapping
-    public Optional<Company> addCompany(@RequestBody Company company) {
+    public @NotNull Optional<Company> addCompany(@RequestBody Company company) {
 
         try {
 
@@ -95,7 +95,7 @@ public class CompanyController  {
             value = {"/{id}"},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Optional<Company> deleteCompanyById(@PathVariable Long id) {
+    public @NotNull Optional<Company> deleteCompanyById(@PathVariable Long id) {
 
         try{
 
