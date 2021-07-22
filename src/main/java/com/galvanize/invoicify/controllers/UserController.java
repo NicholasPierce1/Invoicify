@@ -26,7 +26,7 @@ public class UserController {
 
 
 	@PutMapping("{id}")
-	public User updateUser(Authentication auth, @RequestBody User user, @PathVariable Long id) throws Exception {
+	public @NotNull User updateUser(@RequestBody User user, @PathVariable Long id) throws Exception {
 		 return adapter.updateUser(user, id);
 	}
 

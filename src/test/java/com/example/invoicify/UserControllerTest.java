@@ -154,7 +154,7 @@ public class UserControllerTest {
         when(userRepository.findById(any())).thenReturn(Optional.of(existingUserToBeUpdated));
         when(userRepository.save(any())).thenReturn(savedUpdatedUser);
 
-        User actualUser = userController.updateUser(null, expectedUser, 1L);
+        User actualUser = userController.updateUser(expectedUser, 1L);
 
         assertEquals(actualUser.getUsername(), expectedUser.getUsername());
         assertEquals(actualUser.getPassword(), expectedUser.getPassword());
@@ -175,7 +175,7 @@ public class UserControllerTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserToBeUpdated));
         when(userRepository.save(any())).thenReturn(savedUpdatedUser);
 
-        User actualUser = userController.updateUser(null, expectedUser, 1L);
+        User actualUser = userController.updateUser( expectedUser, 1L);
 
         assertEquals(actualUser.getUsername(), "NewUserName");
         assertEquals(actualUser.getPassword(), "testpassword2");
@@ -195,7 +195,7 @@ public class UserControllerTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserToBeUpdated));
         when(userRepository.save(any())).thenReturn(savedUpdatedUser);
 
-        User actualUser = userController.updateUser(null, expectedUser, 1L);
+        User actualUser = userController.updateUser( expectedUser, 1L);
 
         assertEquals(actualUser.getUsername(), "testuser1");
         assertEquals(actualUser.getPassword(), "newPassword1");
@@ -214,18 +214,10 @@ public class UserControllerTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserToBeUpdated));
         when(userRepository.countUsersByUserName(any())).thenReturn(2);
         assertThrows(DuplicateUserException.class, () -> {
-            userController.updateUser(null, expectedUser, 1L);
+            userController.updateUser( expectedUser, 1L);
         });
 
         verify(userRepository, times(1)).findById(any());
         verify(userRepository, times(1)).countUsersByUserName(any());
     }
-
-
-
-
-
-
-
-
 }
