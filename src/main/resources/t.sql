@@ -31,4 +31,28 @@
    where i.id = 1 -- add (or ? is null)
    and exists (select 1 from invoice_line_item ili where ili.invoice_id = i.id and billing_record_id = line_items.id);
 
-
+select c_i.*, unionTable.*
+from
+( select a.*, c.*, i.*
+     from app_user a, company c, invoice i
+     where i.invoice_company_id = c.company_id
+     and i.created_by = a.user_id) as c_i,
+(
+     (select i.*, r.id, r.billing_record_company_id, r.billing_record_created_by, r.description, r.in_use, null as amount, r.quantity, r.rate, c.*, a.*, users.user_id as rate_user, users.password as rate_pwd, users.username as rate_userName
+           from invoice_line_item i, rate_based_billing_record r, company c, app_user a,
+           (select * from app_user) as users
+     where i.billing_record_id = r.id
+     and r.billing_record_company_id = c.company_id
+     and i.created_by = a.user_id
+     and users.user_id = r.billing_record_created_by)
+union
+     (select i.*, f.*, null as quantity, null as rate, c.*, a.*, users.user_id as rate_user, users.password as rate_pwd, users.username as rate_userName
+           from invoice_line_item i, flat_fee_billing_record f, company c, app_user a,
+           (select * from app_user) as users
+     where i.billing_record_id = f.id
+     and f.billing_record_company_id = c.company_id
+     and i.created_by = a.user_id
+     and users.user_id = f.billing_record_created_by)
+) as unionTable
+where
+c_i.invoice_id = unionTable.invoice_id;
