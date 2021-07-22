@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface InvoiceRepositoryCustom extends Repository {
+public interface InvoiceRepositoryCustom {
 
     InvoiceDataAccess fetchInvoice(long invoiceId, List<Long> recordIds);
     List<InvoiceDataAccess> fetchInvoices(long invoiceId, List<Long> recordIds);

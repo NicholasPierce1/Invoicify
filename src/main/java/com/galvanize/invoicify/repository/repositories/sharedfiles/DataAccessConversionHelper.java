@@ -122,4 +122,17 @@ public final class DataAccessConversionHelper {
         return dataAccess.convertToModel(modelSupplier);
     }
 
+    //todo: add documentation
+    public @NotNull String removeSubQueryPrefixFromColumnName(
+            @NotNull final String columnWithPrefix
+    ){
+
+        if(!columnWithPrefix.startsWith("PREFIX"))
+            throw new IllegalArgumentException("column name " + columnWithPrefix + " does not start with" +
+                    "'PREFIX'. Are you sure this is a sub-query column?");
+
+        return columnWithPrefix.replaceFirst("PREFIX[0-9]*_", "");
+
+    }
+
 }

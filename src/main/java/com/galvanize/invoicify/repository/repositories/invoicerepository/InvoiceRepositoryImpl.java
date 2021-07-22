@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
 import com.galvanize.invoicify.repository.repositories.sharedfiles.DataAccessConversionHelper;
 import com.galvanize.invoicify.repository.repositories.sharedfiles.QueryTableNameModifier;
+import com.sun.istack.NotNull;
 import org.h2.util.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,7 +16,9 @@ import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,11 +30,33 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
     private final DataSource _dataSource;
 
+    private final ObjectMapper _objectMapper;
+
+    private final DateTimeFormatter _dateTimeFormatter;
+
+    private final DataAccessConversionHelper _dataAccessConversionHelper;
+
+    private final InvoiceRepositoryManagerHelper _invoiceRepositoryManagerHelper;
+
     @Autowired
-    public InvoiceRepositoryImpl(EntityManagerFactory entityManagerFactory, DataSource dataSource) {
-        _entityManagerFactory = entityManagerFactory;
+    public InvoiceRepositoryImpl(
+            EntityManagerFactory entityManagerFactory,
+            DataSource dataSource,
+            ObjectMapper objectMapper,
+            DateTimeFormatter _dateTimeFormatter,
+            DataAccessConversionHelper dataAccessConversionHelper) {
+        this._entityManagerFactory = entityManagerFactory;
         this._dataSource = dataSource;
+        this._objectMapper = objectMapper;
+        this._dateTimeFormatter = _dateTimeFormatter;
+        this._dataAccessConversionHelper = dataAccessConversionHelper;
+        this._invoiceRepositoryManagerHelper = new InvoiceRepositoryManagerHelper(
+                this._objectMapper,
+                this._dateTimeFormatter,
+                this._dataAccessConversionHelper
+        );
     }
+
     @Override
     public InvoiceDataAccess fetchInvoice(long invoiceId, List<Long> recordIds) {
         return fetchInvoices(invoiceId, recordIds).get(0);
@@ -76,30 +101,10 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
             final ResultSet resultSet = statement.executeQuery(invoiceQueryStr);
 
-            boolean endOfRows = resultSet.isLast();
+            // todo: invoke helper method for parsing & rendering InvoiceDataAccess
+            // todo: then, refactor data access conversion helper
 
-            while (!endOfRows)
-            {
-                resultSet.next();
-                //System.out.println(resultSet.getMetaData().getColumnCount());
-                System.out.println(resultSet.getMetaData().getColumnCount());
-                for (int column = 1; column < resultSet.getMetaData().getColumnCount() - 1; column++)
-                {
-                    final Object value = resultSet.getObject(column);
 
-                    final HashMap<String, Object> columnResult = new HashMap<String, Object>();
-
-                    columnResult.put(
-                            resultSet.getMetaData().getColumnName(column),
-                            value
-                    );
-
-                    System.out.println(objectMapper.writeValueAsString(columnResult));
-                }
-
-                if(resultSet.isLast())
-                    endOfRows = true;
-            }
 
 //            invoices.forEach(
 //                    (objects ->
@@ -154,13 +159,70 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
         return stringBuffer.toString();
     }
 
-    @Override
-    public String value() {
-        return null;
+    private class InvoiceRepositoryManagerHelper{
+
+        private final ObjectMapper _objectMapper;
+
+        private final DateTimeFormatter _dateTimeFormatter;
+
+        private final DataAccessConversionHelper _dataAccessConversionHelper;
+
+        // enumerates static final members representing the composite (children) hashmaps
+
+        // enumerates static final fields for the key-values for composite (children) hashmaps
+
+        // private static final String INVOICE_
+
+        public InvoiceRepositoryManagerHelper(
+                ObjectMapper objectMapper,
+                DateTimeFormatter dateTimeFormatter,
+                DataAccessConversionHelper dataAccessConversionHelper
+        ){
+            this._objectMapper = objectMapper;
+            this._dateTimeFormatter = dateTimeFormatter;
+            this._dataAccessConversionHelper = dataAccessConversionHelper;
+        }
+
+        public @NotNull List<HashMap<String, Object>> createDeserializableInvoicesFromResultSet(
+                @NotNull final ResultSet resultSet) throws SQLException {
+
+            boolean endOfRows = resultSet.isLast();
+
+            final List<HashMap<String, Object>> invoiceDeserializableList = new ArrayList<HashMap<String, Object>>();
+
+            while (!endOfRows)
+            {
+
+                // holds a
+
+                resultSet.next();
+                //System.out.println(resultSet.getMetaData().getColumnCount());
+                System.out.println(resultSet.getMetaData().getColumnCount());
+                for (int column = 1; column < resultSet.getMetaData().getColumnCount() - 1; column++)
+                {
+
+                    // extract column value from result set
+                    final Object columnValue = resultSet.getObject(column);
+
+                    // extracts column name from result set
+                    String columnName = resultSet.getMetaData().getColumnName(column);
+
+                    // if columnName starts with 'Prefix' then remove sub-query prefix from name
+                    if(columnName.startsWith("PREFIX"))
+                        columnName = this._dataAccessConversionHelper.removeSubQueryPrefixFromColumnName(columnName);
+
+                    // sets key - value pair
+
+                }
+
+                if(resultSet.isLast())
+                    endOfRows = true;
+            }
+
+
+            return null;
+        }
+
     }
 
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        return null;
-    }
 }
