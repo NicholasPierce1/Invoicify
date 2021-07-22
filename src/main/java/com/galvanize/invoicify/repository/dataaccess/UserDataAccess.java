@@ -7,8 +7,28 @@ import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 import javax.persistence.*;
 import java.util.function.Supplier;
 
+
+/**
+ * <h1>UserDataAccess</h1>
+ * <h2>Type: Class</h2>
+ *
+ * Implementing IDataAccess methods to create User data access objects(DAOs)
+ * from the data from the database
+ */
+
 @Entity(name = "app_user")
 public final class UserDataAccess implements IDataAccess<User> {
+
+    /**
+     *<p>
+     * This is a Class that takes the data from the database and
+     * the constructor of the specified entity to create User data access objects
+     *</p>
+     *
+     * @param data: Object[] data representing the information from database.
+     * @param dataList: generic list of data access objects
+     * @param typeConstructor: Lambda typeConstructor representing the constructor for the specified entity type.
+     */
 
     // fields
     @Id
@@ -65,6 +85,16 @@ public final class UserDataAccess implements IDataAccess<User> {
     public void createDataAccess(Object[] dbo) {
 
     }
+
+    /**
+     * <p>
+     *     Converts a data access object to a model object
+     * </p>
+     * @param supplier: provides implementation of creating a model object.
+     *                    NOTE: the default state set in the supplier may/will be written over.
+     * @param <M>: A model type used to create data access reflections
+     * @return a User model object of the reflect data access definition
+     */
 
     @Override
     public <M extends User> M convertToModel(Supplier<M> supplier) {
