@@ -72,7 +72,6 @@ public final class Adapter {
     if(company.isPresent())
         _companyRepository.deleteById(id);
 
-
     return company;
 
     }
