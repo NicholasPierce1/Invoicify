@@ -106,7 +106,7 @@ public class CompanyController  {
      *        entry with the same name already exists, computes the logic, and adds that company to the
      *        database.
      * </p>
-     * @param company -> requires a company @RequestBody parameter in add a company to the list.
+     * @param company -> requires a company @RequestBody parameter in order to add a company to the list.
      * @return : companyRepository -> saving created company
      */
 
