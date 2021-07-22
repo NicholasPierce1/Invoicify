@@ -1,5 +1,6 @@
 package com.galvanize.invoicify.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.models.InvoiceRequest;
 import com.galvanize.invoicify.models.User;
@@ -23,6 +24,7 @@ public class InvoiceController {
     @PostMapping("/{companyId}")
     public Invoice createInvoice(Authentication auth, @RequestBody InvoiceRequest invoiceRequest, @PathVariable long companyId) {
         String userName = "";
+
         if (auth != null) {
              User user = (User) auth.getPrincipal();
              userName = user.getUsername();

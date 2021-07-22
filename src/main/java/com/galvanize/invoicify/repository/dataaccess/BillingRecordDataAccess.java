@@ -22,10 +22,10 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
     @Column(nullable = false)
     public String description;
 
-    @Column(name = "company_id", nullable = false)
+    @Column(name = "billing_record_company_id", nullable = false)
     public long companyId;
 
-    @Column(name = "created_by", nullable = false)
+    @Column(name = "billing_record_created_by", nullable = false)
     public long createdBy;
 
     @Transient

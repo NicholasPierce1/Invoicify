@@ -13,6 +13,7 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItemDat
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "invoice_line_item_id")
     private long id;
     @Column(name = "billing_record_id", nullable = false)
     private long billingRecordId;

@@ -1,11 +1,11 @@
   select
       i.id,
-      (select id from company where id = i.company_id ) company_id,
-      (select name from company where id = i.company_id) company_name,
-      i.created_on  invoice_created_on,
-      (select id from app_user where id = i.created_by) invoice_user_id,
-      (select username from app_user where id = i.created_by ) invoice_user_created_by,
-      (select password from app_user where id = i.created_by ) invoice_user_password,
+      (select company.id from company where id = i.company_id ) company_id,
+      (select company.name from company where id = i.company_id) company_name,
+      i.created_on as invoice_created_on,
+      (select app_user.id from app_user where id = i.created_by) invoice_user_id,
+      (select app_user.username from app_user where id = i.created_by ) invoice_user_created_by,
+      (select app_user.password from app_user where id = i.created_by ) invoice_user_password,
       i.description,
       line_items.*
    from invoice i, (

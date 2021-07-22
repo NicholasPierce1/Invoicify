@@ -16,6 +16,7 @@ public class CompanyDataAccess implements IDataAccess<Company> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "company_id")
     public Long id;
 
     @Column(nullable = false)

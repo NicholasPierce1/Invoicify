@@ -14,6 +14,7 @@ public final class UserDataAccess implements IDataAccess<User> {
     // fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     public Long id;
 
     @Column(nullable = false)
