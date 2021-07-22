@@ -1,11 +1,15 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.models.Invoice;
+import com.galvanize.invoicify.models.InvoiceLineItem;
+import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 @Entity
@@ -33,6 +37,37 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     @Column(name = "description", nullable = false)
     private String description;
+
+    @Transient
+    private Company company;
+    @Transient
+    private User user;
+    @Transient
+    private ArrayList<InvoiceLineItem> lineItems = new ArrayList<InvoiceLineItem>();
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public void setLineItems(ArrayList<InvoiceLineItem> lineItems) {
+        this.lineItems = lineItems;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public ArrayList<InvoiceLineItem> getLineItems() {
+        return lineItems;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public User getUser() {
+        return user;
+    }
 
     public InvoiceDataAccess() {
 
@@ -93,14 +128,19 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     @Override
     public <M extends Invoice> M convertToModel(Supplier<M> supplier) {
-        return null;
+        M invoice = supplier.get();
+        invoice.setId(this.getId());
+        invoice.setCompany(this.getCompany());
+        invoice.setCreatedBy(this.getUser());
+        invoice.setInvoiceDescription(this.getDescription());
+        invoice.setLineItems(this.getLineItems());
+        return invoice;
     }
 
     @Override
     public <M extends Invoice> void convertToDataAccess(M modelObject) {
 
     }
-
 
 
 }

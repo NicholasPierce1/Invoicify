@@ -6,6 +6,8 @@ import com.galvanize.invoicify.repository.adapter.Adapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/invoice")
 public class InvoiceController {
@@ -26,9 +28,13 @@ public class InvoiceController {
         if (auth != null) {
              User user = (User) auth.getPrincipal();
              userName = user.getUsername();
-            System.out.println("here" + auth.getPrincipal());
         }
         return adapter.createInvoice(invoice, companyId, userName);
+    }
+
+    @GetMapping()
+    public List<Invoice> getAllInvoices() {
+        return adapter.getInvoices();
     }
 
 }
