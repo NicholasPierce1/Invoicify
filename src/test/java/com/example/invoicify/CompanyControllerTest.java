@@ -147,9 +147,12 @@ public class CompanyControllerTest {
 
         final Optional<Company> actualCompanyOptional = this.companyController.findById(companyDataAccess.getId());
 
+        assertTrue(actualCompanyOptional.isPresent());
+
+
         final Company actualCompany = this.companyController.findById(companyDataAccess.getId()).get();
 
-        assertTrue(actualCompanyOptional.isPresent());
+
 
         Assertions.assertEquals(
                 objectMapper.writeValueAsString(expectedCompany.getId()),
@@ -189,10 +192,8 @@ public class CompanyControllerTest {
         final Optional<Company> actualCompany = this.companyController.addCompany(expectedCompany);
 
         assertEquals(
-
                 objectMapper.writeValueAsString(actualCompany),
                 objectMapper.writeValueAsString(expectedCompany)
-
         );
 
        // test bad case (name is not unique)
@@ -249,16 +250,18 @@ public class CompanyControllerTest {
 
         Optional<Company> actualCompanyOptional = companyController.updateCompany( expectedCompany, 1L);
 
-        Company actualCompany = companyController.updateCompany( expectedCompany, 1L).get();
-
         assertTrue(actualCompanyOptional.isPresent());
+
+        Company actualCompany = actualCompanyOptional.get();
+
+
 
         assertEquals(actualCompany.getName(), "LTI2");
         assertEquals(actualCompany.getId(), 1L);
 
         // revisit this verify
-//        verify(companyRepository, times(1)).findById(any());
-//        verify(companyRepository, times(1)).save(any());
+        verify(companyRepository, times(1)).findById(any());
+        verify(companyRepository, times(1)).save(any());
 
 
     }
