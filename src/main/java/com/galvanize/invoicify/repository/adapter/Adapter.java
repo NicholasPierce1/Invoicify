@@ -17,6 +17,7 @@ import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.Rat
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepositoryImpl;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import com.sun.istack.NotNull;
+import org.aspectj.weaver.Dump;
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -438,16 +439,16 @@ public final class Adapter {
 
     }
 
-    public Invoice createInvoice(InvoiceRequest invoiceRequest, long companyId, String userName) throws InvalidRequestException {
+    public Invoice createInvoice(Invoice invoice, long companyId, String userName) throws InvalidRequestException {
         //validateRequestCompanyIDandRecordIds(companyId, invoiceRequest.getRecordIds());
         long createdById = getUserByUserName(userName).get().getId();
-        InvoiceDataAccess savedInvoiceDataAccess = saveInvoiceToDb(invoiceRequest, companyId, createdById);
+        InvoiceDataAccess savedInvoiceDataAccess = saveInvoiceToDb(invoice, companyId, createdById);
         long invoiceId = savedInvoiceDataAccess.getId();
-        saveInvoiceItemsToDb(invoiceId, invoiceRequest.getRecordIds(), createdById);
+        saveInvoiceItemsToDb(invoiceId, invoice.getRecordIds(), createdById);
 
         //todo: build invoice response obj
 
-        this._invoiceRepository.fetchInvoice(invoiceId, invoiceRequest.getRecordIds());//.convertToModel(Invoice::new);
+        this._invoiceRepository.fetchInvoice(invoiceId, invoice.getRecordIds());//.convertToModel(Invoice::new);
 
         //return buildInvoice(invoiceDataAccess);
         return new Invoice();
@@ -476,7 +477,7 @@ public final class Adapter {
         }
     }
 
-    private InvoiceDataAccess saveInvoiceToDb(InvoiceRequest invoiceRequest, long companyId, long createdById) {
+    private InvoiceDataAccess saveInvoiceToDb(Invoice invoiceRequest, long companyId, long createdById) {
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess();
         invoiceDataAccess.setCompanyId(companyId);
         invoiceDataAccess.setCreatedOn(new Date());

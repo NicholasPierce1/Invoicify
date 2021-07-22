@@ -1,16 +1,23 @@
 package com.galvanize.invoicify.repository.repositories.invoicerepository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
 import com.galvanize.invoicify.repository.repositories.sharedfiles.DataAccessConversionHelper;
 import com.galvanize.invoicify.repository.repositories.sharedfiles.QueryTableNameModifier;
+import org.h2.util.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Parameter;
 import javax.persistence.Query;
+import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,10 +25,12 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
     private final EntityManagerFactory _entityManagerFactory;
 
+    private final DataSource _dataSource;
 
     @Autowired
-    public InvoiceRepositoryImpl(EntityManagerFactory entityManagerFactory) {
+    public InvoiceRepositoryImpl(EntityManagerFactory entityManagerFactory, DataSource dataSource) {
         _entityManagerFactory = entityManagerFactory;
+        this._dataSource = dataSource;
     }
     @Override
     public InvoiceDataAccess fetchInvoice(long invoiceId, List<Long> recordIds) {
@@ -47,35 +56,70 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
         String flatFeeBillingRecordWhereClause = QueryTableNameModifier.insertTableNamesIntoQuery(recordIdsStr, "f");
         String rateBasedBillingRecordWhereClause = QueryTableNameModifier.insertTableNamesIntoQuery(recordIdsStr, "r");
 
+        try {
+            final ObjectMapper objectMapper = new ObjectMapper();
+            final Connection connection = this._dataSource.getConnection();
+            final Statement statement = connection.createStatement();
 
+            String invoiceQueryStr = getInvoiceSelectQuery();
+            // invoiceQueryStr = invoiceQueryStr.replace("f_ids",flatFeeBillingRecordWhereClause);
+            // invoiceQueryStr = invoiceQueryStr.replace("r_ids",rateBasedBillingRecordWhereClause);
 
-        String invoiceQueryStr = getInvoiceSelectQuery();
-        // invoiceQueryStr = invoiceQueryStr.replace("f_ids",flatFeeBillingRecordWhereClause);
-        // invoiceQueryStr = invoiceQueryStr.replace("r_ids",rateBasedBillingRecordWhereClause);
+            System.out.println("\n\n\n" + invoiceQueryStr + "\n\n\n");
 
-        System.out.println("\n\n\n" + invoiceQueryStr + "\n\n\n");
+            //Query invoiceQuery = em.createNativeQuery(invoiceQueryStr);
+            // invoiceQuery.setParameter(1, invoiceId);
+            // invoiceQuery.setParameter(2, invoiceId);
 
-        Query invoiceQuery = em.createNativeQuery(invoiceQueryStr);
-        // invoiceQuery.setParameter(1, invoiceId);
-        // invoiceQuery.setParameter(2, invoiceId);
+           // List<Object[]> invoices = invoiceQuery.getResultList();
+            List<InvoiceDataAccess> invoiceResultList = new ArrayList<InvoiceDataAccess>();
 
-        List<Object[]> invoices = invoiceQuery.getResultList();
-        List<InvoiceDataAccess> invoiceResultList = new ArrayList<InvoiceDataAccess>();
+            final ResultSet resultSet = statement.executeQuery(invoiceQueryStr);
 
-        invoices.forEach(
-                (objects ->
-                    {
-                        for (final Object object : objects)
-                            System.out.println(object);
-                    }
-                )
-        );
+            boolean endOfRows = resultSet.isLast();
 
-        //DataAccessConversionHelper dataAccessConversionHelper = new DataAccessConversionHelper();
-        //dataAccessConversionHelper.createDataAccessObjects(invoices,invoiceResultList, InvoiceDataAccess::new);
+            while (!endOfRows)
+            {
+                resultSet.next();
+                //System.out.println(resultSet.getMetaData().getColumnCount());
+                System.out.println(resultSet.getMetaData().getColumnCount());
+                for (int column = 1; column < resultSet.getMetaData().getColumnCount() - 1; column++)
+                {
+                    final Object value = resultSet.getObject(column);
 
-        System.out.println(invoiceResultList);
-        return invoiceResultList;
+                    final HashMap<String, Object> columnResult = new HashMap<String, Object>();
+
+                    columnResult.put(
+                            resultSet.getMetaData().getColumnName(column),
+                            value
+                    );
+
+                    System.out.println(objectMapper.writeValueAsString(columnResult));
+                }
+
+                if(resultSet.isLast())
+                    endOfRows = true;
+            }
+
+//            invoices.forEach(
+//                    (objects ->
+//                    {
+//                        for (final Object object : objects)
+//                            System.out.println(object);
+//                    }
+//                    )
+//            );
+
+            //DataAccessConversionHelper dataAccessConversionHelper = new DataAccessConversionHelper();
+            //dataAccessConversionHelper.createDataAccessObjects(invoices,invoiceResultList, InvoiceDataAccess::new);
+
+            System.out.println(invoiceResultList);
+            return invoiceResultList;
+        }
+        catch(Exception ex){
+            System.out.println(ex.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     private String getInvoiceSelectQuery() {

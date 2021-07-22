@@ -1,12 +1,9 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
 import com.galvanize.invoicify.models.Invoice;
-import com.galvanize.invoicify.models.InvoiceRequest;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.function.Supplier;
 

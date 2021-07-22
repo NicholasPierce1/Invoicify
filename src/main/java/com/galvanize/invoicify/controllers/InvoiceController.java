@@ -1,8 +1,6 @@
 package com.galvanize.invoicify.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.models.Invoice;
-import com.galvanize.invoicify.models.InvoiceRequest;
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import org.springframework.security.core.Authentication;
@@ -22,7 +20,7 @@ public class InvoiceController {
             "recordIds":[1,2]
     }*/
     @PostMapping("/{companyId}")
-    public Invoice createInvoice(Authentication auth, @RequestBody InvoiceRequest invoiceRequest, @PathVariable long companyId) {
+    public Invoice createInvoice(Authentication auth, @RequestBody Invoice invoice, @PathVariable long companyId) {
         String userName = "";
 
         if (auth != null) {
@@ -30,7 +28,7 @@ public class InvoiceController {
              userName = user.getUsername();
             System.out.println("here" + auth.getPrincipal());
         }
-        return adapter.createInvoice(invoiceRequest, companyId, userName);
+        return adapter.createInvoice(invoice, companyId, userName);
     }
 
 }

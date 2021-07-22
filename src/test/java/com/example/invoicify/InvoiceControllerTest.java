@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.InvoiceController;
 import com.galvanize.invoicify.models.Invoice;
-import com.galvanize.invoicify.models.InvoiceRequest;
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
@@ -87,7 +86,7 @@ public class InvoiceControllerTest {
         long companyId = 1L;
         long userId = 1L;
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess(companyId, new Date(),userId, "invoice_test_description");
-        InvoiceRequest expectedInvoice = new InvoiceRequest();
+        Invoice expectedInvoice = new Invoice();
 
         UserDataAccess userDataAccess = new UserDataAccess("bob", "password");
 

@@ -1,5 +1,6 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.galvanize.invoicify.models.BillingRecord;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.models.User;
@@ -17,6 +18,7 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
     public Long id;
 
     @Column(name = "in_use", nullable = false)
+    @JsonProperty(value = "in_use")
     public boolean inUse;
 
     @Column(nullable = false)

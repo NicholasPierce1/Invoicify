@@ -1,11 +1,13 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.galvanize.invoicify.models.RateBasedBillingRecord;
 
 import javax.persistence.*;
 import java.util.function.Supplier;
 
 @Entity(name = "RATE_BASED_BILLING_RECORD")
+@JsonIgnoreProperties(value = {"amount"})
 public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<RateBasedBillingRecord> {
 
     // fields

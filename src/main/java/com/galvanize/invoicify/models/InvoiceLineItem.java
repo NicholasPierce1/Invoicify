@@ -7,5 +7,5 @@ public class InvoiceLineItem {
     private BillingRecord billingRecord;
     private Date dateCreatedOn;
     private User createdBy;
-    private InvoiceRequest invoice;
+    private Invoice invoice;
 }

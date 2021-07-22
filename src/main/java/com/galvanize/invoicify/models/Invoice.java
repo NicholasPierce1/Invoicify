@@ -1,10 +1,15 @@
 package com.galvanize.invoicify.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Invoice {
     private long id;
     private Company company;
@@ -12,6 +17,9 @@ public class Invoice {
     private User createdBy;
     private String invoiceDescription;
     private ArrayList<BillingRecord> lineItems;
+
+    private List<Long> recordIds = new ArrayList<Long>();
+
 
     public long getId() {
         return id;
@@ -61,5 +69,11 @@ public class Invoice {
         this.lineItems = lineItems;
     }
 
+    public List<Long> getRecordIds() {
+        return recordIds;
+    }
 
+    public void setRecordIds(List<Long> recordIds) {
+        this.recordIds = recordIds;
+    }
 }
