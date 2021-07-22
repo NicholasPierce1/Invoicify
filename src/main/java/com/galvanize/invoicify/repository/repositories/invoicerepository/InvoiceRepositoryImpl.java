@@ -62,8 +62,8 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             final Statement statement = connection.createStatement();
 
             String invoiceQueryStr = getInvoiceSelectQuery();
-            // invoiceQueryStr = invoiceQueryStr.replace("f_ids",flatFeeBillingRecordWhereClause);
-            // invoiceQueryStr = invoiceQueryStr.replace("r_ids",rateBasedBillingRecordWhereClause);
+            invoiceQueryStr = invoiceQueryStr.replace("f_ids",flatFeeBillingRecordWhereClause);
+            invoiceQueryStr = invoiceQueryStr.replace("r_ids",rateBasedBillingRecordWhereClause);
 
             System.out.println("\n\n\n" + invoiceQueryStr + "\n\n\n");
 
@@ -135,6 +135,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                   " from invoice_line_item i, rate_based_billing_record r, company c, app_user a, " +
                   " (select * from app_user) as users " +
                   " where i.billing_record_id = r.id " +
+                  " and (r_ids) " +
                   " and r.billing_record_company_id = c.company_id " +
                   " and i.created_by = a.user_id " +
                   " and users.user_id = r.billing_record_created_by) " +
@@ -143,6 +144,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                   " from invoice_line_item i, flat_fee_billing_record f, company c, app_user a, " +
                   " (select * from app_user) as users " +
                   " where i.billing_record_id = f.id " +
+                  " and (f_ids)" +
                   " and f.billing_record_company_id = c.company_id " +
                   " and i.created_by = a.user_id " +
                   " and users.user_id = f.billing_record_created_by) " +
