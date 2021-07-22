@@ -2,6 +2,7 @@ package com.galvanize.invoicify.controllers;
 
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
+import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,7 +31,7 @@ public class UserController {
 	}
 
 	@PostMapping
-	public Optional<User> createUser(@RequestBody User user) {
+	public @NotNull Optional<User> createUser(@RequestBody User user) {
 		try{
 			return Optional.of(adapter.createUser(user));
 		} catch (Exception e) {
@@ -40,12 +41,13 @@ public class UserController {
 	}
 
 	@GetMapping
-	public List<User> getUsers() {
+	public @NotNull List<User> getUsers() {
 		return adapter.findAll();
 	}
 
 	@GetMapping("{id}")
-	public User getUser(@PathVariable Long id){
+	public @NotNull
+	User getUser(@PathVariable Long id){
 		return adapter.findUser(id);
 	}
 

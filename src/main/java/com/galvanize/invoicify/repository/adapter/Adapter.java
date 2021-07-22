@@ -37,7 +37,7 @@ public final class Adapter {
     }
 
 
-    public User updateUser(User user, Long id) throws DuplicateUserException {
+    public @NotNull User updateUser(@NotNull final User user, @NotNull final Long id) throws DuplicateUserException {
         UserDataAccess currentUserData = this._userRepository.findById(id).get();
 
         if (user.getUsername() != null && !user.getUsername().equals("")) {
@@ -55,7 +55,7 @@ public final class Adapter {
         return _userRepository.save(currentUserData).convertToModel((User::new));
     }
 
-    public User createUser(User user) throws DuplicateUserException {
+    public @NotNull User createUser(@NotNull final User user) throws DuplicateUserException {
         if (isUserExists(user.getUsername())){
             throw new DuplicateUserException("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
         }
@@ -65,7 +65,7 @@ public final class Adapter {
         return _userRepository.save(userDataAccess).convertToModel((User::new));
     }
 
-    private boolean isUserExists(String userName) throws DuplicateUserException {
+    private @NotNull boolean isUserExists(@NotNull final String userName) throws DuplicateUserException {
         int userCountByUsername = this._userRepository.countUsersByUserName(userName);
         return userCountByUsername > 0;
     }
@@ -75,7 +75,7 @@ public final class Adapter {
         return _userRepository.findAll().stream().map(userDataAccess -> userDataAccess.convertToModel(User::new)).collect(Collectors.toList());
     }
 
-    public User findUser(Long id) {
+    public @NotNull User findUser(@NotNull final Long id) {
         return _userRepository.findById(id).map(userDataAccess -> userDataAccess.convertToModel(User::new)).get();
     }
 }
