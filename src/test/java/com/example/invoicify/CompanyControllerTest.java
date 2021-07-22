@@ -227,6 +227,12 @@ public class CompanyControllerTest {
 
         assertTrue(actualCompany.isPresent());
 
+        doAnswer(invocationOnMock -> {
+            final Long toDelete = invocationOnMock.getArgument(0, Long.class);
+            assertEquals( companyDataAccess.getId(), toDelete );
+            return null; })
+                .when(this.companyRepository).deleteById(1L);
+
         assertEquals(
                 objectMapper.writeValueAsString(expectedCompany),
                 objectMapper.writeValueAsString(actualCompany.orElseThrow(RuntimeException::new))

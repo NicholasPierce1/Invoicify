@@ -15,7 +15,5 @@ public interface CompanyRepository extends JpaRepository<CompanyDataAccess, Long
 //    Company findById(Long id);
     public Optional<CompanyDataAccess> findByName(@NotNull final String name);
 
-//    @Query(value = "SELECT count(*) from app_company WHERE company_name = ?1",nativeQuery = true)
-//    int countCompaniesByName(String name);
 
 }
