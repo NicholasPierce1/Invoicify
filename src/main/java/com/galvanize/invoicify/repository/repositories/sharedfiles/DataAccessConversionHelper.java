@@ -1,11 +1,14 @@
 package com.galvanize.invoicify.repository.repositories.sharedfiles;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 import com.sun.istack.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -17,6 +20,10 @@ import java.util.function.Supplier;
  */
 @Component
 public final class DataAccessConversionHelper {
+
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     /**
      *<p>
@@ -121,5 +128,4 @@ public final class DataAccessConversionHelper {
     ){
         return dataAccess.convertToModel(modelSupplier);
     }
-
 }
