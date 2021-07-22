@@ -16,7 +16,7 @@ public class Invoice {
     private Date createdOn;
     private User createdBy;
     private String invoiceDescription;
-    private ArrayList<BillingRecord> lineItems;
+    private ArrayList<InvoiceLineItem> lineItems;
 
     private List<Long> recordIds = new ArrayList<Long>();
 
@@ -61,11 +61,11 @@ public class Invoice {
         this.invoiceDescription = invoiceDescription;
     }
 
-    public ArrayList<BillingRecord> getLineItems() {
+    public ArrayList<InvoiceLineItem> getLineItems() {
         return lineItems;
     }
 
-    public void setLineItems(ArrayList<BillingRecord> lineItems) {
+    public void setLineItems(ArrayList<InvoiceLineItem> lineItems) {
         this.lineItems = lineItems;
     }
 

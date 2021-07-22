@@ -440,6 +440,10 @@ public final class Adapter {
 
     }
 
+    public List<Invoice>getInvoices() {
+        return _invoiceRepository.fetchInvoices(0L, null).stream().map((invoiceDataAccess -> invoiceDataAccess.convertToModel(Invoice::new))).collect(Collectors.toList());
+    }
+
     public Invoice createInvoice(Invoice invoice, long companyId, String userName) throws InvalidRequestException {
         //validateRequestCompanyIDandRecordIds(companyId, invoiceRequest.getRecordIds());
         long createdById = getUserByUserName(userName).get().getId();
