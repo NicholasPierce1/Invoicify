@@ -10,7 +10,6 @@ import java.util.List;
  * </h2>
  * @field id -> Long id number that is assigned to the Model Object
  * @field name -> String name that is assigned to the Model Object
- *
  */
 
 public final class Company {
@@ -28,10 +27,10 @@ public final class Company {
 
     /**
      * <p>
-     *     This is method is used to convey properties that signify Company Model. It can be overloaded to have a one
+     *     This constructor is used to convey properties that signify Company Model. It can be overloaded to have a one
      *     arg constructor or no arg constructor.
      * </p>
-     * @param id -> Describes the autoserialized number assigned by Spring.
+     * @param id -> Describes the auto-serialized number assigned by Spring.
      * @param name -> The string name representation for the company.
      */
     public Company(Long id, String name) {
