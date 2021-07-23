@@ -305,8 +305,6 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                     endOfRows = true;
             }
 
-            //todo: go through each invoice and set the invoice item list to each
-
             // holds dynamic maps for each invoice (key value is its ID)
             // used to extract list of invoice line items and add a new one when id values match
             final Map<Long, HashMap<String, Object>> invoices = new HashMap<Long, HashMap<String, Object>>();
