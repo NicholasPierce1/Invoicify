@@ -12,6 +12,22 @@ import java.util.function.Supplier;
 @MappedSuperclass()
 public abstract class BillingRecordDataAccess<T extends BillingRecord> implements IDataAccess<T> {
 
+    private enum SubTypeTable{
+
+        FlatFee("FlatFeeBillingRecordDataAccess"),
+        RateBased("RateBasedBillingRecordDataAccess");
+
+        private final String typeName;
+
+        SubTypeTable(String typeName){
+            this.typeName = typeName;
+        }
+
+        public String getTypeName() {
+            return typeName;
+        }
+    }
+
     // fields
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,10 +49,10 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
     public long createdBy;
 
     @Transient
-    public User user;
+    public UserDataAccess user;
 
     @Transient
-    public Company company;
+    public CompanyDataAccess company;
 
     // constructor/s
 
@@ -63,11 +79,11 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
         return description;
     }
 
-    public User getUser() {
+    public UserDataAccess getUser() {
         return user;
     }
 
-    public Company getCompany() {
+    public CompanyDataAccess getCompany() {
         return company;
     }
 
@@ -108,11 +124,11 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
         this.id = id;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDataAccess user) {
         this.user = user;
     }
 
-    public void setCompany(Company company) {
+    public void setCompany(CompanyDataAccess company) {
         this.company = company;
     }
 
@@ -126,11 +142,11 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
 //        System.out.println(this.getUser().getUsername());
 
         final M billingRecord = supplier.get();
-        billingRecord.setClient(this.getCompany());
+        billingRecord.setClient(this.getCompany().convertToModel(Company::new));
         billingRecord.setDescription(this.getDescription());
         billingRecord.setInUse(this.getInUse());
         billingRecord.setId(this.getId());
-        billingRecord.setCreatedBy(this.getUser());
+        billingRecord.setCreatedBy(this.getUser().convertToModel(User::new));
 
         return billingRecord;
     }
@@ -142,9 +158,19 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
 
     @Override
     public <M extends T> void convertToDataAccess(M modelObject) {
+
+        final UserDataAccess userDataAccess = new UserDataAccess();
+        userDataAccess.setId(modelObject.getCreatedBy().getId());
+        userDataAccess.setUsername(modelObject.getCreatedBy().getUsername());
+        userDataAccess.setPassword(modelObject.getCreatedBy().getPassword());
+
+        final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+        companyDataAccess.setName(modelObject.getClient().getName());
+        companyDataAccess.setId(modelObject.getClient().getId());
+
         this.setCreatedBy(modelObject.getCreatedBy().getId());
-        this.setUser(modelObject.getCreatedBy());
-        this.setCompany(modelObject.getClient());
+        this.setUser(userDataAccess);
+        this.setCompany(companyDataAccess);
         this.setCompanyId(modelObject.getClient().getId());
         this.setDescription(modelObject.getDescription());
         if(modelObject.getId() != null)

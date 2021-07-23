@@ -2,10 +2,14 @@ package com.galvanize.invoicify.repository.repositories.invoicerepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
 import com.galvanize.invoicify.repository.repositories.sharedfiles.DataAccessConversionHelper;
 import com.galvanize.invoicify.repository.repositories.sharedfiles.QueryTableNameModifier;
 import com.sun.istack.NotNull;
 import org.h2.util.json.JSONObject;
+import org.javatuples.Pair;
+import org.javatuples.Quartet;
+import org.javatuples.Triplet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
@@ -19,10 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
@@ -108,6 +109,13 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
             final ResultSet resultSet = statement.executeQuery(invoiceQueryStr);
 
+            System.out.println(resultSet.getMetaData().getColumnCount());
+            System.out.println(resultSet.getMetaData().getColumnName(resultSet.getMetaData().getColumnCount() -1));
+            System.out.println(resultSet.getMetaData().getColumnName(1));
+
+            for(int i = 1; i < resultSet.getMetaData().getColumnCount(); i++)
+                System.out.println("id: " + i + " columnName: " + resultSet.getMetaData().getColumnName(i));
+
             // todo: invoke helper method for parsing & rendering InvoiceDataAccess
             // todo: then, refactor data access conversion helper
 
@@ -175,17 +183,39 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
         private final DataAccessConversionHelper _dataAccessConversionHelper;
 
-        // enumerates static final members representing the composite (children) hashmaps
-
         // enumerates static final fields for the key-values for composite (children) hashmaps
 
+        // invoice
         private static final String INVOICE_COMPANY = "company";
-
+        private static final String INVOICE_COMPANY_KEY = "INVOICE_COMPANY";
         private static final String INVOICE_USER = "user";
+        private static final String INVOICE_USER_KEY = "INVOICE_USER";
 
-        private static final String INVOICE_LINE_ITEMS = "lineItems";
+        // invoice line item
+        private static final String IL_USER = "user";
+        private static final String IL_USER_KEY = "IL_USER";
+        private static final String IL_BILLING_RECORD = "billingRecord";
+        private static final String IL_BILLING_RECORD_KEY = "IL_BILLING_RECORD";
 
-        //private static final String IL_
+        // billing record
+        private static final String BR_USER = "user";
+        private static final String BR_USER_KEY = "BR_USER";
+        private static final String BR_COMPANY = "company";
+        private static final String BR_COMPANY_KEY = "BR_COMPANY";
+
+        // holds all invoice line items according to their invoice id (parent)
+        private final Map<String, List<Map<String, ?>>> invoiceLineItemsPerInvoice =
+                new HashMap<>();
+
+        private static final String INVOICE_LINE_ITEM = "lineItems";
+
+        private static final String INVOICE_ID_KEY = "invoice_id";
+
+        // enumerates keys for parent hash map keys
+        private static final String INVOICE_KEY = "INVOICE_KEY";
+        private static final String INVOICE_LINE_ITEM_KEY = "INVOICE_LINE_ITEM_KEY";
+        private static final String BR_KEY = "BR_KEY";
+
 
         public InvoiceRepositoryManagerHelper(
                 ObjectMapper objectMapper,
@@ -212,20 +242,54 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                 resultSet.next();
                 //System.out.println(resultSet.getMetaData().getColumnCount());
                 System.out.println(resultSet.getMetaData().getColumnCount());
-                for (int column = 1; column < resultSet.getMetaData().getColumnCount() - 1; column++)
+
+                Map<String, HashMap<String, Object>> childrenMaps = null;
+
+
+                for (int column = 1; column < resultSet.getMetaData().getColumnCount(); column++)
                 {
 
                     // extract column value from result set
                     final Object columnValue = resultSet.getObject(column);
 
                     // extracts column name from result set
-                    String columnName = resultSet.getMetaData().getColumnName(column);
+                    // sets to lowercase to match data access object's json property names
+                    String columnName = resultSet.getMetaData().getColumnName(column).toLowerCase(Locale.ROOT);
 
                     // if columnName starts with 'Prefix' then remove sub-query prefix from name
-                    if(columnName.startsWith("PREFIX"))
+                    if(columnName.startsWith("prefix"))
                         columnName = this._dataAccessConversionHelper.removeSubQueryPrefixFromColumnName(columnName);
 
-                    // sets key - value pair
+                    // get all children maps if first column of row
+                    if(column == 1)
+                        childrenMaps = this.initializeChildrenHashMaps();
+
+                    // get current map, boolean, map triplet
+                    final Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>
+                            currentMapState = this.getCurrentHashMap(childrenMaps, column);
+
+                    // integrity check (current map and boolean shall never be null)
+                    if(currentMapState.getValue1() == null || currentMapState.getValue0() == null)
+                        throw new RuntimeException("Null encountered on needed state for ORM parsing");
+                    
+                    // if boolean is true then set current map to the given parent map
+                    // only IF parent map != null (parent's don't have a parent)
+                    if(currentMapState.getValue1() && currentMapState.getValue2() != null) {
+
+                        if(currentMapState.getValue3() == null)
+                            throw new RuntimeException("Null encountered on needed state for ORM parsing of parent-child hookup");
+
+                        currentMapState.getValue2().put(currentMapState.getValue3(), currentMapState.getValue0());
+                    }
+
+                    // sets key - value pair to current map
+                    currentMapState.getValue0().put(columnName, columnValue);
+
+                    // if last column in row then add invoice map (with all children attached) to result list
+                    if(column == resultSet.getMetaData().getColumnCount() - 1)
+                        invoiceDeserializableList.add(
+                                childrenMaps.get(INVOICE_KEY)
+                        );
 
                 }
 
@@ -233,8 +297,115 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                     endOfRows = true;
             }
 
+            // todo: remove after testing
+            for(final Map<String, ?> map : invoiceDeserializableList)
+                System.out.println(map);
 
-            return null;
+            //todo: go through each invoice and set the invoice item list to each
+
+
+            return invoiceDeserializableList;
+        }
+
+        // returns a hashmap holding all children hashmap
+        private @NotNull Map<String, HashMap<String, Object>> initializeChildrenHashMaps(){
+
+            // creates return map
+            final Map<String, HashMap<String, Object>> childrenMaps = new HashMap<String, HashMap<String, Object>>();
+
+            // enumerates static final members representing the composite (children) hashmaps
+            final HashMap<String,Object> invoiceCompany = new HashMap<String, Object>();
+            final HashMap<String,Object> invoiceUser = new HashMap<String, Object>();
+
+            final HashMap<String,Object> il_user = new HashMap<String, Object>();
+            final HashMap<String,Object> il_br = new HashMap<String, Object>();
+
+            final HashMap<String,Object> br_user = new HashMap<String, Object>();
+            final HashMap<String,Object> br_company = new HashMap<String, Object>();
+
+            // creates the parent maps
+            final HashMap<String,Object> invoice = new HashMap<>();
+            final HashMap<String,Object> invoice_lineItem = new HashMap<>();
+            final HashMap<String,Object> billingRecord = new HashMap<>();
+            
+            // sets children maps each composite map
+            childrenMaps.put(INVOICE_COMPANY_KEY, invoiceCompany);
+            childrenMaps.put(INVOICE_USER_KEY, invoiceUser);
+            childrenMaps.put(IL_BILLING_RECORD_KEY, il_br);
+            childrenMaps.put(IL_USER_KEY, il_user);
+            childrenMaps.put(BR_COMPANY_KEY, br_company);
+            childrenMaps.put(BR_USER_KEY, br_user);
+            childrenMaps.put(INVOICE_KEY, invoice);
+            childrenMaps.put(INVOICE_LINE_ITEM_KEY, invoice_lineItem);
+            childrenMaps.put(BR_KEY, billingRecord);
+
+
+            return childrenMaps;
+        }
+
+        private @NotNull Quartet<Map<String, Object>, Boolean, Map<String, Object>, String> getCurrentHashMap(
+                @NotNull Map<String, ? extends Map<String, Object>> childrenMaps,
+                @NotNull final int index){
+
+            if(index >= 1 && index <= 3)
+                return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(
+                        childrenMaps.get(INVOICE_USER_KEY),
+                        index == 1,
+                        childrenMaps.get(INVOICE_KEY),
+                        INVOICE_USER
+                );
+            else if(index >= 4 && index <= 5)
+                return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(
+                        childrenMaps.get(INVOICE_COMPANY_KEY),
+                        index == 4,
+                        childrenMaps.get(INVOICE_KEY),
+                        INVOICE_COMPANY
+                );
+            else if(index >= 6 && index <= 10)
+                return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(
+                        childrenMaps.get(INVOICE_KEY),
+                        index == 6,
+                        null,
+                        null
+                );
+            else if(index >= 11 && index <= 13)
+                return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(
+                        childrenMaps.get(IL_USER_KEY),
+                        index == 11,
+                        childrenMaps.get(INVOICE_LINE_ITEM_KEY),
+                        IL_USER
+                );
+            else if(index >= 14 && index <= 18)
+                return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(
+                        childrenMaps.get(INVOICE_LINE_ITEM_KEY),
+                        index == 14,
+                        childrenMaps.get(INVOICE_KEY),
+                        INVOICE_LINE_ITEM
+                );
+            else if(index >= 19 && index <= 21)
+                return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(
+                        childrenMaps.get(BR_USER_KEY),
+                        index == 19,
+                        childrenMaps.get(BR_KEY),
+                        BR_USER
+                );
+            else if(index >= 22 && index <= 23)
+                return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(
+                        childrenMaps.get(BR_COMPANY_KEY),
+                        index == 22,
+                        childrenMaps.get(BR_KEY),
+                        BR_COMPANY
+                );
+            else if(index >= 24 && index <= 30)
+                return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(
+                        childrenMaps.get(BR_KEY),
+                        index == 24,
+                        childrenMaps.get(INVOICE_LINE_ITEM_KEY),
+                        IL_BILLING_RECORD
+                );
+
+            return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(null, null, null, null); // will not be set
+
         }
 
     }

@@ -124,9 +124,9 @@ public class BillingRecordTests {
                     setAmount(150);
                     setDescription("description one");
                     setCompanyId(companyOne.getId());
-                    setCompany(companyOne);
+                    setCompany(companyOneDataAccess);
                     setCreatedBy(userOne.getId());
-                    setUser(userOne);
+                    setUser(userOneDataAccess);
                     setInUse(false);
                 }}
             );
@@ -136,9 +136,9 @@ public class BillingRecordTests {
                     setId(2L);
                     setAmount(125.5);
                     setCompanyId(companyOne.getId());
-                    setCompany(companyOne);
+                    setCompany(companyOneDataAccess);
                     setCreatedBy(userOne.getId());
-                    setUser(userOne);
+                    setUser(userOneDataAccess);
                     setDescription("description two");
                     setInUse(true);
                 }}
@@ -151,9 +151,9 @@ public class BillingRecordTests {
                 {{
                     setId(3L);
                     setCompanyId(companyOne.getId());
-                    setCompany(companyOne);
+                    setCompany(companyOneDataAccess);
                     setCreatedBy(userOne.getId());
-                    setUser(userOne);
+                    setUser(userOneDataAccess);
                     setDescription("description one");
                     setInUse(false);
                     setQuantity(10);
@@ -165,9 +165,9 @@ public class BillingRecordTests {
                 {{
                     setId(4L);
                     setCompanyId(companyOne.getId());
-                    setCompany(companyOne);
+                    setCompany(companyOneDataAccess);
                     setCreatedBy(userOne.getId());
-                    setUser(userOne);
+                    setUser(userOneDataAccess);
                     setDescription("description two");
                     setInUse(false);
                     setQuantity(5);

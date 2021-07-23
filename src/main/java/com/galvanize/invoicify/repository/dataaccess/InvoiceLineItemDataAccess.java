@@ -1,7 +1,10 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.galvanize.invoicify.models.BillingRecord;
 import com.galvanize.invoicify.models.Invoice;
+import com.galvanize.invoicify.models.InvoiceLineItem;
+import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
 import javax.persistence.*;
@@ -10,7 +13,7 @@ import java.util.function.Supplier;
 
 @Entity
 @Table(name = "invoice_line_item")
-public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItemDataAccess> {
+public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +37,13 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItemDat
     @JsonProperty("invoice_id")
     private long invoiceId;
 
+    // transient members
+    @Transient
+    private UserDataAccess user;
+
+    @Transient
+    private BillingRecordDataAccess<? extends BillingRecord> billingRecord;
+
     public InvoiceLineItemDataAccess(long billingRecordId, Date createdOn, long createdBy, long invoiceId) {
         this.id = id;
         this.billingRecordId = billingRecordId;
@@ -41,6 +51,8 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItemDat
         this.createdBy = createdBy;
         this.invoiceId = invoiceId;
     }
+
+    public InvoiceLineItemDataAccess(){}
 
 
     public long getId() {
@@ -61,6 +73,22 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItemDat
 
     public Date getCreatedOn() {
         return createdOn;
+    }
+
+    public BillingRecordDataAccess<? extends BillingRecord> getBillingRecord() {
+        return billingRecord;
+    }
+
+    public UserDataAccess getUser() {
+        return user;
+    }
+
+    public void setUser(UserDataAccess user) {
+        this.user = user;
+    }
+
+    public void setBillingRecord(BillingRecordDataAccess<? extends BillingRecord> billingRecord) {
+        this.billingRecord = billingRecord;
     }
 
     public void setCreatedOn(Date createdOn) {
@@ -89,12 +117,12 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItemDat
     }
 
     @Override
-    public <M extends InvoiceLineItemDataAccess> M convertToModel(Supplier<M> supplier) {
+    public <M extends InvoiceLineItem> M convertToModel(Supplier<M> supplier) {
         return null;
     }
 
     @Override
-    public <M extends InvoiceLineItemDataAccess> void convertToDataAccess(M modelObject) {
+    public <M extends InvoiceLineItem> void convertToDataAccess(M modelObject) {
 
     }
 

@@ -11,6 +11,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "invoice")
@@ -39,33 +40,33 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
     private String description;
 
     @Transient
-    private Company company;
+    private CompanyDataAccess company;
     @Transient
-    private User user;
+    private UserDataAccess user;
     @Transient
-    private ArrayList<InvoiceLineItem> lineItems = new ArrayList<InvoiceLineItem>();
+    private ArrayList<InvoiceLineItemDataAccess> lineItems = new ArrayList<InvoiceLineItemDataAccess>();
 
-    public void setCompany(Company company) {
+    public void setCompany(CompanyDataAccess company) {
         this.company = company;
     }
 
-    public void setLineItems(ArrayList<InvoiceLineItem> lineItems) {
+    public void setLineItems(ArrayList<InvoiceLineItemDataAccess> lineItems) {
         this.lineItems = lineItems;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDataAccess user) {
         this.user = user;
     }
 
-    public ArrayList<InvoiceLineItem> getLineItems() {
+    public ArrayList<InvoiceLineItemDataAccess> getLineItems() {
         return lineItems;
     }
 
-    public Company getCompany() {
+    public CompanyDataAccess getCompany() {
         return company;
     }
 
-    public User getUser() {
+    public UserDataAccess getUser() {
         return user;
     }
 
@@ -130,16 +131,36 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
     public <M extends Invoice> M convertToModel(Supplier<M> supplier) {
         M invoice = supplier.get();
         invoice.setId(this.getId());
-        invoice.setCompany(this.getCompany());
-        invoice.setCreatedBy(this.getUser());
+        if(this.getCompany() != null)
+            invoice.setCompany(this.getCompany().convertToModel(Company::new));
+        if(this.getUser() != null)
+            invoice.setCreatedBy(this.getUser().convertToModel(User::new));
         invoice.setInvoiceDescription(this.getDescription());
-        invoice.setLineItems(this.getLineItems());
+        invoice.setLineItems(
+                this
+                        .getLineItems()
+                        .stream()
+                        .map(
+                                (invoiceLineItemDataAccess -> invoiceLineItemDataAccess.convertToModel(InvoiceLineItem::new))
+                        )
+                        .collect(Collectors.toList()
+                    )
+        );
         return invoice;
     }
 
     @Override
     public <M extends Invoice> void convertToDataAccess(M modelObject) {
+        final UserDataAccess userDataAccess = new UserDataAccess();
+        userDataAccess.setId(modelObject.getCreatedBy().getId());
+        userDataAccess.setUsername(modelObject.getCreatedBy().getUsername());
+        userDataAccess.setPassword(modelObject.getCreatedBy().getPassword());
 
+        final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+        companyDataAccess.setName(modelObject.getCompany().getName());
+        companyDataAccess.setId(modelObject.getCompany().getId());
+
+        //todo: finish
     }
 
 

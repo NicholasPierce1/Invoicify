@@ -135,7 +135,7 @@ public final class DataAccessConversionHelper {
             @NotNull final String columnWithPrefix
     ){
 
-        if(!columnWithPrefix.startsWith("PREFIX"))
+        if(!columnWithPrefix.startsWith("prefix"))
             throw new IllegalArgumentException("column name " + columnWithPrefix + " does not start with" +
                     "'PREFIX'. Are you sure this is a sub-query column?");
 

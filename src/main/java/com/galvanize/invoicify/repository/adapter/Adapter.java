@@ -148,7 +148,7 @@ public final class Adapter {
 
                             // gets user and company
                             // note: assumes user and company exist in this circumstance
-                            final Optional<Pair<Company, User>> companyUserPair = this
+                            final Optional<Pair<CompanyDataAccess, UserDataAccess>> companyUserPair = this
                                     ._billingRecordParentHelper
                                     .getCompanyAndClient(
                                             flatFeeBillingRecordDataAccess.getCompanyId(),
@@ -176,7 +176,7 @@ public final class Adapter {
 
                             // gets user and company
                             // note: assumes user and company exist in this circumstance
-                            final Optional<Pair<Company, User>> companyUserPair = this
+                            final Optional<Pair<CompanyDataAccess, UserDataAccess>> companyUserPair = this
                                     ._billingRecordParentHelper
                                     .getCompanyAndClient(
                                             rateBasedBillingRecordDataAccess.getCompanyId(),
@@ -212,7 +212,7 @@ public final class Adapter {
 
                             // gets user and company
                             // note: assumes user and company exist in this circumstance
-                            final Optional<Pair<Company, User>> companyUserPair = this
+                            final Optional<Pair<CompanyDataAccess, UserDataAccess>> companyUserPair = this
                                     ._billingRecordParentHelper
                                     .getCompanyAndClient(
                                             flatFeeBillingRecordDataAccess.getCompanyId(),
@@ -242,7 +242,7 @@ public final class Adapter {
 
                             // gets user and company
                             // note: assumes user and company exist in this circumstance
-                            final Optional<Pair<Company, User>> companyUserPair = this
+                            final Optional<Pair<CompanyDataAccess, UserDataAccess>> companyUserPair = this
                                     ._billingRecordParentHelper
                                     .getCompanyAndClient(
                                             rateBasedBillingRecordDataAccess.getCompanyId(),
@@ -284,13 +284,14 @@ public final class Adapter {
                 ._companyRepository
                 .findById(
                         flatFeeBillingRecord
-                                .getCreatedBy()
+                                .getClient()
                                 .getId()
                 )
                 .map(
                         (companyDataAccess -> companyDataAccess.convertToModel(Company::new))
                 );
-
+        System.out.println(!user.isPresent());
+        System.out.println(!company.isPresent());
         // verifies that user and company exist
         if(!user.isPresent() || !company.isPresent() || flatFeeBillingRecord.getId() != null)
             return Optional.empty();
@@ -334,7 +335,7 @@ public final class Adapter {
                 ._companyRepository
                 .findById(
                         rateBasedBillingRecord
-                                .getCreatedBy()
+                                .getClient()
                                 .getId()
                 )
                 .map(
@@ -409,14 +410,14 @@ public final class Adapter {
             this._adapter = adapter;
         }
 
-        public Optional<Pair<Company, User>> getCompanyAndClient(final long companyId, final long userId){
+        public Optional<Pair<CompanyDataAccess, UserDataAccess>> getCompanyAndClient(final long companyId, final long userId){
 
-            final Optional<User> user = this.getUserById(userId);
+            final Optional<UserDataAccess> user = this._adapter._userRepository.findById(userId);
 
-            final Optional<Company> company = this.getCompanyById(companyId);
+            final Optional<CompanyDataAccess> company = this._adapter._companyRepository.findById(companyId);
 
             return user.isPresent() && company.isPresent() ?
-                    Optional.of(new Pair<Company, User>(company.get(), user.get()))
+                    Optional.of(new Pair<CompanyDataAccess, UserDataAccess>(company.get(), user.get()))
                     :
                     Optional.empty();
 
