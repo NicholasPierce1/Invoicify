@@ -60,6 +60,8 @@ public class CompanyControllerTest {
 
     private Adapter adapter;
 
+    private CompanyDataAccess companyDataAccess;
+
     @AfterEach
     public void resetMocks(){
         Mockito.reset(this.companyRepository);
@@ -79,21 +81,16 @@ public class CompanyControllerTest {
     @Test
     public void  testViewAllCompanies() throws Exception {
 
-
-        // todo: nick, create bean for object mapper via mapper build
         final ObjectMapper objectMapper = new ObjectMapper();
 
         final ArrayList<CompanyDataAccess> companyDataAccesses = new ArrayList<CompanyDataAccess>(){{
+        CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+        companyDataAccess.setId(1L);
+        companyDataAccess.setName("LTI");
 
-            add(new CompanyDataAccess(){{
-                setId(1L);
-                setName("LTI");
-            }});
-
-            add(new CompanyDataAccess(){{
-                setId(2L);
-                setName("Galvanize");
-            }});
+        CompanyDataAccess companyDataAccess2 = new CompanyDataAccess();
+        companyDataAccess2.setId(1L);
+        companyDataAccess2.setName("LTI");
 
         }};
 
@@ -134,10 +131,10 @@ public class CompanyControllerTest {
 
         final ObjectMapper objectMapper = new ObjectMapper();
 
-        final CompanyDataAccess companyDataAccess = new CompanyDataAccess() {{
-            setId(1L);
-            setName("LTI");
-        }};
+        CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+        companyDataAccess.setId(1L);
+        companyDataAccess.setName("LTI");
+
 
         final Company expectedCompany =
                 companyDataAccess.convertToModel(Company::new);

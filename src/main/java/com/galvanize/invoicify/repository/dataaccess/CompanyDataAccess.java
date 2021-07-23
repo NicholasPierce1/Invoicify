@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  */
 @Entity
 @Table(name = "company")
-public class CompanyDataAccess implements IDataAccess<Company> {
+public final class CompanyDataAccess implements IDataAccess<Company> {
 
     //fields
 
