@@ -54,7 +54,7 @@ public class CompanyDataAccess implements IDataAccess<Company> {
 
     /**
      * <p>
-     *
+     *     This gets the company id in the company table.
      * </p>
      * @return id -> id stored in the company_id field in Company table
      */
@@ -62,16 +62,11 @@ public class CompanyDataAccess implements IDataAccess<Company> {
         return id;
     }
 
-//    /**
-//     * <p>
-//     *
-//     * </p>
-//     * @return
-//     */
-
     /**
-     *
-     * @return
+     * <p>
+     *     This gets the company name that is stored in the Company table.
+     * </p>
+     * @return name -> retrieves the name that was assigned to that company.
      */
     public String getName() {
         return name;
@@ -79,9 +74,9 @@ public class CompanyDataAccess implements IDataAccess<Company> {
 
     /**
      * <p>
-     *
+     *     This sets the serialized id that was assigned to the Company DataAccessObject.
      * </p>
-     * @param id ->
+     * @param id -> takes in the serialized id that was assigned to the Company DataAccessObject.
      */
     public void setId(Long id) {
         this.id = id;
@@ -89,9 +84,9 @@ public class CompanyDataAccess implements IDataAccess<Company> {
 
     /**
      * <p>
-     *
+     *     This sets the String name for the Company DataAccessObject that the user assigns.
      * </p>
-     * @param name ->
+     * @param name -> takes in the String name for the Company DataAccessObject that the user assigns.
      */
     public void setName(String name) {
         this.name = name;
@@ -101,22 +96,23 @@ public class CompanyDataAccess implements IDataAccess<Company> {
 
     /**
      * <p>
-     *
+     *     The method that creates the DataAccessObject that communicates with the database.
      * </p>
-     * @param dbo ->
+     * @param dbo -> takes in the DataAccessObject that Spring auto-generates.
      */
     @Override
     public void createDataAccess(Object[] dbo) {
 
     }
 
-    /**
+     /**
      * <p>
-     *
+     *     Converts a DataAccessOject to a Model Object and assigns the name and id.
      * </p>
-     * @param supplier ->
-     * @param <M> ->
-     * @return
+     * @param supplier -> provides implementation of converting to a Model Object.
+     *       NOTE: the default state set in the supplier may/will be written over.
+     * @param <M> -> A model type used to create data access reflections
+     * @return a Model Object of the reflect data access definition
      */
     @Override
     public <M extends Company> M convertToModel(Supplier<M> supplier) {
@@ -131,10 +127,9 @@ public class CompanyDataAccess implements IDataAccess<Company> {
 
     /**
      * <p>
-     *
+     *     Converts a Model Object to a DataAccessObject and sets the name and id.
      * </p>
-     * @param modelObject ->
-     * @param <M> ->
+     * @param <M> -> A Model Object used to convert DataAccessObject
      */
     @Override
     public <M extends Company> void convertToDataAccess(M modelObject) {
@@ -146,7 +141,7 @@ public class CompanyDataAccess implements IDataAccess<Company> {
      * <p>
      *
      * </p>
-     * @param a ->
+     * @param a
      * @return
      */
     @Override

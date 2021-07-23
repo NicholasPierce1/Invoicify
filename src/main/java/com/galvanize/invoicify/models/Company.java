@@ -40,9 +40,9 @@ public final class Company {
 
     /**
      * <p>
-     *     This gets the company id.
+     *     This is the reflection of the company id that has been converted.
      * </p>
-     * @return id -> retrieves the id that was assigned to that company.
+     * @return id -> retrieves the id that was assigned to that company DataAccessObject.
      */
     public Long getId() {
         return id;
@@ -60,9 +60,9 @@ public final class Company {
 
     /**
      * <p>
-     *     This gets the company name.
+     *     retrieves the  name of a converted Company DataAccessObject.
      * </p>
-     * @return name -> retrieves the name that was assigned to that company.
+     * @return name -> retrieves the name of a converted Company DataAccessObject that was assigned to that company.
      */
     public String getName() {
         return name;
