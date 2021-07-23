@@ -98,72 +98,28 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             final Connection connection = this._dataSource.getConnection();
             final Statement statement = connection.createStatement();
 
-
-
-            System.out.println("\n\n\n" + invoiceQueryStr + "\n\n\n");
-
-            //Query invoiceQuery = em.createNativeQuery(invoiceQueryStr);
-            // invoiceQuery.setParameter(1, invoiceId);
-            // invoiceQuery.setParameter(2, invoiceId);
-
-           // List<Object[]> invoices = invoiceQuery.getResultList();
-            List<InvoiceDataAccess> invoiceResultList = new ArrayList<InvoiceDataAccess>();
-
             final ResultSet resultSet = statement.executeQuery(invoiceQueryStr);
 
-            System.out.println(resultSet.getMetaData().getColumnCount());
-            System.out.println(resultSet.getMetaData().getColumnName(resultSet.getMetaData().getColumnCount() -1));
-            System.out.println(resultSet.getMetaData().getColumnName(1));
-
-            for(int i = 1; i < resultSet.getMetaData().getColumnCount(); i++)
-                System.out.println("id: " + i + " columnName: " + resultSet.getMetaData().getColumnName(i));
-
-            // todo: invoke helper method for parsing & rendering InvoiceDataAccess
-
-//            int x = 0;
-//            while(resultSet.next()){
-//                System.out.println(resultSet.getObject(6));
-//                x+=1;
-//            }
-//            System.out.println(x);
+//            for(int i = 1; i < resultSet.getMetaData().getColumnCount(); i++)
+//                System.out.println("id: " + i + " columnName: " + resultSet.getMetaData().getColumnName(i));
 
             final List<? extends Map<String, ?>> invoices = this._invoiceRepositoryManagerHelper.createDeserializableInvoicesFromResultSet(resultSet);
 
-//            System.out.println(invoices.size());
-//            for(Map<String, ?> map : invoices) {
-//                System.out.println(this._objectMapper.writeValueAsString(map));
-//                System.out.println("size: " +  ((List<Map<String, ?>>) map.get("lineItems")).size());
-//
-//            }
+            final List<InvoiceDataAccess> invoiceDataAccessList =
+                    this._dataAccessConversionHelper.createDataAccessObjects(
+                            invoices,
+                            InvoiceDataAccess.class
+                    );
 
-//            final Map<String, ?> billingRecordMap = invoices.get(0);
-
-//            System.out.println("\n\n" + this._objectMapper.writeValueAsString(billingRecordMap));
-
-//            final List<InvoiceDataAccess> invoiceDataAccess = (List<InvoiceDataAccess>)this._objectMapper.convertValue(
-//                    invoices,
-//                    List.class
-//            );
-
-//            System.out.println("\n\n" + this._objectMapper.writeValueAsString(invoiceDataAccess));
-
-            System.out.println("we made it out bois!");
-            // todo: then, refactor data access conversion helper
-
-//            invoices.forEach(
-//                    (objects ->
-//                    {
-//                        for (final Object object : objects)
-//                            System.out.println(object);
-//                    }
+//            System.out.println(
+//                    this._objectMapper.writeValueAsString(
+//                            invoiceDataAccessList
 //                    )
 //            );
 
-            //DataAccessConversionHelper dataAccessConversionHelper = new DataAccessConversionHelper();
-            //dataAccessConversionHelper.createDataAccessObjects(invoices,invoiceResultList, InvoiceDataAccess::new);
+            System.out.println("we made it out bois!");
 
-            System.out.println(invoiceResultList);
-            return invoiceResultList;
+            return invoiceDataAccessList;
         }
         catch(Exception ex){
             System.out.println(ex.getMessage());
@@ -348,8 +304,6 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                 if(resultSet.isLast())
                     endOfRows = true;
             }
-
-            //todo: go through each invoice and set the invoice item list to each
 
             // holds dynamic maps for each invoice (key value is its ID)
             // used to extract list of invoice line items and add a new one when id values match
