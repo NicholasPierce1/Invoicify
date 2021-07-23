@@ -32,7 +32,7 @@ public final class User implements UserDetails {
 
 	/**
 	 * <p>
-	 *     This method is used to convey properties that are assigned to the User Model.
+	 *     This constructor is used to convey properties that are assigned to the User Model.
 	 *     It can be overloaded to have a one arg constructor as well as a no arg constructor.
 	 * </p>
 	 * @param username -> The string representation for the password.
