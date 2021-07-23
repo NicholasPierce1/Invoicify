@@ -99,10 +99,6 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             final Statement statement = connection.createStatement();
 
             final ResultSet resultSet = statement.executeQuery(invoiceQueryStr);
-
-//            for(int i = 1; i < resultSet.getMetaData().getColumnCount(); i++)
-//                System.out.println("id: " + i + " columnName: " + resultSet.getMetaData().getColumnName(i));
-
             final List<? extends Map<String, ?>> invoices = this._invoiceRepositoryManagerHelper.createDeserializableInvoicesFromResultSet(resultSet);
 
             final List<InvoiceDataAccess> invoiceDataAccessList =
@@ -110,12 +106,6 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                             invoices,
                             InvoiceDataAccess.class
                     );
-
-//            System.out.println(
-//                    this._objectMapper.writeValueAsString(
-//                            invoiceDataAccessList
-//                    )
-//            );
 
             System.out.println("we made it out bois!");
 
@@ -224,8 +214,6 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             {
 
                 resultSet.next();
-                // System.out.println(resultSet.getMetaData().getColumnCount());
-                // System.out.println(resultSet.getMetaData().getColumnCount());
 
                 Map<String, HashMap<String, Object>> childrenMaps = null;
 
@@ -296,7 +284,6 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                         invoiceDeserializableList.add(
                                 childrenMaps.get(INVOICE_KEY)
                         );
-                        //System.out.println("After loop:\n" + childrenMaps.get(INVOICE_KEY));
                     }
 
                 }
