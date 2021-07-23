@@ -9,6 +9,7 @@ import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.adapter.DuplicateUserException;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -51,7 +52,6 @@ public class UserControllerTest {
     @Autowired
     PasswordEncoder encoder;
 
-    @Autowired
     private UserRepository userRepository;
 
     private UserController userController;
@@ -67,6 +67,12 @@ public class UserControllerTest {
         this.userController = new UserController(adapter);
     }
 
+    @AfterEach
+    public void resetMocks(){
+        Mockito.reset(this.userRepository);
+    }
+
+
 
     @Test
     public void createAnExistingUser() throws Exception {
@@ -76,9 +82,8 @@ public class UserControllerTest {
 
         when(userRepository.countUsersByUserName(any())).thenReturn(2);
         when(userRepository.save(any())).thenReturn(userDataAccess);
-        assertThrows(DuplicateUserException.class, () -> {
-            this.userController.createUser(expectedUser);
-        });
+        assertFalse(this.userController.createUser(expectedUser).isPresent());
+
         verify(userRepository,times(1)).countUsersByUserName(any());
     }
 
@@ -97,7 +102,7 @@ public class UserControllerTest {
         String actualUserStr = objectMapper.writeValueAsString(actualUser);
         String expectedUserStr = objectMapper.writeValueAsString(expectedUser);
 
-        assertEquals(actualUserStr, expectedUserStr);
+        assertEquals(expectedUserStr,actualUserStr);
         verify(userRepository, times(1)).save(any());
     }
 
@@ -206,19 +211,4 @@ public class UserControllerTest {
 
     }
 
-    @Test
-    public void modifyUserCredentialsWithAnotherUsernameThatAlreadyExists() throws Exception {
-        UserDataAccess existingUserToBeUpdated = new UserDataAccess("testuser1","testpassword2");
-        //bob is already existing in the database so don't do anything
-        User expectedUser = new User("bob","newPassword1");
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserToBeUpdated));
-        when(userRepository.countUsersByUserName(any())).thenReturn(2);
-        assertThrows(DuplicateUserException.class, () -> {
-            userController.updateUser( expectedUser, 1L);
-        });
-
-        verify(userRepository, times(1)).findById(any());
-        verify(userRepository, times(1)).countUsersByUserName(any());
-    }
 }

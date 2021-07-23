@@ -153,6 +153,7 @@ public final class UserDataAccess implements IDataAccess<User> {
         final M user = supplier.get();
 
         user.setId(this.getId());
+        user.setPassword(this.getPassword());
         user.setUsername(this.getUsername());
 
         return user;
