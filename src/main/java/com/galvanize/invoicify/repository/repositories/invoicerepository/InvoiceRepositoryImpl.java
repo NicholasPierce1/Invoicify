@@ -129,8 +129,23 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
             final List<? extends Map<String, ?>> invoices = this._invoiceRepositoryManagerHelper.createDeserializableInvoicesFromResultSet(resultSet);
 
-            for(Map<String, ?> map : invoices)
-                System.out.println(this._objectMapper.writeValueAsString(map));
+//            System.out.println(invoices.size());
+//            for(Map<String, ?> map : invoices) {
+//                System.out.println(this._objectMapper.writeValueAsString(map));
+//                System.out.println("size: " +  ((List<Map<String, ?>>) map.get("lineItems")).size());
+//
+//            }
+
+//            final Map<String, ?> billingRecordMap = invoices.get(0);
+
+//            System.out.println("\n\n" + this._objectMapper.writeValueAsString(billingRecordMap));
+
+//            final List<InvoiceDataAccess> invoiceDataAccess = (List<InvoiceDataAccess>)this._objectMapper.convertValue(
+//                    invoices,
+//                    List.class
+//            );
+
+//            System.out.println("\n\n" + this._objectMapper.writeValueAsString(invoiceDataAccess));
 
             System.out.println("we made it out bois!");
             // todo: then, refactor data access conversion helper
@@ -224,12 +239,13 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
         private static final String INVOICE_LINE_ITEM = "lineItems";
 
-        private static final String INVOICE_ID_KEY = "invoice_id";
-
         // enumerates keys for parent hash map keys
         private static final String INVOICE_KEY = "INVOICE_KEY";
         private static final String INVOICE_LINE_ITEM_KEY = "INVOICE_LINE_ITEM_KEY";
         private static final String BR_KEY = "BR_KEY";
+
+        // key to extract invoice id from an invoice
+        private static final String INVOICE_ID_KEY = "invoice_id";
 
 
         public InvoiceRepositoryManagerHelper(
@@ -252,11 +268,9 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             while (!endOfRows)
             {
 
-                // holds a
-
                 resultSet.next();
-                //System.out.println(resultSet.getMetaData().getColumnCount());
-                System.out.println(resultSet.getMetaData().getColumnCount());
+                // System.out.println(resultSet.getMetaData().getColumnCount());
+                // System.out.println(resultSet.getMetaData().getColumnCount());
 
                 Map<String, HashMap<String, Object>> childrenMaps = null;
 
@@ -294,7 +308,16 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                         if(currentMapState.getValue3() == null)
                             throw new RuntimeException("Null encountered on needed state for ORM parsing of parent-child hookup");
 
-                        currentMapState.getValue2().put(currentMapState.getValue3(), currentMapState.getValue0());
+                        // encapsulate child map into a list for invoice parent (data type: List<Map<String, ? extends Map<String, ?>>)
+                        currentMapState.getValue2().put(
+                                currentMapState.getValue3(),
+                                currentMapState.getValue3().equals(INVOICE_LINE_ITEM) ?
+                                        new ArrayList<Map<String, ?>>(){{
+                                            add(currentMapState.getValue0());
+                                        }}
+                                        :
+                                        currentMapState.getValue0()
+                        );
                     }
 
                     // if column value is 'amount'
@@ -329,8 +352,36 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
             //todo: go through each invoice and set the invoice item list to each
 
+            // holds dynamic maps for each invoice (key value is its ID)
+            // used to extract list of invoice line items and add a new one when id values match
+            final Map<Long, HashMap<String, Object>> invoices = new HashMap<Long, HashMap<String, Object>>();
 
-            return invoiceDeserializableList;
+
+            // iterates over all maps and inserts into invoices if the id doesn't exist yet
+            for(final HashMap<String, Object> invoice : invoiceDeserializableList){
+                // checks if id values match (same invoice -- line item different though)
+                if(invoices.containsKey((Long)invoice.get(INVOICE_ID_KEY))) { // exist already add invoice line item
+                    ((List<Map<String, ?>>)
+                            ((Map<String, Object>)invoices.get(
+                                    (Long)invoice.get(INVOICE_ID_KEY)
+                                )
+                            )
+                                    .get(INVOICE_LINE_ITEM)
+                        )
+                            .add(
+                                    // safe conversion && will always hold only 1 item
+                                    ((List<Map<String, ?>>) invoice.get(INVOICE_LINE_ITEM)).get(0)
+                            );
+                }
+                else  // new invoice, add invoice to invoice map
+                    invoices.put(
+                            (Long) invoice.get(INVOICE_ID_KEY),
+                            invoice
+                    );
+
+            }
+
+            return new ArrayList<HashMap<String, Object>>(invoices.values());
         }
 
         // returns a hashmap holding all children hashmap

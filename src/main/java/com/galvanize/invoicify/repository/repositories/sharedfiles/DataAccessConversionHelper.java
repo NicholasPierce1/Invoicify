@@ -139,7 +139,7 @@ public final class DataAccessConversionHelper {
             throw new IllegalArgumentException("column name " + columnWithPrefix + " does not start with" +
                     "'PREFIX'. Are you sure this is a sub-query column?");
 
-        return columnWithPrefix.replaceFirst("PREFIX[0-9]*_", "");
+        return columnWithPrefix.replaceFirst("prefix[0-9]*_", "");
 
     }
 
