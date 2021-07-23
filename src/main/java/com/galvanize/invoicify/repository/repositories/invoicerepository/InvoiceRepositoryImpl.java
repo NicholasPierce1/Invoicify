@@ -171,7 +171,13 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
         // enumerates static final fields for the key-values for composite (children) hashmaps
 
-        // private static final String INVOICE_
+        private static final String INVOICE_COMPANY = "company";
+
+        private static final String INVOICE_USER = "user";
+
+        private static final String INVOICE_LINE_ITEMS = "lineItems";
+
+        //private static final String IL_
 
         public InvoiceRepositoryManagerHelper(
                 ObjectMapper objectMapper,
