@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 public class Invoice {
     private long id;
     private Company company;
-    private Date createdOn;
+    private LocalDate createdOn;
     private User createdBy;
     private String invoiceDescription;
     private List<InvoiceLineItem> lineItems;
@@ -38,11 +39,11 @@ public class Invoice {
         this.company = company;
     }
 
-    public Date getCreatedOn() {
+    public LocalDate getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(Date createdOn) {
+    public void setCreatedOn(LocalDate createdOn) {
         this.createdOn = createdOn;
     }
 

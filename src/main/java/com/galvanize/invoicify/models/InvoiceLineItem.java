@@ -3,12 +3,13 @@ package com.galvanize.invoicify.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.Transient;
+import java.time.LocalDate;
 import java.util.Date;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InvoiceLineItem {
     private long id;
-    private Date dateCreatedOn;
+    private LocalDate dateCreatedOn;
 
     @Transient
     private User createdBy;
@@ -33,11 +34,11 @@ public class InvoiceLineItem {
         this.billingRecord = billingRecord;
     }
 
-    public Date getDateCreatedOn() {
+    public LocalDate getDateCreatedOn() {
         return dateCreatedOn;
     }
 
-    public void setDateCreatedOn(Date dateCreatedOn) {
+    public void setCreatedOn(LocalDate dateCreatedOn) {
         this.dateCreatedOn = dateCreatedOn;
     }
 

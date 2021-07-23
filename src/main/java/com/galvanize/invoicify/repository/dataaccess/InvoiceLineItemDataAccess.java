@@ -2,18 +2,25 @@ package com.galvanize.invoicify.repository.dataaccess;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.galvanize.invoicify.models.BillingRecord;
-import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.models.InvoiceLineItem;
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.function.Supplier;
 
 @Entity
 @Table(name = "invoice_line_item")
 public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
+
+    @Autowired
+    @Transient
+    DateTimeFormatter dateTimeFormatter;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -120,7 +127,7 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
     public <M extends InvoiceLineItem> M convertToModel(Supplier<M> supplier) {
         M invoiceLineItem = supplier.get();
         invoiceLineItem.setId(this.getId());
-        invoiceLineItem.setDateCreatedOn(this.getCreatedOn());
+        invoiceLineItem.setCreatedOn(LocalDate.parse(this.getCreatedOn().toString(), dateTimeFormatter));
         invoiceLineItem.setCreatedBy(this.getUser().convertToModel(User::new));
         return invoiceLineItem;
     }

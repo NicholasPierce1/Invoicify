@@ -10,7 +10,11 @@ import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.function.Supplier;
@@ -19,6 +23,10 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "invoice")
 public class InvoiceDataAccess implements IDataAccess<Invoice> {
+
+    @Autowired
+    @Transient
+    DateTimeFormatter dateTimeFormatter;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -139,7 +147,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
         if(this.getUser() != null)
             invoice.setCreatedBy(this.getUser().convertToModel(User::new));
         invoice.setInvoiceDescription(this.getDescription());
-        invoice.setCreatedOn(this.getCreatedOn());
+        invoice.setCreatedOn(LocalDate.parse(this.getCreatedOn().toString(), dateTimeFormatter));
         invoice.setLineItems(
                 this
                         .getLineItems()
