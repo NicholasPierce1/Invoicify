@@ -76,7 +76,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             for (int i = 0; i < recordIds.size(); i++) {
                 final String or = " or ";
                 String placeHolder = "t1.id = %d";
-                if (i != recordIds.size() - 1 && recordIds.size() != 1) {// not last element
+                if (i != recordIds.size() - 1) {// not last element
                     placeHolder = placeHolder.concat(or);
                 }
                 recordIdsStr = recordIdsStr.concat(String.format(placeHolder, recordIds.get(i)));
