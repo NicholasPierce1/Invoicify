@@ -71,16 +71,17 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
         String invoiceQueryStr = "";
 
         if (recordIds != null || recordIds.size() > 0) {
-            String recordIdsStr = " and ";
+            String recordIdsStr = " and (";
 
             for (int i = 0; i < recordIds.size(); i++) {
                 final String or = " or ";
                 String placeHolder = "t1.id = %d";
-                if (i != recordIds.size() - 1) {// not last element
+                if (i != recordIds.size() - 1 && recordIds.size() != 1) {// not last element
                     placeHolder = placeHolder.concat(or);
                 }
                 recordIdsStr = recordIdsStr.concat(String.format(placeHolder, recordIds.get(i)));
             }
+            recordIdsStr += ")";
 
             String flatFeeBillingRecordWhereClause = QueryTableNameModifier.insertTableNamesIntoQuery(recordIdsStr, "f");
             String rateBasedBillingRecordWhereClause = QueryTableNameModifier.insertTableNamesIntoQuery(recordIdsStr, "r");
