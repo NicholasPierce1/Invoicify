@@ -49,25 +49,63 @@ public final class User implements UserDetails {
 		return null;
 	}
 
+
+	/**
+	 * <p>
+	 *     This methods gets the password stored for the User DataAccessObject
+	 *     stored in the user table.
+	 * </p>
+	 * @return password -> password stored in the user_password field in the User table.
+	 */
+
 	@Override
 	public String getPassword() {
 		return password;
 	}
+
+	/**
+	 * <p>
+	 *     This method gets the String username for the User DataAccessObject
+	 *     stored in the user table
+	 * </p>
+	 * @return username -> string username stored in the user_password field in the user table.
+	 * */
 
 	@Override
 	public String getUsername() {
 		return username;
 	}
 
+	/**
+	 * <p>
+	 *		This method checks if the account is non-expired in the user data store.
+	 * </p>
+	 * @return true -> return true if the account credentials are non-expired.
+	 * */
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
 	}
 
+	/**
+	 * <p>
+	 *		This method checks if the authentication for the user is locked.
+	 * </p>
+	 * @return true -> boolean returns true of the account is locked.
+	 * */
+
 	@Override
 	public boolean isAccountNonLocked() {
 		return true;
 	}
+
+	/**
+	 * <p>
+	 *		Checks if the credentials entered are expired.
+	 * </p>
+	 * @return true -> boolean returns true if the credentials stored are expired.
+	 * */
 
 	@Override
 	public boolean isCredentialsNonExpired() {
@@ -81,9 +119,10 @@ public final class User implements UserDetails {
 
 	/**
 	 * <p>
-	 *     This gets the User id.
+	 *     This is the reflection of the user id in the database that has been
+	 *     converted.
 	 * </p>
-	 * @return id -> retrieves the id that was assigned to that User.
+	 * @return id -> retrieves the id that was assigned to that user DataAccessObject.
 	 * */
 
 	public Long getId() {
@@ -104,7 +143,7 @@ public final class User implements UserDetails {
 
 	/**
 	 * <p>
-	 *		The String password
+	 *		This sets String password
 	 * </p>
 	 * @param password -> sets the password of the User assigned to the DataAccessObject after conversion.
 	 * */

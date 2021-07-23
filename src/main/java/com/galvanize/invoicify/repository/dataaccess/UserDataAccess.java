@@ -60,30 +60,65 @@ public final class UserDataAccess implements IDataAccess<User> {
 
     /**
      *<p>
-     *
+     *  This gets the user id in the user table.
      *</p>
-     * @return id -> id stored in the user_id field.
+     * @return id -> id stored in the user_id field in User table.
      * */
 
     public Long getId() {
         return id;
     }
 
+    /**
+     *<p>
+     *  This gets the password that is stored in the user table.
+     *</p>
+     * @return password ->
+     * */
+
     public String getPassword() {
         return password;
     }
+
+    /**
+     * <p>
+     *     This gets the user name that is stored in the User table.
+     * </p>
+     * @return username -> retrieves the username that was assigned to that user.
+     * */
 
     public String getUsername() {
         return username;
     }
 
+    /**
+     * <p>
+     *     This sets the serialized id that was assigned to the User DataAccessObject.
+     * </p>
+     * @param id -> takes in the serialized id that was assigned to the user DataAccessObject
+     * */
+
     public void setId(Long id) {
         this.id = id;
     }
 
+    /***
+     * <p>
+     *     The sets the string password for the User that is stored in the user table.
+     * </p>
+     * @param password -> set the password of the User assigned to that User
+     */
+
     public void setPassword(String password) {
         this.password = password;
     }
+
+    /***
+     * <p>
+     *     This sets the username that is stored for the user in the user table.
+     * </p>
+     * @param username -> sets the username of the User
+     */
 
     public void setUsername(String username) {
         this.username = username;
@@ -92,6 +127,10 @@ public final class UserDataAccess implements IDataAccess<User> {
     // method/s
 
     /**
+     * <p>
+     *      The method creates the DataAccessObject that communicates with the database.
+     * </p>
+     * @param dbo -> takes in the DataAccessObject that Spring autogenerates.
      * */
 
     @Override
@@ -101,9 +140,9 @@ public final class UserDataAccess implements IDataAccess<User> {
 
     /**
      * <p>
-     *     Converts a data access object to a model object
+     *     Converts a DataAccessObject to a Model Object and assigns the username and id.
      * </p>
-     * @param supplier: provides implementation of creating a model object.
+     * @param supplier: provides implementation of converting to a model object.
      *                NOTE: the default state set in the supplier may/will be written over.
      * @param <M>: A model type used to create data access reflections
      * @return a User model object of the reflect data access definition
@@ -120,9 +159,11 @@ public final class UserDataAccess implements IDataAccess<User> {
     }
 
     /**
-     *
-     * @param
-     * */
+     * <p>
+     *     Converts a Model Object to a DataAccessObject and sets the name and id.
+     * </p>
+     * @param <M>: A Model Object used to convert DataAccessObject
+     */
 
     @Override
     public <M extends User> void convertToDataAccess(M modelObject) {
