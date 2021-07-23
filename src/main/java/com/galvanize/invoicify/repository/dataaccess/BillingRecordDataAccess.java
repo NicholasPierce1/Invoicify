@@ -18,12 +18,12 @@ import java.util.function.Supplier;
         property = "type"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = RateBasedBillingRecord.class, name = "RateBasedBillingRecordDataAccess"),
-        @JsonSubTypes.Type(value = FlatFeeBillingRecord.class, name = "FlatFeeBillingRecordDataAccess")
+        @JsonSubTypes.Type(value = RateBasedBillingRecordDataAccess.class, name = "RateBasedBillingRecordDataAccess"),
+        @JsonSubTypes.Type(value = FlatFeeBillingRecordDataAccess.class, name = "FlatFeeBillingRecordDataAccess")
 })
 public abstract class BillingRecordDataAccess<T extends BillingRecord> implements IDataAccess<T> {
 
-    private enum SubTypeTable{
+    public enum SubTypeTable{
 
         FlatFee("FlatFeeBillingRecordDataAccess"),
         RateBased("RateBasedBillingRecordDataAccess");
