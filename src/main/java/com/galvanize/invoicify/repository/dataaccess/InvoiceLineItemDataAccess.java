@@ -118,7 +118,11 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
 
     @Override
     public <M extends InvoiceLineItem> M convertToModel(Supplier<M> supplier) {
-        return null;
+        M invoiceLineItem = supplier.get();
+        invoiceLineItem.setId(this.getId());
+        invoiceLineItem.setDateCreatedOn(this.getCreatedOn());
+        invoiceLineItem.setCreatedBy(this.getUser().convertToModel(User::new));
+        return invoiceLineItem;
     }
 
     @Override

@@ -1,11 +1,13 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.models.InvoiceLineItem;
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -136,6 +138,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
         if(this.getUser() != null)
             invoice.setCreatedBy(this.getUser().convertToModel(User::new));
         invoice.setInvoiceDescription(this.getDescription());
+        invoice.setCreatedOn(this.getCreatedOn());
         invoice.setLineItems(
                 this
                         .getLineItems()
@@ -159,6 +162,8 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
         final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
         companyDataAccess.setName(modelObject.getCompany().getName());
         companyDataAccess.setId(modelObject.getCompany().getId());
+
+
 
         //todo: finish
     }
