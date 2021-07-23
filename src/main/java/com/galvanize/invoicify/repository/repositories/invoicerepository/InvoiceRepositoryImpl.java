@@ -1,6 +1,7 @@
 package com.galvanize.invoicify.repository.repositories.invoicerepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.galvanize.invoicify.repository.dataaccess.BillingRecordDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
 import com.galvanize.invoicify.repository.repositories.sharedfiles.DataAccessConversionHelper;
@@ -117,6 +118,20 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                 System.out.println("id: " + i + " columnName: " + resultSet.getMetaData().getColumnName(i));
 
             // todo: invoke helper method for parsing & rendering InvoiceDataAccess
+
+//            int x = 0;
+//            while(resultSet.next()){
+//                System.out.println(resultSet.getObject(6));
+//                x+=1;
+//            }
+//            System.out.println(x);
+
+            final List<? extends Map<String, ?>> invoices = this._invoiceRepositoryManagerHelper.createDeserializableInvoicesFromResultSet(resultSet);
+
+            for(Map<String, ?> map : invoices)
+                System.out.println(this._objectMapper.writeValueAsString(map));
+
+            System.out.println("we made it out bois!");
             // todo: then, refactor data access conversion helper
 
 
@@ -155,7 +170,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                   " (select a.*, i.*, users.user_id as prefix_user_id, users.password as prefix_password, users.username as prefix_username, c.*, r.id, r.billing_record_company_id, r.billing_record_created_by, r.description, r.in_use, null as amount, r.quantity, r.rate " +
                   " from invoice_line_item i, rate_based_billing_record r, company c, app_user a, " +
                   " (select * from app_user) as users " +
-                  " where i.billing_record_id = r.id " + rIds+
+                  " where i.billing_record_id = r.id " +// + rIds+
                   " and r.billing_record_company_id = c.company_id " +
                   " and i.created_by = a.user_id " +
                   " and users.user_id = r.billing_record_created_by) " +
@@ -164,18 +179,19 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                   " from invoice_line_item i, flat_fee_billing_record f, company c, app_user a, " +
                   " (select * from app_user) as users " +
                   " where i.billing_record_id = f.id " +
-                  fIds +
+                  //fIds +
                   " and f.billing_record_company_id = c.company_id " +
                   " and i.created_by = a.user_id " +
                   " and users.user_id = f.billing_record_created_by) " +
                   ") as unionTable " +
                   "where " +
-                  "c_i.invoice_id = unionTable.invoice_id " +
-                           invId   + ";");
+                  "c_i.invoice_id = unionTable.invoice_id "// +
+                          //invId   + ";"
+        );
         return stringBuffer.toString();
     }
 
-    private class InvoiceRepositoryManagerHelper{
+    private static class InvoiceRepositoryManagerHelper{
 
         private final ObjectMapper _objectMapper;
 
@@ -246,7 +262,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                 Map<String, HashMap<String, Object>> childrenMaps = null;
 
 
-                for (int column = 1; column < resultSet.getMetaData().getColumnCount(); column++)
+                for (int column = 1; column < resultSet.getMetaData().getColumnCount() + 1; column++)
                 {
 
                     // extract column value from result set
@@ -282,24 +298,35 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                         currentMapState.getValue2().put(currentMapState.getValue3(), currentMapState.getValue0());
                     }
 
+                    // if column value is 'amount'
+                    // determine if current billing record is flat fee or rate based
+                    // amount == null then rate based
+                    if(columnName.equals("amount")){
+                        currentMapState.getValue0().put(
+                                "type",
+                                columnValue == null ?
+                                        BillingRecordDataAccess.SubTypeTable.RateBased.getTypeName()
+                                        :
+                                        BillingRecordDataAccess.SubTypeTable.FlatFee.getTypeName()
+                        );
+                    }
+
                     // sets key - value pair to current map
                     currentMapState.getValue0().put(columnName, columnValue);
 
                     // if last column in row then add invoice map (with all children attached) to result list
-                    if(column == resultSet.getMetaData().getColumnCount() - 1)
+                    if(column == resultSet.getMetaData().getColumnCount() - 1) {
                         invoiceDeserializableList.add(
                                 childrenMaps.get(INVOICE_KEY)
                         );
+                        //System.out.println("After loop:\n" + childrenMaps.get(INVOICE_KEY));
+                    }
 
                 }
 
                 if(resultSet.isLast())
                     endOfRows = true;
             }
-
-            // todo: remove after testing
-            for(final Map<String, ?> map : invoiceDeserializableList)
-                System.out.println(map);
 
             //todo: go through each invoice and set the invoice item list to each
 
@@ -396,7 +423,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                         childrenMaps.get(BR_KEY),
                         BR_COMPANY
                 );
-            else if(index >= 24 && index <= 30)
+            else if(index >= 24 && index <= 31)
                 return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(
                         childrenMaps.get(BR_KEY),
                         index == 24,

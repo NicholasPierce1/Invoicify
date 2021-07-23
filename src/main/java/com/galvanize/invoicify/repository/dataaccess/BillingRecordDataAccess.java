@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 @MappedSuperclass()
 public abstract class BillingRecordDataAccess<T extends BillingRecord> implements IDataAccess<T> {
 
-    private enum SubTypeTable{
+    public enum SubTypeTable{
 
         FlatFee("FlatFeeBillingRecordDataAccess"),
         RateBased("RateBasedBillingRecordDataAccess");
