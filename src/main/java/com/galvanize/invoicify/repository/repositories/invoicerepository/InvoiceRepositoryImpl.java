@@ -1,6 +1,7 @@
 package com.galvanize.invoicify.repository.repositories.invoicerepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
 import com.galvanize.invoicify.repository.repositories.sharedfiles.DataAccessConversionHelper;
@@ -119,8 +120,6 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
             // todo: invoke helper method for parsing & rendering InvoiceDataAccess
             // todo: then, refactor data access conversion helper
-
-
 
 //            invoices.forEach(
 //                    (objects ->

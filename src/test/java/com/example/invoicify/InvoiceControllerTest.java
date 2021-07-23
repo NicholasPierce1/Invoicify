@@ -29,6 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -190,9 +191,8 @@ public class InvoiceControllerTest {
     public void createInvoice() throws Exception {
         long companyId = 1L;
         long userId = 1L;
-        final LocalDate now = LocalDate.now();
 
-        InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess(companyId, now, userId, "invoice_test_description");
+        InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess(companyId, new Date(), userId, "invoice_test_description");
         Invoice invoiceRequest = new Invoice();
         List<Long> recordIds = new ArrayList<Long>();
         recordIds.add(1L);
@@ -224,7 +224,7 @@ public class InvoiceControllerTest {
         long companyId = 1L;
         long userId = 1L;
         final LocalDate now = LocalDate.now();
-        InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess(companyId, now, userId, "invoice_test_description");
+        InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess(companyId, new Date(), userId, "invoice_test_description");
         Invoice invoiceRequest = new Invoice();
         List<Long> recordIds = new ArrayList<Long>();
         recordIds.add(1L);

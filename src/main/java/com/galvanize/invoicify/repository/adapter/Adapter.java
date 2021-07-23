@@ -480,7 +480,7 @@ public final class Adapter {
     private InvoiceDataAccess saveInvoiceToDb(Invoice invoiceRequest, long companyId, long createdById) {
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess();
         invoiceDataAccess.setCompanyId(companyId);
-        invoiceDataAccess.setCreatedOn(LocalDate.now());
+        invoiceDataAccess.setCreatedOn(new Date());
         invoiceDataAccess.setCreatedBy(createdById);
         invoiceDataAccess.setDescription(invoiceRequest.getInvoiceDescription());
         this._invoiceRepository.save(invoiceDataAccess).convertToModel(Invoice::new);
