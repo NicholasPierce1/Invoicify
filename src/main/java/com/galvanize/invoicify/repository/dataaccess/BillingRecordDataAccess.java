@@ -18,8 +18,8 @@ import java.util.function.Supplier;
         property = "type"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = RateBasedBillingRecord.class, name = "RateBasedBillingRecord"),
-        @JsonSubTypes.Type(value = FlatFeeBillingRecord.class, name = "FlatFeeBillingRecord")
+        @JsonSubTypes.Type(value = RateBasedBillingRecord.class, name = "RateBasedBillingRecordDataAccess"),
+        @JsonSubTypes.Type(value = FlatFeeBillingRecord.class, name = "FlatFeeBillingRecordDataAccess")
 })
 public abstract class BillingRecordDataAccess<T extends BillingRecord> implements IDataAccess<T> {
 

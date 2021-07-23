@@ -256,7 +256,8 @@ public class InvoiceControllerTest {
     public void testCreateInvoiceBillingRecordOrClause() {
         List<Long> recordIds = new ArrayList<Long>();
         recordIds.add(1L);
-        //recordIds.add(2L);
+        recordIds.add(2L);
+        recordIds.add(3L);
         String recordIdsStr = " and (";
 
         for (int i = 0; i < recordIds.size(); i++) {
