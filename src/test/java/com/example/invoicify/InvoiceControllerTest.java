@@ -1,17 +1,20 @@
 package com.example.invoicify;
 
-import ch.qos.logback.core.joran.spi.ElementPath;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.InvoiceController;
 import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.repository.adapter.Adapter;
+import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.invoicelineitemrepository.InvoiceLineItemRepository;
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
+import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepositoryCustom;
+import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepositoryImpl;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,7 +30,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,13 +48,11 @@ public class InvoiceControllerTest {
 
     ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
     private FlatFeeBillingRecordRepository _flatFeeBillingRecordRepository;
 
-    @Autowired
     private RateBaseBillingRecordRepository _rateBasedBillingRecordRepository;
 
-    private CompanyRepository companyRepository;
+    private CompanyRepository _companyRepository;
 
     private UserRepository _userRepository;
 
@@ -72,10 +72,12 @@ public class InvoiceControllerTest {
     public void createAdapter() {
         this._invoiceRepository = Mockito.mock(InvoiceRepository.class);
         this._userRepository = Mockito.mock(UserRepository.class);
-        this.companyRepository = Mockito.mock(CompanyRepository.class);
+        this._companyRepository = Mockito.mock(CompanyRepository.class);
+        this._flatFeeBillingRecordRepository = Mockito.mock(FlatFeeBillingRecordRepository.class);
+        this._invoiceLineItemRepository = Mockito.mock(InvoiceLineItemRepository.class);
         adapter = new Adapter(
                 _userRepository,
-                companyRepository,
+                _companyRepository,
                 _flatFeeBillingRecordRepository,
                 _rateBasedBillingRecordRepository,
                 _invoiceRepository,
@@ -193,6 +195,10 @@ public class InvoiceControllerTest {
         long userId = 1L;
 
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess(companyId, new Date(), userId, "invoice_test_description");
+        InvoiceLineItemDataAccess invoiceLineItemDataAccess = new InvoiceLineItemDataAccess();
+        CompanyDataAccess company = new CompanyDataAccess();
+
+
         Invoice invoiceRequest = new Invoice();
         List<Long> recordIds = new ArrayList<Long>();
         recordIds.add(1L);
@@ -201,19 +207,23 @@ public class InvoiceControllerTest {
         invoiceRequest.setInvoiceDescription("Invoice Description");
         invoiceRequest.setRecordIds(recordIds);
         Invoice expectedInvoice = new Invoice();
-
         UserDataAccess userDataAccess = new UserDataAccess("bob", "password");
         userDataAccess.setId(userId);
 
-        when(_userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(userDataAccess));
+
+        when(_companyRepository.findById(companyId)).thenReturn(Optional.of(company));
+        when(_flatFeeBillingRecordRepository.existsById(any())).thenReturn(true);
+        when(_userRepository.findByUsername(any())).thenReturn(Optional.of(userDataAccess));
+        //when(_invoiceRepository.save(any())).thenReturn(invoiceDataAccess);
+        when(_invoiceLineItemRepository.save(any())).thenReturn(invoiceLineItemDataAccess);
+        when(_invoiceRepository.fetchInvoice(any(), any())).thenReturn(invoiceDataAccess);
         when(_invoiceRepository.save(any())).thenReturn(invoiceDataAccess);
-        when(_invoiceRepository.fetchInvoice(any(),any())).thenReturn(invoiceDataAccess);
 
         Invoice actualInvoice = this.invoiceController.createInvoice(auth, invoiceRequest, 1);
         assertEquals(objectMapper.writeValueAsString(actualInvoice), createInvoiceResponseStr);
 
 
-        verify(_invoiceRepository, times(1)).save(any());
+        //verify(_invoiceRepository, times(1)).save(any());
 
 
     }
@@ -223,32 +233,16 @@ public class InvoiceControllerTest {
     public void getInvoices() throws Exception {
         long companyId = 1L;
         long userId = 1L;
-        final LocalDate now = LocalDate.now();
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess(companyId, new Date(), userId, "invoice_test_description");
-        Invoice invoiceRequest = new Invoice();
-        List<Long> recordIds = new ArrayList<Long>();
-        recordIds.add(1L);
-        recordIds.add(2L);
 
-        invoiceRequest.setInvoiceDescription("Invoice Description");
-        invoiceRequest.setRecordIds(recordIds);
+        List<InvoiceDataAccess> listOfDataAccesses = new ArrayList<InvoiceDataAccess>();
+        listOfDataAccesses.add(invoiceDataAccess);
         Invoice expectedInvoice = new Invoice();
+        when(_invoiceRepository.fetchInvoices(any(), any())).thenReturn(listOfDataAccesses);
 
-
-
-
-        UserDataAccess userDataAccess = new UserDataAccess("bob", "password");
-        userDataAccess.setId(userId);
-
-        //List<InvoiceDataAccess> listOfDataAccesses = new ArrayList<InvoiceDataAccess>(InvoiceDataAccess);
-
-        //when(_invoiceRepository.fetchInvoices(any(), any())).thenReturn();
-
-        Invoice actualInvoice = this.invoiceController.createInvoice(auth, invoiceRequest, 1);
+        Invoice actualInvoice = this.invoiceController.createInvoice(auth, expectedInvoice, 1);
         assertEquals(objectMapper.writeValueAsString(actualInvoice), objectMapper.writeValueAsString(expectedInvoice));
         verify(_invoiceRepository, times(1)).save(any());
-
-
     }
 
 

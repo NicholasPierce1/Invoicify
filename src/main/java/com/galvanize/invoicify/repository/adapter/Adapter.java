@@ -446,10 +446,11 @@ public final class Adapter {
     }
 
     public Invoice createInvoice(Invoice invoice, long companyId, String userName) throws InvalidRequestException {
-        //validateRequestCompanyIDandRecordIds(companyId, invoiceRequest.getRecordIds());
+        validateRequestCompanyIDandRecordIds(companyId, invoice.getRecordIds());
         long createdById = getUserByUserName(userName).get().getId();
         InvoiceDataAccess savedInvoiceDataAccess = saveInvoiceToDb(invoice, companyId, createdById);
         long invoiceId = savedInvoiceDataAccess.getId();
+        System.out.println("here");
         saveInvoiceItemsToDb(invoiceId, invoice.getRecordIds(), createdById);
         return this._invoiceRepository.fetchInvoice(invoiceId, invoice.getRecordIds()).convertToModel(Invoice::new);
     }
@@ -461,7 +462,6 @@ public final class Adapter {
             throw new InvalidRequestException("Company ID " + companyId + "not found.");
         }
         for (long id : recordIds) {
-            //isBillingRecordIdValid = getBillingRecordById(id).isPresent();
             isBillingRecordIdValid = _flatFeeBillingRecordRepository.existsById(id) || _rateBasedBillingRecordRepository.existsById(id);
             if (!isBillingRecordIdValid) {
                 throw new InvalidRequestException("Record ID " + id + " not found.");
