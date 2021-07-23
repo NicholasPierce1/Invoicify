@@ -163,18 +163,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     @Override
     public <M extends Invoice> void convertToDataAccess(M modelObject) {
-        final UserDataAccess userDataAccess = new UserDataAccess();
-        userDataAccess.setId(modelObject.getCreatedBy().getId());
-        userDataAccess.setUsername(modelObject.getCreatedBy().getUsername());
-        userDataAccess.setPassword(modelObject.getCreatedBy().getPassword());
 
-        final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
-        companyDataAccess.setName(modelObject.getCompany().getName());
-        companyDataAccess.setId(modelObject.getCompany().getId());
-
-
-
-        //todo: finish
     }
 
 
