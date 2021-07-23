@@ -8,4 +8,6 @@ public class InvoiceLineItem {
     private Date dateCreatedOn;
     private User createdBy;
     private Invoice invoice;
+
+
 }

@@ -451,11 +451,7 @@ public final class Adapter {
         InvoiceDataAccess savedInvoiceDataAccess = saveInvoiceToDb(invoice, companyId, createdById);
         long invoiceId = savedInvoiceDataAccess.getId();
         saveInvoiceItemsToDb(invoiceId, invoice.getRecordIds(), createdById);
-
-        //todo: build invoice response obj
-
-        this._invoiceRepository.fetchInvoice(invoiceId, invoice.getRecordIds());//.convertToModel(Invoice::new);
-        return new Invoice();
+        return this._invoiceRepository.fetchInvoice(invoiceId, invoice.getRecordIds()).convertToModel(Invoice::new);
     }
 
     private void validateRequestCompanyIDandRecordIds(long companyId, List<Long> recordIds) throws InvalidRequestException {
@@ -484,7 +480,7 @@ public final class Adapter {
     private InvoiceDataAccess saveInvoiceToDb(Invoice invoiceRequest, long companyId, long createdById) {
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess();
         invoiceDataAccess.setCompanyId(companyId);
-        invoiceDataAccess.setCreatedOn(LocalDate.now());
+        invoiceDataAccess.setCreatedOn(new Date());
         invoiceDataAccess.setCreatedBy(createdById);
         invoiceDataAccess.setDescription(invoiceRequest.getInvoiceDescription());
         this._invoiceRepository.save(invoiceDataAccess).convertToModel(Invoice::new);

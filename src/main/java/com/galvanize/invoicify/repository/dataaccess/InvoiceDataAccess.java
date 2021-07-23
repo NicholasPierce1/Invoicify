@@ -8,8 +8,8 @@ import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -30,7 +30,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     @Column(name = "created_on",nullable = false)
     @JsonProperty(value = "created_on")
-    private LocalDate createdOn;
+    private Date createdOn;
 
     @Column(name = "created_by",nullable = false)
     @JsonProperty(value = "created_by")
@@ -73,7 +73,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
     public InvoiceDataAccess() {
 
     }
-    public InvoiceDataAccess(long companyId, LocalDate createdOn, long createdBy, String description) {
+    public InvoiceDataAccess(long companyId, Date createdOn, long createdBy, String description) {
         this.companyId = companyId;
         this.createdOn = createdOn;
         this.createdBy = createdBy;
@@ -96,11 +96,11 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
         this.companyId = companyId;
     }
 
-    public LocalDate getCreatedOn() {
+    public Date getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(LocalDate createdOn) {
+    public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
     }
 

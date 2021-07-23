@@ -1,15 +1,26 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.galvanize.invoicify.models.BillingRecord;
-import com.galvanize.invoicify.models.Company;
-import com.galvanize.invoicify.models.User;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.galvanize.invoicify.models.*;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 
 import javax.persistence.*;
 import java.util.function.Supplier;
 
 @MappedSuperclass()
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type"
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = RateBasedBillingRecord.class, name = "RateBasedBillingRecordDataAccess"),
+        @JsonSubTypes.Type(value = FlatFeeBillingRecord.class, name = "FlatFeeBillingRecordDataAccess")
+})
 public abstract class BillingRecordDataAccess<T extends BillingRecord> implements IDataAccess<T> {
 
     public enum SubTypeTable{

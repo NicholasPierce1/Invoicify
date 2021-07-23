@@ -72,7 +72,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
         String invoiceQueryStr = "";
 
         if (recordIds != null || recordIds.size() > 0) {
-            String recordIdsStr = " and ";
+            String recordIdsStr = " and (";
 
             for (int i = 0; i < recordIds.size(); i++) {
                 final String or = " or ";
@@ -82,6 +82,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                 }
                 recordIdsStr = recordIdsStr.concat(String.format(placeHolder, recordIds.get(i)));
             }
+            recordIdsStr += ")";
 
             String flatFeeBillingRecordWhereClause = QueryTableNameModifier.insertTableNamesIntoQuery(recordIdsStr, "f");
             String rateBasedBillingRecordWhereClause = QueryTableNameModifier.insertTableNamesIntoQuery(recordIdsStr, "r");
@@ -133,8 +134,6 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
             System.out.println("we made it out bois!");
             // todo: then, refactor data access conversion helper
-
-
 
 //            invoices.forEach(
 //                    (objects ->
