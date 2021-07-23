@@ -71,7 +71,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
         String invoiceQueryStr = "";
 
-        if (recordIds != null || recordIds.size() > 0) {
+        if (recordIds != null && recordIds.size() > 0) {
             String recordIdsStr = " and (";
 
             for (int i = 0; i < recordIds.size(); i++) {
