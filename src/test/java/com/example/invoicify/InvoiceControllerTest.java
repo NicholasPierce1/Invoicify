@@ -27,6 +27,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -87,21 +89,160 @@ public class InvoiceControllerTest {
         long userId = 1L;
         final LocalDate now = LocalDate.now();
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess(companyId, now, userId, "invoice_test_description");
+        Invoice invoiceRequest = new Invoice();
+        List<Long> recordIds = new ArrayList<Long>();
+        recordIds.add(1L);
+        recordIds.add(2L);
+
+        invoiceRequest.setInvoiceDescription("Invoice Description");
+        invoiceRequest.setRecordIds(recordIds);
         Invoice expectedInvoice = new Invoice();
 
-        // todo: fully create invoice data access -- test fails due to having a partial invoice data access
+
+        String createInvoiceResponseStr = "{" +
+                "  \"id\": 1," +
+                "  \"company\": {" +
+                "    \"id\": 1," +
+                "    \"name\": \"Vapianos Ltd.\"" +
+                "  }," +
+                "  \"createdOn\": \"2015-05-07\"," +
+                "  \"createdBy\": {" +
+                "    \"id\": 1," +
+                "    \"password\": \"$2a$10$d1wOiO11zyY.iqptZNiMnezV4FnMvN5TPRTTMC5V89IhnXqhCkdzm\"," +
+                "    \"username\": \"admin\"," +
+                "    \"enabled\": true," +
+                "    \"authorities\": null," +
+                "    \"accountNonExpired\": true," +
+                "    \"accountNonLocked\": true," +
+                "    \"credentialsNonExpired\": true" +
+                "  }," +
+                "  \"invoiceDescription\": \"new invoice\"," +
+                "  \"lineItems\": [" +
+                "    {" +
+                "      \"id\": 1," +
+                "      \"createdOn\": \"2015-05-07\"," +
+                "      \"createdBy\": {" +
+                "        \"id\": 1," +
+                "        \"password\": \"$2a$10$d1wOiO11zyY.iqptZNiMnezV4FnMvN5TPRTTMC5V89IhnXqhCkdzm\"," +
+                "        \"username\": \"admin\"," +
+                "        \"enabled\": true," +
+                "        \"authorities\": null," +
+                "        \"accountNonExpired\": true," +
+                "        \"accountNonLocked\": true," +
+                "        \"credentialsNonExpired\": true" +
+                "      }" +
+                "    }," +
+                "    {" +
+                "      \"id\": 2," +
+                "      \"createdOn\": \"2015-05-07\"," +
+                "      \"createdBy\": {" +
+                "        \"id\": 1," +
+                "        \"password\": \"$2a$10$d1wOiO11zyY.iqptZNiMnezV4FnMvN5TPRTTMC5V89IhnXqhCkdzm\"," +
+                "        \"username\": \"admin\"," +
+                "        \"enabled\": true," +
+                "        \"authorities\": null," +
+                "        \"accountNonExpired\": true," +
+                "        \"accountNonLocked\": true," +
+                "        \"credentialsNonExpired\": true" +
+                "      }" +
+                "    }" +
+                "  ]" +
+                "}";
+        
+        
 
         UserDataAccess userDataAccess = new UserDataAccess("bob", "password");
         userDataAccess.setId(userId);
-        /*
+
         when(_userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(userDataAccess));
         when(_invoiceRepository.save(any(InvoiceDataAccess.class))).thenReturn(invoiceDataAccess);
 
-        Invoice actualInvoice = this.invoiceController.createInvoice(auth, expectedInvoice, 1);
+        Invoice actualInvoice = this.invoiceController.createInvoice(auth, invoiceRequest, 1);
         assertEquals(objectMapper.writeValueAsString(actualInvoice), objectMapper.writeValueAsString(expectedInvoice));
         verify(_invoiceRepository, times(1)).save(any());
 
-         */
+
+    }
+
+    @Test
+    //@WithMockUser(value = "bob")
+    public void getInvoices() throws Exception {
+        long companyId = 1L;
+        long userId = 1L;
+        final LocalDate now = LocalDate.now();
+        InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess(companyId, now, userId, "invoice_test_description");
+        Invoice invoiceRequest = new Invoice();
+        List<Long> recordIds = new ArrayList<Long>();
+        recordIds.add(1L);
+        recordIds.add(2L);
+
+        invoiceRequest.setInvoiceDescription("Invoice Description");
+        invoiceRequest.setRecordIds(recordIds);
+        Invoice expectedInvoice = new Invoice();
+
+
+        String getInvoicesResponseStr = "[{" +
+                "  \"id\": 1," +
+                "  \"company\": {" +
+                "    \"id\": 1," +
+                "    \"name\": \"Vapianos Ltd.\"" +
+                "  }," +
+                "  \"createdOn\": \"2015-05-07\"," +
+                "  \"createdBy\": {" +
+                "    \"id\": 1," +
+                "    \"password\": \"$2a$10$d1wOiO11zyY.iqptZNiMnezV4FnMvN5TPRTTMC5V89IhnXqhCkdzm\"," +
+                "    \"username\": \"admin\"," +
+                "    \"enabled\": true," +
+                "    \"authorities\": null," +
+                "    \"accountNonExpired\": true," +
+                "    \"accountNonLocked\": true," +
+                "    \"credentialsNonExpired\": true" +
+                "  }," +
+                "  \"invoiceDescription\": \"new invoice\"," +
+                "  \"lineItems\": [" +
+                "    {" +
+                "      \"id\": 1," +
+                "      \"createdOn\": \"2015-05-07\"," +
+                "      \"createdBy\": {" +
+                "        \"id\": 1," +
+                "        \"password\": \"$2a$10$d1wOiO11zyY.iqptZNiMnezV4FnMvN5TPRTTMC5V89IhnXqhCkdzm\"," +
+                "        \"username\": \"admin\"," +
+                "        \"enabled\": true," +
+                "        \"authorities\": null," +
+                "        \"accountNonExpired\": true," +
+                "        \"accountNonLocked\": true," +
+                "        \"credentialsNonExpired\": true" +
+                "      }" +
+                "    }," +
+                "    {" +
+                "      \"id\": 2," +
+                "      \"createdOn\": \"2015-05-07\"," +
+                "      \"createdBy\": {" +
+                "        \"id\": 1," +
+                "        \"password\": \"$2a$10$d1wOiO11zyY.iqptZNiMnezV4FnMvN5TPRTTMC5V89IhnXqhCkdzm\"," +
+                "        \"username\": \"admin\"," +
+                "        \"enabled\": true," +
+                "        \"authorities\": null," +
+                "        \"accountNonExpired\": true," +
+                "        \"accountNonLocked\": true," +
+                "        \"credentialsNonExpired\": true" +
+                "      }" +
+                "    }" +
+                "  ]" +
+                "}]";
+
+        UserDataAccess userDataAccess = new UserDataAccess("bob", "password");
+        userDataAccess.setId(userId);
+
+        List<InvoiceDataAccess> listOfDataAccesses = new ArrayList<InvoiceDataAccess>(InvoiceDataAccess);
+
+        when(_invoiceRepository.fetchInvoices(any(), any())).thenReturn();
+
+        Invoice actualInvoice = this.invoiceController.createInvoice(auth, invoiceRequest, 1);
+        assertEquals(objectMapper.writeValueAsString(actualInvoice), objectMapper.writeValueAsString(expectedInvoice));
+        verify(_invoiceRepository, times(1)).save(any());
+
+
     }
 
 
