@@ -26,28 +26,31 @@ public final class DataAccessConversionHelper {
     ObjectMapper objectMapper;
 
     /**
-     *<p>
+     *<p> todo: modify
      * This is a Helper method that takes the data from the database and
      * the constructor of the specified entity to create multiple data access objects
      *</p>
      *
      * @param data: Object[] data representing the information from database.
-     * @param dataList: generic list of data access objects
-     * @param typeConstructor: Lambda typeConstructor representing the constructor for the specified entity type.
-     */
-    public <U extends List<T>, T extends IDataAccess<?>> void createDataAccessObjects(
-            @NotNull final List<? extends Object[]> data,
-            @NotNull final U dataList,
-            @NotNull final Supplier<T> typeConstructor)
+ */
+    public < T extends IDataAccess<?>> List<T> createDataAccessObjects(
+            @NotNull final List<? extends Map<String, ?>> data,
+            @NotNull final Class<T> serializerEndpoint)
             throws DataAccessConversionException, IllegalArgumentException {
-        // making sure the list is == 0 before adding DAOs
-        if(dataList.size() != 0)
-            throw new IllegalArgumentException("list size of data access must be 0");
+
+        // initializes a list to retain outputted DAOs from ORM deserialization
+        final List<T> dataAccessObjects = new ArrayList<T>();
+
+        // making sure data targeted for ORM deserialization is non-empty
+        if(data.size() == 0)
+            throw new IllegalArgumentException("list size of data access must not be 0");
         // loops through data and adds each DAO created to the list
         try{
-            for (final Object[] objectData : data) {
-                dataList.add(this.createDataAccessObject(objectData, typeConstructor));
+            for (final Map<String, ? > dataAccess : data) {
+                dataAccessObjects.add(this.createDataAccessObject(dataAccess, serializerEndpoint));
             }
+
+            return dataAccessObjects;
         }
         // checks to make sure DDL is matches up properly
         catch(Exception e){
@@ -66,19 +69,19 @@ public final class DataAccessConversionHelper {
      * the constructor of the specified entity to create a data access object
      *</p>
      *
-     * @param data: Object[] data representing the information from database.
-     * @param typeConstructor: Lambda typeConstructor representing the constructor for the specified entity type.
+     * @param data: todo: modify
+     //* @param typeConstructor: Lambda typeConstructor representing the constructor for the specified entity type.
      * @return  Returning the created data access object
      */
     public <T extends IDataAccess<?>> T createDataAccessObject(
-            @NotNull final Object[] data,
-            @NotNull final Supplier<T> typeConstructor)
+            @NotNull final Map<String, ?> data,
+            @NotNull final Class<T> serializerEndpoint)
             throws DataAccessConversionException, IllegalArgumentException {
         // takes the specified type and then updates the DAO with the data
-        T returnValue = typeConstructor.get();
-        returnValue.createDataAccess(data);
-        return returnValue;
-
+        return this.objectMapper.convertValue(
+                data,
+                serializerEndpoint
+        );
     }
 
     /**
