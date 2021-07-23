@@ -9,6 +9,18 @@ import com.galvanize.invoicify.models.User;
 
 import java.util.Optional;
 
+/**
+ * <h2>
+ *     This interface extends the JPARepository, which takes in a UserDataAccess Object, along
+ *      with its serialized Long id. This repository defines a method that finds a user by
+ *      its user name. Important to note that it inherits the methods from the JPARepository,
+ *      so this interface is not confined to just the method that is present. Most of
+ *      the methods called on by the UserRepository actually are inherited from
+ *      parent interface
+ * </h2>
+ */
+
+
 @Repository
 public interface UserRepository extends JpaRepository<UserDataAccess, Long> {
 
