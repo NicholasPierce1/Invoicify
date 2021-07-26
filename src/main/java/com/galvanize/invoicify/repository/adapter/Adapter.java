@@ -14,16 +14,13 @@ import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.Flat
 import com.galvanize.invoicify.repository.repositories.invoicelineitemrepository.InvoiceLineItemRepository;
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
-import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepositoryImpl;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import com.sun.istack.NotNull;
-import org.aspectj.weaver.Dump;
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -443,17 +440,42 @@ public final class Adapter {
         return _invoiceRepository.fetchInvoices(0L, new ArrayList<>()).stream().map((invoiceDataAccess -> invoiceDataAccess.convertToModel(Invoice::new))).collect(Collectors.toList());
     }
 
+    /**
+     * <p>
+     *    This method will create an invoice for a given company id and set its creator id with the passed in username.
+     * </p>
+     * @param invoice
+     *  {
+     *    "invoiceDescription":"new invoice",
+     *    "recordIds":[1,2]
+     *  }
+     * @param companyId - any positive long number.
+     * @param userName - this is pre-populated when a user logs in and is passed from InvoiceController.java
+     * @return Invoice Object without the record Ids passed in from the client request.
+     * @throws InvalidRequestException
+     */
     public Invoice createInvoice(Invoice invoice, long companyId, String userName) throws InvalidRequestException {
-        validateRequestCompanyIDandRecordIds(companyId, invoice.getRecordIds());
-        long createdById = getUserByUserName(userName).get().getId();
+        validateRequestCompanyIDAndRecordIds(companyId, invoice.getRecordIds());
+        long createdById = getUserByUserName(userName).get().getId(); //fetch the user using the UserRepository and its id is used for creating the invoice.
         InvoiceDataAccess savedInvoiceDataAccess = saveInvoiceToDb(invoice, companyId, createdById);
         long invoiceId = savedInvoiceDataAccess.getId();
         saveInvoiceItemsToDb(invoiceId, invoice.getRecordIds(), createdById);
         return this._invoiceRepository.fetchInvoice(invoiceId, invoice.getRecordIds()).convertToModel(Invoice::new);
     }
 
-    private void validateRequestCompanyIDandRecordIds(long companyId, List<Long> recordIds) throws InvalidRequestException {
-        boolean isBillingRecordIdValid = false;
+    /**
+     * <p>
+     *     This Method uses CompanyRepository, FlatFeeBillingRecordRepository, and RateBasedBillingRecordRepository for validation of ids.
+     *     This doesn't return anything as this will throw an InvalidRequestException if one of the IDs are invalid.
+     *     know usages: Adapter.java - createInvoice method.
+     * </p>
+     *
+     * @param companyId
+     * @param recordIds
+     * @throws InvalidRequestException
+     */
+    private void validateRequestCompanyIDAndRecordIds(long companyId, List<Long> recordIds) throws InvalidRequestException {
+        boolean isBillingRecordIdValid = false; //assume billing record is invalid
         boolean isCompanyValid = _companyRepository.findById(companyId).isPresent();
         if (!isCompanyValid) {
             throw new InvalidRequestException("Company ID " + companyId + "not found.");
@@ -466,7 +488,16 @@ public final class Adapter {
         }
     }
 
-
+    /**
+     * <p>
+     *      This method loops through the list of recordIds and use InvoiceLineItemRepository that extends JpaRepository to save data to InvoiceLineItem entity table.
+     *      known usages : CreateInvoice in Adapter.java
+     * </p>
+     *
+     * @param invoiceId
+     * @param recordIds
+     * @param createdById
+     */
     private void saveInvoiceItemsToDb(long invoiceId, List<Long> recordIds, long createdById) {
         for(Long billingRecordId : recordIds) {
             InvoiceLineItemDataAccess invoiceLineItemDataAccess = new InvoiceLineItemDataAccess(billingRecordId, new Date(), createdById, invoiceId);
@@ -474,6 +505,17 @@ public final class Adapter {
         }
     }
 
+    /**
+     * <p>
+     *     Use InvoiceRepository that extends JpaRepository to save data to Invoice entity table and return.
+     *     known usages : CreateInvoice in Adapter.java
+     * </p>
+     *
+     * @param invoiceRequest
+     * @param companyId
+     * @param createdById
+     * @return - InvoiceDataAccess that is constructed in this method.
+     */
     private InvoiceDataAccess saveInvoiceToDb(Invoice invoiceRequest, long companyId, long createdById) {
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess();
         invoiceDataAccess.setCompanyId(companyId);
