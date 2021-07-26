@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SeedData {
 
 	public SeedData(UserRepository userRepository, PasswordEncoder encoder) {
-		System.out.println("called");
 		UserDataAccess admin = userRepository.save(new UserDataAccess("admin", encoder.encode("admin")));
 		UserDataAccess userBob = userRepository.save(new UserDataAccess("bob", encoder.encode("password")));
 		UserDataAccess userBobby = userRepository.save(new UserDataAccess("bobby", encoder.encode("password")));
