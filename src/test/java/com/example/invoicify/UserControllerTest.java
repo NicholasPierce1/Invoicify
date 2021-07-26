@@ -139,9 +139,11 @@ public class UserControllerTest {
         User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getPassword());
 
         when(userRepository.findById(any())).thenReturn(Optional.of(userDataAccess));
-        final User actualUser = userController.getUser(1L);
+        final Optional<User> actualUser = userController.getUser(1L);
 
-        String actualUserStr = objectMapper.writeValueAsString(actualUser);
+        assertTrue(actualUser.isPresent());
+
+        String actualUserStr = objectMapper.writeValueAsString(actualUser.orElseThrow(RuntimeException::new));
         String expectedUserStr = objectMapper.writeValueAsString(expectedUser);
         assertEquals(actualUserStr, expectedUserStr);
 
