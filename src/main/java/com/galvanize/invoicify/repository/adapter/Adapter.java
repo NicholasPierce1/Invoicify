@@ -459,7 +459,7 @@ public final class Adapter {
             throw new InvalidRequestException("Company ID " + companyId + "not found.");
         }
         for (long id : recordIds) {
-            isBillingRecordIdValid = (_flatFeeBillingRecordRepository.existsById(id) && _rateBasedBillingRecordRepository.existsById(id));
+            isBillingRecordIdValid = _flatFeeBillingRecordRepository.existsById(id) || _rateBasedBillingRecordRepository.existsById(id);
             if (!isBillingRecordIdValid) {
                 throw new InvalidRequestException("Record ID " + id + " not found.");
             }
