@@ -14,7 +14,6 @@ import com.galvanize.invoicify.repository.repositories.companyrepository.Company
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
-import org.checkerframework.checker.nullness.Opt;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -251,7 +250,9 @@ public class BillingRecordTests {
         );
 
         verify(this._flatFeeBillingRecordRepository, times(1)).findAll();
+
         verify(this._rateBasedBillingRecordRepository, times(1)).findAll();
+
         verify(
                 this._companyRepository,
                 times(this._generalBillingRecordAmalgamation.size())
