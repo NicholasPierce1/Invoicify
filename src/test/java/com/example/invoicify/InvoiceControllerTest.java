@@ -227,5 +227,23 @@ public class InvoiceControllerTest {
         System.out.println(recordIdsStr);
     }
 
+    // this is a test to make sure that null is returned if one of the ids are invalid.
+    @Test
+    public void testCreateInvoiceWithInvalidParams() throws Exception {
+        Invoice invoiceRequest = new Invoice();
+        List<Long> recordIds = new ArrayList<Long>();
+        recordIds.add(1L);
+        recordIds.add(2L);
+        invoiceRequest.setInvoiceDescription("test desc");
+        invoiceRequest.setRecordIds(recordIds);
+
+        when(_companyRepository.findById(companyId)).thenReturn(Optional.empty());
+        when(_flatFeeBillingRecordRepository.existsById(any())).thenReturn(false);
+
+        Invoice actualInvoice = invoiceController.createInvoice(auth, invoiceRequest, companyId);
+        assertNull(actualInvoice);
+
+    }
+
 
 }

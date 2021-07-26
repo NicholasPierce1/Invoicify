@@ -24,12 +24,15 @@ public class InvoiceController {
     @PostMapping("/{companyId}")
     public Invoice createInvoice(Authentication auth, @RequestBody Invoice invoice, @PathVariable long companyId) {
         String userName = "";
-
         if (auth != null) {
              User user = (User) auth.getPrincipal();
              userName = user.getUsername();
         }
-        return adapter.createInvoice(invoice, companyId, userName);
+        try {
+            return adapter.createInvoice(invoice, companyId, userName);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @GetMapping()
