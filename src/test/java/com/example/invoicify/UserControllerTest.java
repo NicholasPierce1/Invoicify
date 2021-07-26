@@ -9,10 +9,7 @@ import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.galvanize.invoicify.repository.adapter.DuplicateUserException;
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -45,9 +42,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 
 public class UserControllerTest {
-
-    @Autowired
-    MockMvc mvc;
 
     @Autowired
     PasswordEncoder encoder;
@@ -118,17 +112,19 @@ public class UserControllerTest {
         List<User> expectedUsers = mockUserDataAccessList.stream().map(userDataAccess -> userDataAccess.convertToModel(User::new)).collect(Collectors.toList());
 
         when(userRepository.findAll()).thenReturn(mockUserDataAccessList);
-        final List<User> actualUsers = userController.getUsers();
-        assertTrue(actualUsers.size() == 2);
+        final Optional<List<User>> actualUsersOptional = userController.getUsers();
+        assertTrue(actualUsersOptional.isPresent());
+        assertTrue(actualUsersOptional.get().size() == 2);
 
+        List<User> actualUsers = actualUsersOptional.get();
 
         for(int i=0; i<actualUsers.size(); i++) {
-            String actualUserStr = objectMapper.writeValueAsString(actualUsers.get(i));
-            String expectedUserStr = objectMapper.writeValueAsString(expectedUsers.get(i));
-            assertEquals(actualUserStr, expectedUserStr);
+            Assertions.assertEquals(
+                    objectMapper.writeValueAsString(actualUsers.get(i)),
+                    objectMapper.writeValueAsString(expectedUsers.get(i))
+            );
+
         }
-
-
         verify(userRepository, times(1)).findAll();
     }
 
@@ -160,7 +156,11 @@ public class UserControllerTest {
         when(userRepository.findById(any())).thenReturn(Optional.of(existingUserToBeUpdated));
         when(userRepository.save(any())).thenReturn(savedUpdatedUser);
 
-        User actualUser = userController.updateUser(expectedUser, 1L);
+        Optional<User> actualUserOptional = userController.updateUser(expectedUser, 1L);
+
+        assertTrue(actualUserOptional.isPresent());
+
+        User actualUser = actualUserOptional.get();
 
         assertEquals(actualUser.getUsername(), expectedUser.getUsername());
         assertEquals(actualUser.getPassword(), expectedUser.getPassword());
@@ -181,7 +181,11 @@ public class UserControllerTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserToBeUpdated));
         when(userRepository.save(any())).thenReturn(savedUpdatedUser);
 
-        User actualUser = userController.updateUser( expectedUser, 1L);
+        Optional<User> actualUserOptional = userController.updateUser( expectedUser, 1L);
+
+        assertTrue(actualUserOptional.isPresent());
+
+        User actualUser = actualUserOptional.get();
 
         assertEquals(actualUser.getUsername(), "NewUserName");
         assertEquals(actualUser.getPassword(), "testpassword2");
@@ -201,7 +205,11 @@ public class UserControllerTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserToBeUpdated));
         when(userRepository.save(any())).thenReturn(savedUpdatedUser);
 
-        User actualUser = userController.updateUser( expectedUser, 1L);
+        Optional<User> actualUserOptional = userController.updateUser( expectedUser, 1L);
+
+        assertTrue(actualUserOptional.isPresent());
+
+        User actualUser = actualUserOptional.get();
 
         assertEquals(actualUser.getUsername(), "testuser1");
         assertEquals(actualUser.getPassword(), "newPassword1");

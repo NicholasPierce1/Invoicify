@@ -73,7 +73,7 @@ public final class UserDataAccess implements IDataAccess<User> {
      *<p>
      *  This gets the password that is stored in the user table.
      *</p>
-     * @return password ->
+     * @return password -> retrieves the password that was assigned to that user.
      * */
 
     public String getPassword() {

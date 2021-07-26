@@ -88,10 +88,14 @@ public final class Adapter {
      *     with to verify that the given userName does not already exist in the user table.
      *     Then saves the user as a DAO in the user table and converts the DAO to a user Model.
      *</p>
-     * @param user
+     * @param user -> takes in the specific user provided
      * @return User : With the userRepository, it checks if the user exists, throws a DuplicateUserExecption,
      * otherwise, a new user DAO is instantiated then converted to a user model.
-     * @throws DuplicateUserException
+     * @throws DuplicateUserException : It addresses the issue of computing logic against duplication
+     * of keys. Since the User table must contain non-null, unique String name entries,
+     * this exception prevents the user from assigning a name to a User that already exists
+     * in the table. This aslo handles redirecting the user in these instances and
+     * prompting to adjust serialization so table integrity in tact and aligned with the rest of the system
      * */
 
     public @NotNull User createUser(@NotNull final User user) throws DuplicateUserException {
@@ -112,7 +116,10 @@ public final class Adapter {
      * @param userName -> specific user to be verified to exist in data store
      * @return boolean -> validates if specified user exists, then counts the number of times the userName is listed to
      * verify that the user exists. If it does exist, it returns true.
-     * @exception DuplicateUserException
+     * @exception DuplicateUserException -> It addresses the issue of computing logic against duplication of keys.
+     * Since the User table must contain non-null, unique String name entries, this exception prevents the user from
+     * assigning a name to a User that already exists in the table. This also handles redirecting the user in these
+     * instances and prompting to adjust serialization so table integrity in tact and aligned with the rest of the system
      * */
 
     private @NotNull boolean isUserExists(@NotNull final String userName) throws DuplicateUserException {

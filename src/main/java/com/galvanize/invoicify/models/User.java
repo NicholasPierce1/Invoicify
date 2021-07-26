@@ -19,6 +19,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public final class User implements UserDetails {
 
+	/**
+	 * <p>
+	 *     The serialVersionUID attribute is an identifier that is used to serialize
+	 *     an instance object of a User model into the database. It to compares the versions of the
+	 *     User class ensuring that the same class was used during Serialization is loaded during Deserialization.
+	 * </p>
+	 * */
+
+
 	private static final long serialVersionUID = 1L;
 
 	private Long id;

@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/user/")
 public final class UserController {
 
 	/**
@@ -55,8 +55,13 @@ public final class UserController {
 	 */
 
 	@PutMapping("{id}")
-	public @NotNull User updateUser(@RequestBody User user, @PathVariable Long id)  {
-		 return adapter.updateUser(user, id);
+	public @NotNull Optional<User> updateUser(@RequestBody User user, @PathVariable Long id)  {
+		 try {
+		 	return Optional.of(adapter.updateUser(user, id));
+		 } catch (Exception e) {
+			 System.out.println(e.getLocalizedMessage());
+			 return Optional.empty();
+		 }
 	}
 
 	/**
@@ -90,8 +95,12 @@ public final class UserController {
 	 * */
 
 	@GetMapping
-	public @NotNull List<User> getUsers() {
-		return adapter.findAll();
+	public @NotNull Optional<List<User>> getUsers() {
+		try {
+			return Optional.of(adapter.findAll());
+		} catch (Exception e) {
+			System.out.println(e.getLocalizedMessage());
+		} return Optional.empty();
 	}
 
 	/**
@@ -104,7 +113,7 @@ public final class UserController {
 	 * @return: User
 	 * */
 
-	@GetMapping("{id}")
+	@GetMapping("{id}/")
 	public @NotNull	User getUser(@PathVariable Long id) {
 		return adapter.findUser(id);
 	}
