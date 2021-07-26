@@ -63,12 +63,12 @@ public class CompanyControllerTest {
     private CompanyDataAccess companyDataAccess;
 
     @AfterEach
-    public void resetMocks(){
+    public void resetMocks() {
         Mockito.reset(this.companyRepository);
     }
 
     @BeforeAll
-    public void createAdapter(){
+    public void createAdapter() {
 
         this.companyRepository = Mockito.mock(CompanyRepository.class);
 
@@ -79,21 +79,21 @@ public class CompanyControllerTest {
     }
 
     @Test
-    public void  testViewAllCompanies() throws Exception {
+    public void testViewAllCompanies() throws Exception {
 
         // Instantiating an object mapper instance
         final ObjectMapper objectMapper = new ObjectMapper();
 
         // Creating a new CompanyDataAccess ArrayList with setting an Id and name
-        final ArrayList<CompanyDataAccess> companyDataAccesses = new ArrayList<CompanyDataAccess>(){{
-        CompanyDataAccess companyDataAccess = new CompanyDataAccess();
-        companyDataAccess.setId(1L);
-        companyDataAccess.setName("LTI");
+        final ArrayList<CompanyDataAccess> companyDataAccesses = new ArrayList<CompanyDataAccess>() {{
+            CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+            companyDataAccess.setId(1L);
+            companyDataAccess.setName("LTI");
 
-        // Creating another CompanyDataAccess instance set to the same Id and name
-        CompanyDataAccess companyDataAccess2 = new CompanyDataAccess();
-        companyDataAccess2.setId(1L);
-        companyDataAccess2.setName("LTI");
+            // Creating another CompanyDataAccess instance set to the same Id and name
+            CompanyDataAccess companyDataAccess2 = new CompanyDataAccess();
+            companyDataAccess2.setId(1L);
+            companyDataAccess2.setName("LTI");
 
         }};
 
@@ -102,7 +102,7 @@ public class CompanyControllerTest {
         List<Company> expectedCompanies =
                 companyDataAccesses
                         .stream()
-                        .map( (companyDataAccess -> companyDataAccess.convertToModel(Company::new)) )
+                        .map((companyDataAccess -> companyDataAccess.convertToModel(Company::new)))
                         .collect(Collectors.toList());
 
         // Utilizing company repository to find all companyDataAccesses
@@ -127,7 +127,7 @@ public class CompanyControllerTest {
                 actualCompanyList.size()
         ); // size of list the same
 
-        for(int i = 0; i < actualCompanyList.size(); i++) // compares json strings of response to expected for each company
+        for (int i = 0; i < actualCompanyList.size(); i++) // compares json strings of response to expected for each company
             Assertions.assertEquals(
                     objectMapper.writeValueAsString(expectedCompanies.get(i)), // converts company object to json string
                     objectMapper.writeValueAsString(actualCompanyList.get(i)) // extracts json string from json array
@@ -188,9 +188,7 @@ public class CompanyControllerTest {
         when(this.companyRepository.findByName(companyDataAccess.getName())).thenReturn(Optional.of(companyDataAccess));
 
         // test bad case (name is not unique)
-        assertFalse(
-                this.companyController.addCompany(expectedCompany).isPresent()
-        );
+        assertFalse(this.companyController.addCompany(expectedCompany).isPresent());
 
     }
 
@@ -259,8 +257,9 @@ public class CompanyControllerTest {
         // to test if an object is actually be deleted from the database in this test file
         doAnswer(invocationOnMock -> {
             final Long toDelete = invocationOnMock.getArgument(0, Long.class);
-            assertEquals( companyDataAccess.getId(), toDelete );
-            return null; })
+            assertEquals(companyDataAccess.getId(), toDelete);
+            return null;
+        })
                 .when(this.companyRepository).deleteById(1L);
 
         // Ensures that the deleted company matches the Id and name of the company that the user is attempting to delete,
@@ -277,11 +276,11 @@ public class CompanyControllerTest {
     public void testModifyCompanyName() throws Exception {
 
         // Creating two CompanyDataAccess instances and setting the Id and name
-        final CompanyDataAccess existingCompanyToBeUpdated = new CompanyDataAccess(1L,"LTI");
-        final CompanyDataAccess savedUpdatedCompany = new CompanyDataAccess(1L,"LTI2");
+        final CompanyDataAccess existingCompanyToBeUpdated = new CompanyDataAccess(1L, "LTI");
+        final CompanyDataAccess savedUpdatedCompany = new CompanyDataAccess(1L, "LTI2");
 
         // Creating a Company model instance to the name of the object that is being modified
-        final Company expectedCompany= new Company(1L,"LTI2");
+        final Company expectedCompany = new Company(1L, "LTI2");
 
         // Utilizing company repository to find one corresponding companyDataAccess by Id
         when(companyRepository.findById(1L)).thenReturn(Optional.of(existingCompanyToBeUpdated));
@@ -290,7 +289,7 @@ public class CompanyControllerTest {
         when(companyRepository.save(any())).thenReturn(savedUpdatedCompany);
 
         // Setting an Optional Company to an actual variable that calls the companyController to find that company and modify it
-        final Optional<Company> actualCompanyOptional = companyController.updateCompany( expectedCompany, 1L);
+        final Optional<Company> actualCompanyOptional = companyController.updateCompany(expectedCompany, 1L);
 
         // Assume that the company is present
         assertTrue(actualCompanyOptional.isPresent());
