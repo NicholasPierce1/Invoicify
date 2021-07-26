@@ -93,7 +93,7 @@ public final class Adapter {
         }
 
         CompanyDataAccess companyDataAccess = new CompanyDataAccess();
-        companyDataAccess.setName(company.getName());
+        companyDataAccess.convertToDataAccess(company);
 
         return _companyRepository
                         .save(companyDataAccess)
