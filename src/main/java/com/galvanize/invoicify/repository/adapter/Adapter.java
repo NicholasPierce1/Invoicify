@@ -143,12 +143,16 @@ public final class Adapter {
         CompanyDataAccess currentCompanyData = this._companyRepository.findById(id).get();
 
         if(company.getName() != null && !company.getName().equals("")){
+
             if(this._companyRepository.findByName(company.getName()).isPresent()){
+
                 throw new DuplicateCompanyException("Company " + company.getName() + "is an existing company name. Please choose a different name.");
             }
+
             currentCompanyData.setName(company.getName());
         }
 
         return _companyRepository.save(currentCompanyData).convertToModel((Company::new));
+
     }
 }

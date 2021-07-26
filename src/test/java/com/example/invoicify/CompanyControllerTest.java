@@ -142,7 +142,7 @@ public class CompanyControllerTest {
         assertTrue(actualCompanyOptional.isPresent());
 
         // Unwrapping the optional company
-        final Company actualCompany = this.companyController.findById(companyDataAccess.getId()).get();
+        final Company actualCompany = actualCompanyOptional.get();
 
         // Makes sure the Ids of the retrieved companies are the same
         Assertions.assertEquals(
@@ -150,10 +150,17 @@ public class CompanyControllerTest {
                 objectMapper.writeValueAsString(actualCompany.getId())
         );
 
+        verify(companyRepository, times(1)).findById(companyDataAccess.getId());
+
+        verifyNoMoreInteractions(this.companyRepository);
+
     }
 
     @Test
     public void testCreateCompanyThatAlreadyExists() throws Exception {
+
+        // Instantiating an object mapper instance
+        final ObjectMapper objectMapper = new ObjectMapper();
 
         // Creating a CompanyDataAccess instance and setting the name
         final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
@@ -166,8 +173,16 @@ public class CompanyControllerTest {
         // when for bad case (name is not unique)
         when(this.companyRepository.findByName(companyDataAccess.getName())).thenReturn(Optional.of(companyDataAccess));
 
+        // Testing to ensure that persisting to the company table is working
+        when(companyRepository.save(companyDataAccess)).thenReturn(companyDataAccess);
+
         // test bad case (name is not unique)
         assertFalse(this.companyController.addCompany(expectedCompany).isPresent());
+
+        verify(companyRepository, times(1)).findByName(companyDataAccess.getName());
+        verify(companyRepository, times(0)).save(companyDataAccess);
+
+        verifyNoMoreInteractions(this.companyRepository);
 
     }
 
@@ -203,6 +218,12 @@ public class CompanyControllerTest {
                 objectMapper.writeValueAsString(actualCompany.get())
 
         );
+
+        verify(companyRepository, times(1)).findByName(companyDataAccess.getName());
+        verify(companyRepository, times(1)).save(companyDataAccess);
+
+
+        verifyNoMoreInteractions(this.companyRepository);
 
     }
 
@@ -249,6 +270,12 @@ public class CompanyControllerTest {
 
         );
 
+        verify(companyRepository, times(1)).findById(companyDataAccess.getId());
+        verify(companyRepository, times(1)).deleteById(companyDataAccess.getId());
+
+
+        verifyNoMoreInteractions(this.companyRepository);
+
     }
 
     @Test
@@ -263,6 +290,9 @@ public class CompanyControllerTest {
 
         // Utilizing company repository to find one corresponding companyDataAccess by Id
         when(companyRepository.findById(1L)).thenReturn(Optional.of(existingCompanyToBeUpdated));
+
+        // Utilizing company repository to find one corresponding companyDataAccess by Name
+        when(companyRepository.findByName("LTI")).thenReturn(Optional.of(existingCompanyToBeUpdated));
 
         // Testing to ensure that the modified company has been added to the table
         when(companyRepository.save(any(CompanyDataAccess.class))).thenReturn(savedUpdatedCompany);
@@ -281,8 +311,11 @@ public class CompanyControllerTest {
         assertEquals(actualCompany.getId(), 1L);
 
         // Verifies that the company has been found, and added back to the table
-        verify(companyRepository, times(1)).findById(any());
-        verify(companyRepository, times(1)).save(any());
+        verify(companyRepository, times(1)).findById(any(Long.class));
+        verify(companyRepository, times(1)).findByName(any(String.class));
+        verify(companyRepository, times(1)).save(any(CompanyDataAccess.class));
+
+        verifyNoMoreInteractions(this.companyRepository);
 
     }
 
