@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/company")
-public class CompanyController  {
+public final class CompanyController  {
 
     /**
      * <p>
