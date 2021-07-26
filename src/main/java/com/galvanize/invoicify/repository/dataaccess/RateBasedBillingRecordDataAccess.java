@@ -57,11 +57,6 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
     // methods
 
     @Override
-    public void createDataAccess(Object[] dbo) {
-
-    }
-
-    @Override
     public <M extends RateBasedBillingRecord> M convertToModel(Supplier<M> supplier) {
 
         final M rateBaseBillingRecord = super.convertToModel(supplier);

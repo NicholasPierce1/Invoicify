@@ -163,11 +163,6 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
     }
 
     @Override
-    public void createDataAccess(Object[] dbo) {
-
-    }
-
-    @Override
     public <M extends T> void convertToDataAccess(M modelObject) {
 
         final UserDataAccess userDataAccess = new UserDataAccess();

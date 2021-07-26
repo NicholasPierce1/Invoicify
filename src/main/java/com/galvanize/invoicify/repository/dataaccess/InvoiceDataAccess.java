@@ -2,6 +2,7 @@ package com.galvanize.invoicify.repository.dataaccess;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.galvanize.invoicify.configuration.InvoicifyConfiguration;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.models.InvoiceLineItem;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
@@ -23,10 +25,6 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "invoice")
 public class InvoiceDataAccess implements IDataAccess<Invoice> {
-
-    @Autowired
-    @Transient
-    DateTimeFormatter dateTimeFormatter;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,10 +50,15 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     @Transient
     private CompanyDataAccess company;
+
     @Transient
     private UserDataAccess user;
+
     @Transient
     private ArrayList<InvoiceLineItemDataAccess> lineItems = new ArrayList<InvoiceLineItemDataAccess>();
+
+    @Transient
+    DateTimeFormatter dateTimeFormatter = InvoicifyConfiguration.getStaticDateFormatter();
 
     public void setCompany(CompanyDataAccess company) {
         this.company = company;
@@ -131,13 +134,6 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
         this.description = description;
     }
 
-
-
-    @Override
-    public void createDataAccess(Object[] dbo) {
-
-    }
-
     @Override
     public <M extends Invoice> M convertToModel(Supplier<M> supplier) {
         M invoice = supplier.get();
@@ -147,7 +143,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
         if(this.getUser() != null)
             invoice.setCreatedBy(this.getUser().convertToModel(User::new));
         invoice.setInvoiceDescription(this.getDescription());
-        invoice.setCreatedOn(LocalDate.parse(this.getCreatedOn().toString(), dateTimeFormatter));
+        invoice.setCreatedOn(this.getCreatedOn().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         invoice.setLineItems(
                 this
                         .getLineItems()
@@ -161,6 +157,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
         return invoice;
     }
 
+    //todo: implement and use in create invoice method
     @Override
     public <M extends Invoice> void convertToDataAccess(M modelObject) {
 

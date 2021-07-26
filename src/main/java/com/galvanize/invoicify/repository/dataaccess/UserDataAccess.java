@@ -63,12 +63,6 @@ public final class UserDataAccess implements IDataAccess<User> {
 
     // method/s
 
-
-    @Override
-    public void createDataAccess(Object[] dbo) {
-
-    }
-
     @Override
     public <M extends User> M convertToModel(Supplier<M> supplier) {
         M user = supplier.get();

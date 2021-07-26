@@ -1,5 +1,6 @@
 package com.galvanize.invoicify.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,6 +16,8 @@ import java.util.List;
 public class Invoice {
     private long id;
     private Company company;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate createdOn;
     private User createdBy;
     private String invoiceDescription;

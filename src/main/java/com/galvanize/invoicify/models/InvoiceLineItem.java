@@ -1,5 +1,6 @@
 package com.galvanize.invoicify.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.Transient;
@@ -8,14 +9,17 @@ import java.util.Date;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InvoiceLineItem {
+
     private long id;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateCreatedOn;
 
-    @Transient
     private User createdBy;
-    @Transient
+
+
     private Invoice invoice;
-    @Transient
+
     private BillingRecord billingRecord;
 
     public long getId() {

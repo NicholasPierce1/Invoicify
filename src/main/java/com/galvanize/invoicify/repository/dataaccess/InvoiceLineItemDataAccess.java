@@ -1,6 +1,7 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.galvanize.invoicify.configuration.InvoicifyConfiguration;
 import com.galvanize.invoicify.models.BillingRecord;
 import com.galvanize.invoicify.models.InvoiceLineItem;
 import com.galvanize.invoicify.models.User;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.function.Supplier;
@@ -16,11 +18,6 @@ import java.util.function.Supplier;
 @Entity
 @Table(name = "invoice_line_item")
 public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
-
-    @Autowired
-    @Transient
-    DateTimeFormatter dateTimeFormatter;
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,6 +47,9 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
 
     @Transient
     private BillingRecordDataAccess<? extends BillingRecord> billingRecord;
+
+    @Transient
+    DateTimeFormatter dateTimeFormatter = InvoicifyConfiguration.getStaticDateFormatter();
 
     public InvoiceLineItemDataAccess(long billingRecordId, Date createdOn, long createdBy, long invoiceId) {
         this.id = id;
@@ -119,19 +119,15 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
     }
 
     @Override
-    public void createDataAccess(Object[] dbo) {
-
-    }
-
-    @Override
     public <M extends InvoiceLineItem> M convertToModel(Supplier<M> supplier) {
         M invoiceLineItem = supplier.get();
         invoiceLineItem.setId(this.getId());
-        invoiceLineItem.setCreatedOn(LocalDate.parse(this.getCreatedOn().toString(), dateTimeFormatter));
+        invoiceLineItem.setCreatedOn(this.getCreatedOn().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
         invoiceLineItem.setCreatedBy(this.getUser().convertToModel(User::new));
         return invoiceLineItem;
     }
 
+    //todo: implement and use in create invoice data access story (or whereas applicable)
     @Override
     public <M extends InvoiceLineItem> void convertToDataAccess(M modelObject) {
 

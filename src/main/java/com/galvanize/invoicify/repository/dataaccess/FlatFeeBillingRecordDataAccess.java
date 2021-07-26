@@ -37,11 +37,6 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<Flat
     // method/s
 
     @Override
-    public void createDataAccess(Object[] dbo) {
-
-    }
-
-    @Override
     public <M extends FlatFeeBillingRecord> M convertToModel(Supplier<M> supplier) {
 
         final M flatFeeBillingRecord = super.convertToModel(supplier);

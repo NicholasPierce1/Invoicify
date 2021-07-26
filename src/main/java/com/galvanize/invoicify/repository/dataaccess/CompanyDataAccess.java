@@ -55,11 +55,6 @@ public class CompanyDataAccess implements IDataAccess<Company> {
     // methods
 
     @Override
-    public void createDataAccess(Object[] dbo) {
-
-    }
-
-    @Override
     public <M extends Company> M convertToModel(Supplier<M> supplier) {
 
         final M company = supplier.get();
