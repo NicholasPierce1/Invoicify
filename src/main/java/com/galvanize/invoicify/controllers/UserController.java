@@ -28,7 +28,7 @@ public final class UserController {
 	 * </p>
 	 * */
 
-	private Adapter adapter;
+	private final Adapter adapter;
 
 	/**
 	 * <p>
@@ -50,7 +50,7 @@ public final class UserController {
 	 *  	The response is then rendered a user that the DataAccessObject retrieves.
 	 * </p>
 	 * @param id -> requires an id in the @PathVariable to locate the user to update.
-	 * @param user -> requires a User type compayn from the request body prior to updating a user
+	 * @param user -> requires a User type user from the request body prior to updating a user
 	 * @return : User
 	 */
 
