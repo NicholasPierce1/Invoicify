@@ -91,10 +91,6 @@ public class CompanyControllerTest {
         // Utilizing company repository to find all companyDataAccesses
         when(companyRepository.findAll()).thenReturn(companyDataAccesses);
 
-        // This allows the controller, adapter, data access, and model to work as expected
-        // ONLY the repository is hardcoded for its response
-//        System.out.println(adapter._companyRepository.findAll().size());
-
         // Setting an Optional List of Companies to an actual variable that calls the companyController to view all companies
         final Optional<List<Company>>
                 actualCompanyListOptional = this.companyController.viewAllCompanies();
