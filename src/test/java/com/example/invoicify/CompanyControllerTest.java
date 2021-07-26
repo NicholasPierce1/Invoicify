@@ -93,7 +93,7 @@ public class CompanyControllerTest {
 
         // This allows the controller, adapter, data access, and model to work as expected
         // ONLY the repository is hardcoded for its response
-        System.out.println(adapter._companyRepository.findAll().size());
+//        System.out.println(adapter._companyRepository.findAll().size());
 
         // Setting an Optional List of Companies to an actual variable that calls the companyController to view all companies
         final Optional<List<Company>>
@@ -117,7 +117,7 @@ public class CompanyControllerTest {
             );
 
         // Making sure that the company repository found 2 entries
-        verify(companyRepository, times(2)).findAll();
+        verify(companyRepository, times(1)).findAll();
 
     }
 
