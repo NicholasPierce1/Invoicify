@@ -116,8 +116,7 @@ public class InvoiceControllerTest {
         username = "admin";
         password = "$2a$10$uQ/Y566Nkp67exYhhoTd8e27uFEF7imX7Q3QhF.0HtLJmXQYUJJ4m";
         invoiceDescription = "test desc";
-        createdOnStr = "26-07-2021";
-        createdOn=new SimpleDateFormat("dd-MM-yyyy").parse(createdOnStr);
+        createdOn = new Date();
 
         //initialize data accesses models
         companyDataAccess = new CompanyDataAccess(companyId, "Subway");
@@ -194,21 +193,15 @@ public class InvoiceControllerTest {
 
         List<InvoiceDataAccess> invoiceDataAccessList = new ArrayList<InvoiceDataAccess>();
         //invoiceDataAccess is initialize in @BeforeAll.
-        System.out.println(objectMapper.writeValueAsString(invoiceDataAccess));
-
         invoiceDataAccessList.add(invoiceDataAccess);
-
         // creates the expected Invoice that's qualified from the pending mock and conversion operations enclosed
         // within the adapter
         final List<Invoice> expectedInvoiceList = invoiceDataAccessList
                 .stream()
                 .map((invoiceDataAccess -> invoiceDataAccess.convertToModel(Invoice::new)))
                 .collect(Collectors.toList());
-
         when(_invoiceRepository.fetchInvoices(anyLong(), anyList())).thenReturn(invoiceDataAccessList);
-        
         List<Invoice> actualInvoiceList = this.invoiceController.getAllInvoices();
-
         assertEquals(objectMapper.writeValueAsString(expectedInvoiceList), objectMapper.writeValueAsString(actualInvoiceList));
     }
 
