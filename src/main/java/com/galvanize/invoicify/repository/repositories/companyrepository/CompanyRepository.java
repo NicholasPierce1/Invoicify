@@ -22,6 +22,11 @@ import java.util.Optional;
 @Repository
 public interface CompanyRepository extends JpaRepository<CompanyDataAccess, Long> {
 
+    /**
+     *
+     * @param name
+     * @return
+     */
     public Optional<CompanyDataAccess> findByName(@NotNull final String name);
 
 
