@@ -14,16 +14,13 @@ import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.Flat
 import com.galvanize.invoicify.repository.repositories.invoicelineitemrepository.InvoiceLineItemRepository;
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
-import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepositoryImpl;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import com.sun.istack.NotNull;
-import org.aspectj.weaver.Dump;
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -458,7 +455,7 @@ public final class Adapter {
      * @throws InvalidRequestException
      */
     public Invoice createInvoice(Invoice invoice, long companyId, String userName) throws InvalidRequestException {
-        validateRequestCompanyIDandRecordIds(companyId, invoice.getRecordIds());
+        validateRequestCompanyIDAndRecordIds(companyId, invoice.getRecordIds());
         long createdById = getUserByUserName(userName).get().getId(); //fetch the user using the UserRepository and its id is used for creating the invoice.
         InvoiceDataAccess savedInvoiceDataAccess = saveInvoiceToDb(invoice, companyId, createdById);
         long invoiceId = savedInvoiceDataAccess.getId();
@@ -477,8 +474,8 @@ public final class Adapter {
      * @param recordIds
      * @throws InvalidRequestException
      */
-    private void validateRequestCompanyIDandRecordIds(long companyId, List<Long> recordIds) throws InvalidRequestException {
-        boolean isBillingRecordIdValid = false;
+    private void validateRequestCompanyIDAndRecordIds(long companyId, List<Long> recordIds) throws InvalidRequestException {
+        boolean isBillingRecordIdValid = false; //assume billing record is invalid
         boolean isCompanyValid = _companyRepository.findById(companyId).isPresent();
         if (!isCompanyValid) {
             throw new InvalidRequestException("Company ID " + companyId + "not found.");
