@@ -17,10 +17,7 @@ import com.galvanize.invoicify.repository.repositories.invoicelineitemrepository
 import com.galvanize.invoicify.repository.repositories.invoicerepository.InvoiceRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -153,6 +150,17 @@ public class InvoiceControllerTest {
         invoiceDataAccess.setLineItems(lineItems);
     }
 
+    @AfterEach
+    public void resetMocks(){
+        Mockito.reset(this._companyRepository,
+        _companyRepository,
+        _flatFeeBillingRecordRepository,
+        _rateBasedBillingRecordRepository,
+        _userRepository,
+        _invoiceRepository,
+        _invoiceLineItemRepository,
+        _invoiceRepository);
+    }
 
     @Test
     public void createInvoice() throws Exception {
