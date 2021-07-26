@@ -264,10 +264,12 @@ public final class Adapter {
     /**
      * <p>
      *     Exposed adapter stub for BillingRecordRepository endpoint to
-     *     encapsulate the retrieval of all BillingRecords with children state attached.
+     *     encapsulate the saving of a FlatFeeBillingRecord.
      * </p>
-     * @param flatFeeBillingRecord
-     * @return
+     * @param flatFeeBillingRecord: a non-null composite FlatFeeBillingRecord to save.
+     *                            Composite: ID field not attached but children IDs are attached.
+     * @return an Optional FlatFeeBillingRecord with children information fully qualified.
+     * If the children IDs do not map to a preexisting child entity then empty Optional.
      */
     public @NotNull Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(
             @NotNull final FlatFeeBillingRecord flatFeeBillingRecord){
@@ -319,6 +321,16 @@ public final class Adapter {
         return Optional.of(flatFeeBillingRecord);
     }
 
+    /**
+     * <p>
+     *     Exposed adapter stub for BillingRecordRepository endpoint to
+     *     encapsulate the saving of a RateBasedBillingRecord.
+     * </p>
+     * @param rateBasedBillingRecord: a non-null composite RateBasedBillingRecord to save.
+     *                            Composite: ID field not attached but children IDs are attached.
+     * @return an Optional RateBasedBillingRecord with children information fully qualified.
+     * If the children IDs do not map to a preexisting child entity then empty Optional.
+     */
     public @NotNull Optional<RateBasedBillingRecord> saveRateBasedFeeBillingRecord(
             @NotNull final RateBasedBillingRecord rateBasedBillingRecord){
 
@@ -409,14 +421,46 @@ public final class Adapter {
         return _companyRepository.save(currentCompanyData).convertToModel((Company::new));
     }
 
+    /**
+     * <h2>
+     *     BillingRecordParentHelper
+     * </h2>
+     * <p>
+     *     Static helper class to facilitate operations with children retrieval and
+     *     qualification.
+     * </p>
+     */
     private static class BillingRecordParentHelper{
 
+        /**
+         * <p>
+         * Bean injection of adapter passed via non-autowired constructor to
+         * have access to adapter stubs.
+         * Usage: invoke Company and User repository endpoints for children entity retrievals and qualification
+         * for BillingRecords
+         * </p>
+         */
         private final Adapter _adapter;
 
+        /**
+         * <p>
+         *     Non-autowired constructor to attached adapter state for internal, repository invocation.
+         * </p>
+         * @param adapter: Bean injected adapter.
+         */
         public BillingRecordParentHelper(@NotNull final Adapter adapter){
             this._adapter = adapter;
         }
 
+        /**
+         * <p>
+         *     Retrieves Company and User (pre-converted to model endpoint) via their respective IDs.
+         * </p>
+         * @param companyId: ID endpoint that maps to preexisting Company
+         * @param userId: ID endpoint that maps to preexisting User
+         * @return An Optional Pair retaining both model objects if they exist.
+         * If either, or both, IDs do not map to their respective children then an empty Optional is given.
+         */
         public Optional<Pair<Company, User>> getCompanyAndClient(final long companyId, final long userId){
 
             final Optional<User> user = this.getUserById(userId);
@@ -430,6 +474,14 @@ public final class Adapter {
 
         }
 
+        /**
+         * <p>
+         *     Retrieves an User (pre-converted to model endpoint) via its respective ID.
+         * </p>
+         * @param clientId: ID endpoint that maps to preexisting User
+         * @return An Optional User
+         * If ID does not map to its respective endpoint then an empty Optional is given.
+         */
         public Optional<User> getUserById(final long clientId){
             return this
                     ._adapter
@@ -438,6 +490,14 @@ public final class Adapter {
                     .map( (userDataAccess -> userDataAccess.convertToModel(User::new)) );
         }
 
+        /**
+         * <p>
+         *     Retrieves a Company (pre-converted to model endpoint) via its respective ID.
+         * </p>
+         * @param companyId: ID endpoint that maps to preexisting User
+         * @return An Optional Company
+         * If ID does not map to its respective endpoint then an empty Optional is given.
+         */
         public Optional<Company> getCompanyById(final long companyId){
             return this
                     ._adapter
