@@ -2,6 +2,7 @@ package com.galvanize.invoicify.controllers;
 
 import com.galvanize.invoicify.repository.adapter.Adapter;
 import com.sun.istack.NotNull;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import com.galvanize.invoicify.models.User;
 import java.util.List;
@@ -51,10 +52,13 @@ public final class UserController {
 	 * </p>
 	 * @param id -> requires an id in the @PathVariable to locate the user to update.
 	 * @param user -> requires a User type compayn from the request body prior to updating a user
-	 * @return : User
+	 * @return : User that is mapped/qualified by the given path variable ID
 	 */
 
-	@PutMapping("{id}")
+	@PutMapping(
+			value = {"/{id}", "/{id}/"},
+			produces = MediaType.APPLICATION_JSON_VALUE
+	)
 	public @NotNull Optional<User> updateUser(@RequestBody User user, @PathVariable Long id)  {
 		 try {
 		 	return Optional.of(adapter.updateUser(user, id));
@@ -110,11 +114,22 @@ public final class UserController {
 	 * 	 	adapter. After the request has been validated and processed the specific user is returned.
 	 * </p>
 	 * @param id -> requires an id @PathVariable in order to search for the requested user.
-	 * @return: User
+	 * @return : User that is mapped/qualified by the given path variable ID
 	 * */
 
-	@GetMapping("{id}/")
-	public @NotNull	User getUser(@PathVariable Long id) {
-		return adapter.findUser(id);
+	@GetMapping(
+			value = {"/{id}", "/{id}/"},
+			produces = MediaType.APPLICATION_JSON_VALUE
+	)
+	public @NotNull	Optional<User> getUser(@PathVariable Long id) {
+
+		try {
+			return Optional.of(this.adapter.findUser(id));
+		}
+		catch(Exception ex){
+			System.out.println(ex.getMessage());
+
+			return Optional.empty();
+		}
 	}
 }
