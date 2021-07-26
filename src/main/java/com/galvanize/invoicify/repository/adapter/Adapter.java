@@ -123,8 +123,7 @@ public final class Adapter {
      * */
 
     private @NotNull boolean isUserExists(@NotNull final String userName) throws DuplicateUserException {
-        int userCountByUsername = this._userRepository.countUsersByUserName(userName);
-        return userCountByUsername > 0;
+        return this._userRepository.findByUsername(userName).isPresent();
     }
 
 
