@@ -2,6 +2,7 @@ package com.example.invoicify;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.InvoicifyApplication;
+import com.galvanize.invoicify.configuration.InvoicifyConfiguration;
 import com.galvanize.invoicify.controllers.InvoiceController;
 import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.repository.adapter.Adapter;
@@ -39,12 +40,13 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = InvoicifyApplication.class)
+@ContextConfiguration(classes = {InvoicifyApplication.class, InvoicifyConfiguration.class})
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class InvoiceControllerTest {
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    ObjectMapper objectMapper;
 
     private FlatFeeBillingRecordRepository _flatFeeBillingRecordRepository;
 
