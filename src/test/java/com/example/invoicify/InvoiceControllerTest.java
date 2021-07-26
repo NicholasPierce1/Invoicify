@@ -94,6 +94,7 @@ public class InvoiceControllerTest {
         this._companyRepository = Mockito.mock(CompanyRepository.class);
         this._flatFeeBillingRecordRepository = Mockito.mock(FlatFeeBillingRecordRepository.class);
         this._invoiceLineItemRepository = Mockito.mock(InvoiceLineItemRepository.class);
+        this._rateBasedBillingRecordRepository = Mockito.mock(RateBaseBillingRecordRepository.class);
         adapter = new Adapter(
                 _userRepository,
                 _companyRepository,
@@ -178,14 +179,26 @@ public class InvoiceControllerTest {
         when(_companyRepository.findById(companyId)).thenReturn(Optional.of(companyDataAccess));
         //to pass create invoice validation
         when(_flatFeeBillingRecordRepository.existsById(any())).thenReturn(true);
+        when(_rateBasedBillingRecordRepository.existsById(any())).thenReturn(true);
         when(_userRepository.findByUsername(any())).thenReturn(Optional.of(userDataAccess));
         when(_invoiceRepository.save(any())).thenReturn(invoiceDataAccess);  //invoiceDataAccess is initialize in @BeforeAll.
         when(_invoiceLineItemRepository.save(any())).thenReturn(invoiceLineItemDataAccess2);
         when(_invoiceRepository.fetchInvoice(anyLong(), anyList())).thenReturn(invoiceDataAccess); //invoiceDataAccess is initialize in @BeforeAll.
 
-
         Invoice actualInvoice = this.invoiceController.createInvoice(auth, invoiceRequest, companyId);
         assertEquals(objectMapper.writeValueAsString(expectedInvoice),objectMapper.writeValueAsString(actualInvoice));
+
+        verify(_companyRepository, times(1)).findById(any());
+        //we want to call this twice because we have 2 record Ids in our params so we need to loop through twice
+        verify(_flatFeeBillingRecordRepository, times(2)).existsById(any());
+        verify(_userRepository, times(1)).findByUsername(any());
+        verify(_invoiceRepository, times(1)).save(any());
+        verify(_invoiceRepository, times(1)).fetchInvoice(anyLong(), anyList());
+        //there are 2 saves for invoice line items per each billing record.
+        verify(_invoiceLineItemRepository, times(2)).save(any());
+
+        verifyNoMoreInteractions(_companyRepository,_flatFeeBillingRecordRepository,_userRepository,_invoiceRepository, _invoiceLineItemRepository, _invoiceRepository);
+
     }
 
     @Test
@@ -203,6 +216,10 @@ public class InvoiceControllerTest {
         when(_invoiceRepository.fetchInvoices(anyLong(), anyList())).thenReturn(invoiceDataAccessList);
         List<Invoice> actualInvoiceList = this.invoiceController.getAllInvoices();
         assertEquals(objectMapper.writeValueAsString(expectedInvoiceList), objectMapper.writeValueAsString(actualInvoiceList));
+
+        verify(_invoiceRepository, times(1)).fetchInvoices(anyLong(), anyList());
+        verifyNoMoreInteractions(_invoiceRepository);
+
     }
 
 
@@ -237,11 +254,15 @@ public class InvoiceControllerTest {
         invoiceRequest.setInvoiceDescription("test desc");
         invoiceRequest.setRecordIds(recordIds);
 
-        when(_companyRepository.findById(companyId)).thenReturn(Optional.empty());
+        when(_companyRepository.findById(anyLong())).thenReturn(Optional.empty());
         when(_flatFeeBillingRecordRepository.existsById(any())).thenReturn(false);
 
         Invoice actualInvoice = invoiceController.createInvoice(auth, invoiceRequest, companyId);
         assertNull(actualInvoice);
+
+        verify(_companyRepository, times(1)).findById(anyLong());
+        verifyNoMoreInteractions(_companyRepository);
+
 
     }
 
