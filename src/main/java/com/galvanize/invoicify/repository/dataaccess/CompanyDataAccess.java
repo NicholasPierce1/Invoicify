@@ -139,10 +139,12 @@ public final class CompanyDataAccess implements IDataAccess<Company> {
 
     /**
      * <p>
-     *
+     *      Overrides Object's equal method to assert equality amongst CompanyDataAccess objects.
+     *      If ID is set in the CompanyDataAccess input then equality of state
+     *      (positing that the addresses are not equal) will be asserted as well.
      * </p>
-     * @param a
-     * @return
+     * @param a: a nullable CompanyDataAccess object
+     * @return boolean based on the equality of the memory addresses or the state of objects.
      */
     @Override
     public boolean equals(Object a){
