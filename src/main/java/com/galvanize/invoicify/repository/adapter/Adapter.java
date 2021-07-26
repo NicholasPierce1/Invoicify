@@ -138,7 +138,7 @@ public final class Adapter {
      */
 
     public List<User> findAll() {
-        return _userRepository.findAll().stream().map(userDataAccess -> userDataAccess.convertTo(User::new)).collect(Collectors.toList());
+        return _userRepository.findAll().stream().map(userDataAccess -> userDataAccess.convertToModel(User::new)).collect(Collectors.toList());
     }
 
     /**
