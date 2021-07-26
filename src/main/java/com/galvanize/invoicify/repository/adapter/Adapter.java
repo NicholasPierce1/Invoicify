@@ -290,8 +290,6 @@ public final class Adapter {
                 .map(
                         (companyDataAccess -> companyDataAccess.convertToModel(Company::new))
                 );
-        System.out.println(!user.isPresent());
-        System.out.println(!company.isPresent());
         // verifies that user and company exist
         if(!user.isPresent() || !company.isPresent() || flatFeeBillingRecord.getId() != null)
             return Optional.empty();
@@ -442,7 +440,7 @@ public final class Adapter {
     }
 
     public List<Invoice>getInvoices() {
-        return _invoiceRepository.fetchInvoices(0L, null).stream().map((invoiceDataAccess -> invoiceDataAccess.convertToModel(Invoice::new))).collect(Collectors.toList());
+        return _invoiceRepository.fetchInvoices(0L, new ArrayList<>()).stream().map((invoiceDataAccess -> invoiceDataAccess.convertToModel(Invoice::new))).collect(Collectors.toList());
     }
 
     public Invoice createInvoice(Invoice invoice, long companyId, String userName) throws InvalidRequestException {
@@ -450,7 +448,6 @@ public final class Adapter {
         long createdById = getUserByUserName(userName).get().getId();
         InvoiceDataAccess savedInvoiceDataAccess = saveInvoiceToDb(invoice, companyId, createdById);
         long invoiceId = savedInvoiceDataAccess.getId();
-        System.out.println("here");
         saveInvoiceItemsToDb(invoiceId, invoice.getRecordIds(), createdById);
         return this._invoiceRepository.fetchInvoice(invoiceId, invoice.getRecordIds()).convertToModel(Invoice::new);
     }
