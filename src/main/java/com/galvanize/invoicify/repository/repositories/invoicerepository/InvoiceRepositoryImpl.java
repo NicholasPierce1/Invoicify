@@ -3,71 +3,115 @@ package com.galvanize.invoicify.repository.repositories.invoicerepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.repository.dataaccess.BillingRecordDataAccess;
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
-import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
 import com.galvanize.invoicify.repository.repositories.sharedfiles.DataAccessConversionHelper;
 import com.galvanize.invoicify.repository.repositories.sharedfiles.QueryTableNameModifier;
 import com.sun.istack.NotNull;
-import org.h2.util.json.JSONObject;
-import org.javatuples.Pair;
+import com.sun.istack.Nullable;
 import org.javatuples.Quartet;
-import org.javatuples.Triplet;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Parameter;
-import javax.persistence.Query;
 import javax.sql.DataSource;
-import java.lang.annotation.Annotation;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
+/**
+ * <h2>
+ *     InvoiceRepositoryImpl
+ * </h2>
+ * <p>
+ *     Repository manager (custom repository implementation) servicing
+ *     Invoices, recursive to all children entities/state.
+ *     Serves to supplement custom functionality for acquiring invoices by custom, convoluted
+ *     criterion + appended all recursive children state.
+ * </p>
+ */
 public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
 
-    private final EntityManagerFactory _entityManagerFactory;
-
+    /**
+     * <p>
+     *     represents Spring's Data DataSource Bean injection embedding connection state to the current
+     *     remote datastore. Live connection internal to execute prepared statements.
+     * </p>
+     */
     private final DataSource _dataSource;
 
-    private final ObjectMapper _objectMapper;
-
-    private final DateTimeFormatter _dateTimeFormatter;
-
+    /**
+     * <p>
+     *     represents DataAccessConversionHelper's Bean injection
+     *     to facilitate and encapsulate
+     *     DBO Graph -> DataAccess conversions
+     *     and
+     *     parsing/removing DBO Graph state for ORM conversion
+     * </p>
+     */
     private final DataAccessConversionHelper _dataAccessConversionHelper;
 
+    /**
+     * <p>
+     *     represents singelton helper subclass to provide encapsulation to
+     *     procure ORM inputs for ObjectMapper serialization to targeted DataAccess endpoints
+     * </p>
+     */
     private final InvoiceRepositoryManagerHelper _invoiceRepositoryManagerHelper;
 
+    /**
+     * <p>
+     *     autowired constructor to supplement construction of Bean injection
+     *     for adapter, exclusive interaction
+     * </p>
+     * @param dataSource represents DataAccessConversionHelper's Bean injection
+     *     to facilitate and encapsulate
+     *     DBO Graph -> DataAccess conversions
+     *     and
+     *     parsing/removing DBO Graph state for ORM conversion
+     * @param dataAccessConversionHelper represents Spring's Data DataSource Bean injection embedding connection state to the current
+     *     remote datastore. Live connection internal to execute prepared statements.
+     */
     @Autowired
     public InvoiceRepositoryImpl(
-            EntityManagerFactory entityManagerFactory,
             DataSource dataSource,
-            ObjectMapper objectMapper,
-            DateTimeFormatter _dateTimeFormatter,
             DataAccessConversionHelper dataAccessConversionHelper) {
-        this._entityManagerFactory = entityManagerFactory;
         this._dataSource = dataSource;
-        this._objectMapper = objectMapper;
-        this._dateTimeFormatter = _dateTimeFormatter;
         this._dataAccessConversionHelper = dataAccessConversionHelper;
-        this._invoiceRepositoryManagerHelper = new InvoiceRepositoryManagerHelper(
-                this._objectMapper,
-                this._dateTimeFormatter,
-                this._dataAccessConversionHelper
-        );
+        this._invoiceRepositoryManagerHelper =
+                new InvoiceRepositoryManagerHelper(this._dataAccessConversionHelper);
     }
 
+    /**
+     * <p>
+     *      Fetches the mapped invoice by it's id and optionally by billing record IDs.
+     * </p>
+     * @param invoiceId Invoice's id value to search and acquire from
+     * @param recordIds Invoice's record ids that'll be matched onto the provided
+     *                  invoiceId for subsequent filtering.
+     * @return the Invoice of the supplemented criterion.
+     * <b>NOTE: </b>If not invoices are matched then an empty list is given.
+     */
     @Override
-    public InvoiceDataAccess fetchInvoice(long invoiceId, List<Long> recordIds) {
+    public @NotNull InvoiceDataAccess fetchInvoice(
+            final long invoiceId,
+            @Nullable final List<Long> recordIds) {
         return fetchInvoices(invoiceId, recordIds).get(0);
     }
 
+    /**
+     * <p>
+     *      Fetches the mapped invoice by it's id and optionally by billing record IDs.
+     *      If recordIds is null then "select all" is performed.
+     * </p>
+     * @param invoiceId Invoice's id value to search and acquire from
+     *                  <b>NOTE: </b>Ignored if recordIds is null.
+     * @param recordIds Invoice's record ids that'll be matched onto the provided
+     *                  invoiceId for subsequent filtering.
+     * @return the Invoice/s of the supplemented criterion.
+     * <b>NOTE: </b>If not invoices are matched then an empty list is given.
+     */
     @Override
-    public List<InvoiceDataAccess> fetchInvoices(long invoiceId, List<Long> recordIds) {
-        EntityManager em = _entityManagerFactory.createEntityManager();
+    public @NotNull List<InvoiceDataAccess> fetchInvoices(
+            final long invoiceId,
+            @Nullable final List<Long> recordIds) {
 
         String invoiceQueryStr = "";
 
@@ -84,9 +128,9 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             }
             recordIdsStr += ")";
 
-            String flatFeeBillingRecordWhereClause = QueryTableNameModifier.insertTableNamesIntoQuery(recordIdsStr, "f");
-            String rateBasedBillingRecordWhereClause = QueryTableNameModifier.insertTableNamesIntoQuery(recordIdsStr, "r");
-            String invoiceAndClause = " and c_i.invoice_id = " + invoiceId;
+            final String flatFeeBillingRecordWhereClause = QueryTableNameModifier.insertTableNamesIntoQuery(recordIdsStr, "f");
+            final String rateBasedBillingRecordWhereClause = QueryTableNameModifier.insertTableNamesIntoQuery(recordIdsStr, "r");
+            final String invoiceAndClause = " and c_i.invoice_id = " + invoiceId;
 
             invoiceQueryStr = getInvoiceSelectQuery(rateBasedBillingRecordWhereClause, flatFeeBillingRecordWhereClause, invoiceAndClause);
         } else {
@@ -94,7 +138,6 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
         }
 
         try {
-            final ObjectMapper objectMapper = new ObjectMapper();
             final Connection connection = this._dataSource.getConnection();
             final Statement statement = connection.createStatement();
 
@@ -117,9 +160,22 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
         }
     }
 
+    /**
+     * <p>
+     *     Procures the query that selects all and a single invoice.
+     *     Deviation of behavior is optionally administered by empty Strings for the composite argument.
+     * </p>
+     * @param rIds the id values of rate base billing records used to filtered Invoices by (must be present)
+     * @param fIds the id values of flat fee billing records used to filtered Invoices by (must be present)
+     * @param invId the id value of the Invoice to filter Invoice entity by on remote data store
+     * @return String of the finalized query to flush into Spring Data's DataSource Connection
+     */
+    private @NotNull String getInvoiceSelectQuery(
+            @NotNull final String rIds,
+            @NotNull final String fIds,
+            @NotNull final String invId) {
 
-    private String getInvoiceSelectQuery(String rIds, String fIds, String invId) {
-        StringBuffer stringBuffer = new StringBuffer(
+        final StringBuffer stringBuffer = new StringBuffer(
                   "select c_i.*, unionTable.* " +
                   "from " +
                   "( select a.*, c.*, i.* " +
@@ -150,59 +206,185 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
         return stringBuffer.toString();
     }
 
+    /**
+     * <h2>
+     *     InvoiceRepositoryManagerHelper
+     * </h2>
+     * <p>
+     *     Static helper class (singleton injection into InvoiceRepositoryImpl Bean injection)
+     *     to encapsulate and facilitate ORM's perquisite in generating ORM compatible conversion types
+     *     which are reflected via Spring Data's DBO Graph.
+     *     Creates reflection Maps that can subsequently passed into the
+     *     ORM layer for rendering DataAccess objects.
+     * </p>
+     */
     private static class InvoiceRepositoryManagerHelper{
 
-        private final ObjectMapper _objectMapper;
-
-        private final DateTimeFormatter _dateTimeFormatter;
-
+        /**
+         *  represent the DataAccessConversionHelper for parsing & filtering
+         *  DBO graph prefixes of overlapping column key-names.
+         */
         private final DataAccessConversionHelper _dataAccessConversionHelper;
 
         // enumerates static final fields for the key-values for composite (children) hashmaps
 
         // invoice
+        /**
+         * <p>
+         *     Key value to access and/or set Invoice's super map.
+         *     <b>clarification: </b> super map is applied in the context that
+         *     this map, which the key points to, represents the Invoice Map itself.
+         *     This map will retain all children, along with recursive children,
+         *     to fully/exhaustively define itself.
+         * </p>
+         */
+        private static final String INVOICE_KEY = "INVOICE_KEY";
+
+        /**
+         * <p>
+         *     Key value to access and/or set Company maps within an Invoice Map
+         * </p>
+         */
         private static final String INVOICE_COMPANY = "company";
+
+        /**
+         * <p>
+         *     Key value to access and/or set Invoice's Company Map compositely.
+         *     <b>clarification: </b> composite is used in the context to extricate
+         *     the Company Map (which is an member to an Invoice Map) from the ChildrenMap
+         * </p>
+         */
         private static final String INVOICE_COMPANY_KEY = "INVOICE_COMPANY";
+
+        /**
+         * <p>
+         *     Key value to access and/or set User maps within an Invoice Map
+         * </p>
+         */
         private static final String INVOICE_USER = "user";
+
+        /**
+         * <p>
+         *     Key value to access and/or set Invoice's User Map compositely.
+         *     <b>clarification: </b> composite is used in the context to extricate
+         *     the User Map (which is an member to an Invoice Map) from the ChildrenMap
+         * </p>
+         */
         private static final String INVOICE_USER_KEY = "INVOICE_USER";
 
+        /**
+         * <p>
+         *     Key value to access and/or set InvoiceLineItem maps within an Invoice Map
+         * </p>
+         */
+        private static final String INVOICE_LINE_ITEM = "lineItems";
+
+        /**
+         * <p>
+         *     Key value to access and/or set Invoice's InvoiceLineItem Map compositely.
+         *     <b>clarification: </b> composite is used in the context to extricate
+         *     the InvoiceLineItem Map (which is an member to an Invoice Map) from the ChildrenMap
+         * </p>
+         */
+        private static final String INVOICE_LINE_ITEM_KEY = "INVOICE_LINE_ITEM_KEY";
+
         // invoice line item
+        /**
+         * <p>
+         *     Key value to access and/or set User maps within an InvoiceLineItem Map
+         * </p>
+         */
         private static final String IL_USER = "user";
+
+        /**
+         * <p>
+         *     Key value to access and/or set InvoiceLineItem's User Map compositely.
+         *     <b>clarification: </b> composite is used in the context to extricate
+         *     the User Map (which is an member to an InvoiceLineItem Map) from the ChildrenMap
+         * </p>
+         */
         private static final String IL_USER_KEY = "IL_USER";
+
+        /**
+         * <p>
+         *     Key value to access and/or set BillingRecord maps within an InvoiceLineItem Map
+         * </p>
+         */
         private static final String IL_BILLING_RECORD = "billingRecord";
+
+        /**
+         * <p>
+         *     Key value to access and/or set InvoiceLineItem's BillingRecord Map compositely.
+         *     <b>clarification: </b> composite is used in the context to extricate
+         *     the BillingRecord Map (which is an member to an InvoiceLineItem Map) from the ChildrenMap
+         * </p>
+         */
         private static final String IL_BILLING_RECORD_KEY = "IL_BILLING_RECORD";
 
         // billing record
+
+        /**
+         * <p>
+         *     Key value to access and/or set User maps within an BillingRecord Map
+         * </p>
+         */
         private static final String BR_USER = "user";
+
+        /**
+         * <p>
+         *     Key value to access and/or set BillingRecord's User Map compositely.
+         *     <b>clarification: </b> composite is used in the context to extricate
+         *     the User Map (which is an member to an BillingRecord Map) from the ChildrenMap
+         * </p>
+         */
         private static final String BR_USER_KEY = "BR_USER";
+
+        /**
+         * <p>
+         *     Key value to access and/or set Company maps within an BillingRecord Map
+         * </p>
+         */
         private static final String BR_COMPANY = "company";
+
+        /**
+         * <p>
+         *     Key value to access and/or set BillingRecord's Company Map compositely.
+         *     <b>clarification: </b> composite is used in the context to extricate
+         *     the Company Map (which is an member to an BillingRecord Map) from the ChildrenMap
+         * </p>
+         */
         private static final String BR_COMPANY_KEY = "BR_COMPANY";
 
-        // holds all invoice line items according to their invoice id (parent)
-        private final Map<String, List<Map<String, ?>>> invoiceLineItemsPerInvoice =
-                new HashMap<>();
-
-        private static final String INVOICE_LINE_ITEM = "lineItems";
-
-        // enumerates keys for parent hash map keys
-        private static final String INVOICE_KEY = "INVOICE_KEY";
-        private static final String INVOICE_LINE_ITEM_KEY = "INVOICE_LINE_ITEM_KEY";
-        private static final String BR_KEY = "BR_KEY";
-
-        // key to extract invoice id from an invoice
+        /**
+         * <p>
+         *     key to extract invoice's InvoiceId value
+         * </p>
+         */
         private static final String INVOICE_ID_KEY = "invoice_id";
 
 
-        public InvoiceRepositoryManagerHelper(
-                ObjectMapper objectMapper,
-                DateTimeFormatter dateTimeFormatter,
-                DataAccessConversionHelper dataAccessConversionHelper
-        ){
-            this._objectMapper = objectMapper;
-            this._dateTimeFormatter = dateTimeFormatter;
+        /**
+         * <p>
+         *     Singelton constructor (via InvoiceRepositoryImpl Bean injection)
+         *     to create a InvoiceRepositoryManagerHelper.
+         * </p>
+         * @param dataAccessConversionHelper represent the DataAccessConversionHelper for parsing & filtering
+         *     DBO graph prefixes of overlapping column key-names.
+         */
+        public InvoiceRepositoryManagerHelper(DataAccessConversionHelper dataAccessConversionHelper){
             this._dataAccessConversionHelper = dataAccessConversionHelper;
         }
 
+        /**
+         * <p>
+         *     Creates a fully-qualified list of Invoices (with children and recursive children set)
+         *     from Spring Data's DBO Graph.
+         * </p>
+         * @param resultSet Spring Data's DBO Graph embedded with query result sets
+         * @return List of HashMaps holding all of Invoice's state (with recursive children state attached)
+         * @throws SQLException if metadata attached to ResultSet is not set (query execution ended in
+         * an error and/or improperly created manually)
+         */
         public @NotNull List<HashMap<String, Object>> createDeserializableInvoicesFromResultSet(
                 @NotNull final ResultSet resultSet) throws SQLException {
 
@@ -324,7 +506,14 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             return new ArrayList<HashMap<String, Object>>(invoices.values());
         }
 
-        // returns a hashmap holding all children hashmap
+        /**
+         * <p>
+         *     Creates a Map retaining all children map, including the super parent (Invoice).
+         *     Usage: to append composite field values and subsequently attach to parent map.
+         *     <b>Note: </b> This conglomerate maps represents ONE fully-qualified Invoice object.
+         * </p>
+         * @return Map of all children maps including super parent (Invoice)
+         */
         private @NotNull Map<String, HashMap<String, Object>> initializeChildrenHashMaps(){
 
             // creates return map
@@ -335,7 +524,6 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             final HashMap<String,Object> invoiceUser = new HashMap<String, Object>();
 
             final HashMap<String,Object> il_user = new HashMap<String, Object>();
-            final HashMap<String,Object> il_br = new HashMap<String, Object>();
 
             final HashMap<String,Object> br_user = new HashMap<String, Object>();
             final HashMap<String,Object> br_company = new HashMap<String, Object>();
@@ -343,25 +531,57 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
             // creates the parent maps
             final HashMap<String,Object> invoice = new HashMap<>();
             final HashMap<String,Object> invoice_lineItem = new HashMap<>();
-            final HashMap<String,Object> billingRecord = new HashMap<>();
-            
+            final HashMap<String,Object> billingRecord = new HashMap<String, Object>();
+
             // sets children maps each composite map
             childrenMaps.put(INVOICE_COMPANY_KEY, invoiceCompany);
             childrenMaps.put(INVOICE_USER_KEY, invoiceUser);
-            childrenMaps.put(IL_BILLING_RECORD_KEY, il_br);
+            childrenMaps.put(IL_BILLING_RECORD_KEY, billingRecord);
             childrenMaps.put(IL_USER_KEY, il_user);
             childrenMaps.put(BR_COMPANY_KEY, br_company);
             childrenMaps.put(BR_USER_KEY, br_user);
             childrenMaps.put(INVOICE_KEY, invoice);
             childrenMaps.put(INVOICE_LINE_ITEM_KEY, invoice_lineItem);
-            childrenMaps.put(BR_KEY, billingRecord);
-
 
             return childrenMaps;
         }
 
+        /**
+         * <p>
+         *     Helper method to return necessary state to append composite fields from the ResultSet
+         *     into the correct maps. Additionally provides state to attach children maps to parent maps.
+         * </p>
+         *     <b>necessary state</b>
+         *     <ul>
+         *         <li>
+         *             <p>
+         *                  childMap: the map of the current child within the index, threshold range
+         *            </p>
+         *         </li>
+         *         <li>
+         *             <p>
+         *                 isFirstIndex: indicates if this is the first index of this child map threshold range
+         *             </p>
+         *         </li>
+         *         <li>
+         *            <p>
+         *                 parentMap: the map of the parent which to attach the current child map to
+         *             </p>
+         *          </li>
+         *          <li>
+         *             <p>
+         *                 childMapKeyToParent: the key-value to set the child map into the parent map
+         *             </p>
+         *         </li>
+         *     </ul>
+         * @param childrenMaps a conglomerate map retaining all children map
+         *                     <b>Note: </b> you should not be setting this yourself but
+         *                     acquiring it from a prior helper method in this ORM helper class
+         * @param index the current index within the ResultSet Graph traversal
+         * @return A tuple (comprised of four items) retaining necessary state enumerated above
+         */
         private @NotNull Quartet<Map<String, Object>, Boolean, Map<String, Object>, String> getCurrentHashMap(
-                @NotNull Map<String, ? extends Map<String, Object>> childrenMaps,
+                @NotNull final Map<String, ? extends Map<String, Object>> childrenMaps,
                 @NotNull final int index){
 
             if(index >= 1 && index <= 3)
@@ -403,19 +623,19 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
                 return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(
                         childrenMaps.get(BR_USER_KEY),
                         index == 19,
-                        childrenMaps.get(BR_KEY),
+                        childrenMaps.get(IL_BILLING_RECORD_KEY),
                         BR_USER
                 );
             else if(index >= 22 && index <= 23)
                 return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(
                         childrenMaps.get(BR_COMPANY_KEY),
                         index == 22,
-                        childrenMaps.get(BR_KEY),
+                        childrenMaps.get(IL_BILLING_RECORD_KEY),
                         BR_COMPANY
                 );
             else if(index >= 24 && index <= 31)
                 return new Quartet<Map<String, Object>, Boolean, Map<String, Object>, String>(
-                        childrenMaps.get(BR_KEY),
+                        childrenMaps.get(IL_BILLING_RECORD_KEY),
                         index == 24,
                         childrenMaps.get(INVOICE_LINE_ITEM_KEY),
                         IL_BILLING_RECORD
