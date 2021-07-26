@@ -221,7 +221,12 @@ public class BillingRecordTests {
     public void testGetAllBillingRecords() throws Exception{
 
         // acquires actual list from controller invocation
-        final List<BillingRecord> actualBillingRecords = this._billingRecordController.getAllBillingRecords();
+        final Optional<List<BillingRecord>> actualBillingRecordsOptional = this._billingRecordController.getAllBillingRecords();
+
+        // asserts that optional is non-empty
+        assertTrue(actualBillingRecordsOptional.isPresent());
+
+        final List<BillingRecord> actualBillingRecords = actualBillingRecordsOptional.get();
 
         // assert size of lists are equal
         assertEquals(_generalBillingRecordAmalgamation.size(), actualBillingRecords.size());
