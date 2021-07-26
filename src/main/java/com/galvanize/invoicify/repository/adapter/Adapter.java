@@ -119,6 +119,13 @@ public final class Adapter {
                 .map(companyDataAccess -> companyDataAccess.convertToModel(Company::new)).get();
     }
 
+    /**
+     * <p>
+     *     Exposed adapter stub for BillingRecordRepository endpoint to
+     *     encapsulate the retrieval of all BillingRecords with children state attached.
+     * </p>
+     * @return List of BillingRecords with children state attached
+     */
     public @NotNull List<BillingRecord> getAllBillingRecords(){
 
         // holds conjoined billing records (flat fee & rate base)
@@ -184,6 +191,14 @@ public final class Adapter {
 
     }
 
+    /**
+     * <p>
+     *     Exposed adapter stub for BillingRecordRepository endpoint to
+     *     encapsulate the retrieval of a BillingRecord via its ID with children state attached.
+     * </p>
+     * @param id: a NotNull ID that maps to either a FlatFeeBillingRecord or a RateBasedBillingRecord
+     * @return an Optional BillingRecord that maps to the given ID. Null otherwise.
+     */
     public @NotNull Optional<BillingRecord> getBillingRecordById(@NotNull final Long id){
         final ObjectMapper objectMapper = new ObjectMapper();
         // note: billing record may be in Flat, Rate, or none
@@ -246,6 +261,14 @@ public final class Adapter {
 
     }
 
+    /**
+     * <p>
+     *     Exposed adapter stub for BillingRecordRepository endpoint to
+     *     encapsulate the retrieval of all BillingRecords with children state attached.
+     * </p>
+     * @param flatFeeBillingRecord
+     * @return
+     */
     public @NotNull Optional<FlatFeeBillingRecord> saveFlatFeeBillingRecord(
             @NotNull final FlatFeeBillingRecord flatFeeBillingRecord){
 
