@@ -26,12 +26,14 @@ public final class DataAccessConversionHelper {
     ObjectMapper objectMapper;
 
     /**
-     *<p> todo: modify
-     * This is a Helper method that takes the data from the database and
-     * the constructor of the specified entity to create multiple data access objects
+     *<p>
+     *  Creates a List of the targeted DataAccess object from a List of Map representation/reflections of
+     *  Spring Data's Result Set Graph.
      *</p>
-     *
-     * @param data: Object[] data representing the information from database.
+     * @param data List of the conglomerated map-data representing the targeted DataAccess returned from the ResultSet
+     * @param serializerEndpoint class definition of the targeted DataAccess type
+     * @param <T> DataAccess type to convert the conglomerated-maps to
+     * @return List of the targeted DataAccess types
  */
     public < T extends IDataAccess<?>> List<T> createDataAccessObjects(
             @NotNull final List<? extends Map<String, ?>> data,
@@ -65,13 +67,13 @@ public final class DataAccessConversionHelper {
 
     /**
      *<p>
-     * This is a Helper method that takes the data from the database and
-     * the constructor of the specified entity to create a data access object
+     *  Creates a DataAccess object from a Map representation/reflection of
+     *  Spring Data's Result Set Graph.
      *</p>
-     *
-     * @param data: todo: modify
-     //* @param typeConstructor: Lambda typeConstructor representing the constructor for the specified entity type.
-     * @return  Returning the created data access object
+     * @param data Conglomerated map-data representing the targeted DataAccess returned from the ResultSet
+     * @param serializerEndpoint class definition of the targeted DataAccess type
+     * @param <T> DataAccess type to convert the conglomerated-map to
+     * @return the targeted DataAccess type
      */
     public <T extends IDataAccess<?>> T createDataAccessObject(
             @NotNull final Map<String, ?> data,
