@@ -5,15 +5,11 @@ import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.CompanyController;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.adapter.Adapter;
-import com.galvanize.invoicify.repository.adapter.DuplicateCompanyException;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
-import org.json.JSONArray;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,26 +17,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.util.Assert;
-
-import javax.servlet.http.HttpServletResponse;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-//import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-//@WebMvcTest(CompanyController.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = InvoicifyApplication.class)
@@ -286,7 +269,7 @@ public class CompanyControllerTest {
         when(companyRepository.findById(1L)).thenReturn(Optional.of(existingCompanyToBeUpdated));
 
         // Testing to ensure that the modified company has been added to the table
-        when(companyRepository.save(any())).thenReturn(savedUpdatedCompany);
+        when(companyRepository.save(any(CompanyDataAccess.class))).thenReturn(savedUpdatedCompany);
 
         // Setting an Optional Company to an actual variable that calls the companyController to find that company and modify it
         final Optional<Company> actualCompanyOptional = companyController.updateCompany(expectedCompany, 1L);
