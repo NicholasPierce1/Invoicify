@@ -66,8 +66,7 @@ public final class Adapter {
     }
 
     private boolean isUserExists(String userName) throws DuplicateUserException {
-        int userCountByUsername = this._userRepository.countUsersByUserName(userName);
-        return userCountByUsername > 0;
+        return this._userRepository.findByUsername(userName).isPresent();
     }
 
 
