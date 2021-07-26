@@ -20,43 +20,74 @@ import java.util.function.Supplier;
 public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<RateBasedBillingRecord> {
 
     // fields
-
+    /**
+     * <p>
+     *     represents the rate for each composite item within the quantity
+     *     for this RateBasedBillingRecordDataAccess
+     * </p>
+     */
     @Column(nullable = false)
     public double rate;
 
+    /**
+     * <p>
+     *     represents the quantity of each item
+     *     for this RateBasedBillingRecordDataAccess
+     * </p>
+     */
     @Column(nullable = false)
     public double quantity;
 
     // constructors
-
+    /**
+     * <p>
+     *     No arg-constructor to be created for DA->Model conversion and JacksonJSON serialization in custom
+     *     ORM.
+     * </p>
+     */
     public RateBasedBillingRecordDataAccess(){
 
     }
 
     // get & set
-
+    /**
+     * <p>
+     *     returns rate
+     * </p>
+     * @return instance value of rate for this RateBasedBillingRecordDataAccess
+     */
     public double getRate() {
         return rate;
     }
 
+    /**
+     * <p>
+     *     returns quantity
+     * </p>
+     * @return instance value of quantity for this RateBasedBillingRecordDataAccess
+     */
     public double getQuantity() {
         return quantity;
     }
 
-    public Long getId() {
-        return id;
-    }
-
+    /**
+     * <p>
+     *     sets the rate value for this RateBasedBillingRecordDataAccess
+     * </p>
+     * @param rate: new rate value for this RateBasedBillingRecordDataAccess
+     */
     public void setRate(double rate) {
         this.rate = rate;
     }
 
+    /**
+     * <p>
+     *     sets the rate quantity for this RateBasedBillingRecordDataAccess
+     * </p>
+     * @param quantity: new quantity value for this RateBasedBillingRecordDataAccess
+     */
     public void setQuantity(double quantity) {
         this.quantity = quantity;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     // methods
@@ -66,6 +97,16 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
 
     }
 
+    /**
+     * <p>
+     *     IConvertible's implementation to convert a RateBasedBillingRecordDataAccess to it's model type parameter
+     *     (RateBasedBillingRecord).
+     * </p>
+     * @param supplier: supplements a model object that extends (concrete implementation) of RateBasedBillingRecord
+     * @param <M>: extension (concrete implementation) of RateBasedBillingRecord
+     * @return a model object of aforementioned type parameter with the reflective state of 'this'
+     * RateBasedBillingRecordDataAccess
+     */
     @Override
     public <M extends RateBasedBillingRecord> M convertToModel(Supplier<M> supplier) {
 
@@ -77,6 +118,13 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
         return rateBaseBillingRecord;
     }
 
+    /**
+     * <p>
+     *     IConvertible's implementation to convert a model to a RateBasedBillingRecordDataAccess
+     * </p>
+     * @param modelObject a model object that extends (concrete implementation) of RateBasedBillingRecord
+     * @param <M> extension (concrete implementation) of RateBasedBillingRecord
+     */
     @Override
     public <M extends RateBasedBillingRecord> void convertToDataAccess(M modelObject) {
         super.convertToDataAccess(modelObject);

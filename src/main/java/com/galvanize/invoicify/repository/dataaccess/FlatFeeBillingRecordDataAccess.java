@@ -68,7 +68,16 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<Flat
 
     }
 
-
+    /**
+     * <p>
+     *     IConvertible's implementation to convert a FlatFeeBillingRecordDataAccess to it's model type parameter
+     *     (FlatFeeBillingRecord).
+     * </p>
+     * @param supplier: supplements a model object that extends (concrete implementation) of FlatFeeBillingRecord
+     * @param <M>: extension (concrete implementation) of FlatFeeBillingRecord
+     * @return a model object of aforementioned type parameter with the reflective state of 'this'
+     * FlatFeeBillingRecordDataAccess
+     */
     @Override
     public <M extends FlatFeeBillingRecord> M convertToModel(Supplier<M> supplier) {
 
@@ -79,6 +88,13 @@ public class FlatFeeBillingRecordDataAccess extends BillingRecordDataAccess<Flat
 
     }
 
+    /**
+     * <p>
+     *     IConvertible's implementation to convert a model to a FlatFeeBillingRecordDataAccess
+     * </p>
+     * @param modelObject a model object that extends (concrete implementation) of FlatFeeBillingRecord
+     * @param <M> extension (concrete implementation) of FlatFeeBillingRecord
+     */
     @Override
     public <M extends FlatFeeBillingRecord> void convertToDataAccess(M modelObject) {
         super.convertToDataAccess(modelObject);
