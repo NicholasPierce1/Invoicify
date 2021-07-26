@@ -80,7 +80,7 @@ public final class CompanyController  {
      * @return : Optional<Company> if that Company exists with the id, null otherwise
      */
     @GetMapping(
-            value = {"/{id}" , "{id}/", "/{id}/" , "{id}"},
+            value = {"/{id}" ,"/{id}/"},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public @NotNull Optional<Company> findById(@NotNull final @PathVariable Long id) {
@@ -136,7 +136,7 @@ public final class CompanyController  {
      * @return : the company that was removed; should be null
      */
     @DeleteMapping(
-            value = {"/{id}" , "{id}/", "/{id}/" , "{id}"},
+            value = {"/{id}", "/{id}/"},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public @NotNull Optional<Company> deleteCompanyById(@NotNull final @PathVariable Long id) {
@@ -165,7 +165,7 @@ public final class CompanyController  {
      * @return : the updated Company
      */
     @PutMapping(
-            value = {"/{id}" , "{id}/", "/{id}/" , "{id}"},
+            value = {"/{id}" , "/{id}/"},
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public @NotNull Optional<Company> updateCompany(@NotNull final @RequestBody Company company, final @PathVariable Long id)  {
