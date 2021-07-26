@@ -36,11 +36,12 @@ public final class Adapter {
 
     /**
      * <p>
-     *      Handles the request from the controller by utilziing the userRepository; looks up the
-     *      company with teh given
+     *      Handles the request from the controller by utilizing the userRepository; looks up the
+     *      user with the given name then converts the UserDataAccessModel to a User Model.
      * </p>
-     * @param username
-     * @return Optional<User> : a user is returned
+     * @param username -> requires a String username from the request body prior to retrieving a user by username
+     * @return Optional<User> : uses userRepository to find the specified User DataAccessObject by its name and converts
+     *  it to a User Model Object.
      * */
 
     public @NotNull Optional<User> getUserByUserName(final String username){
