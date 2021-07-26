@@ -72,13 +72,17 @@ public class UserControllerTest {
     public void createAnExistingUser() throws Exception {
 
         UserDataAccess userDataAccess = new UserDataAccess("testuser1","testpassword2");
-        User expectedUser = new User(userDataAccess.getUsername(),userDataAccess.getPassword());
+        userDataAccess.setUsername("testuser1");
 
-        when(userRepository.countUsersByUserName(any())).thenReturn(2);
-        when(userRepository.save(any())).thenReturn(userDataAccess);
+        // Setting a userDataAccess object variable then converting it to a company object
+        final User expectedUser =
+                userDataAccess.convertToModel(User::new);
+
+        // when for bad case (name is not unique)
+        when(this.userRepository.findByUsername(userDataAccess.getUsername())).thenReturn(Optional.of(userDataAccess));
+
+        // test bad case (name is not unique)
         assertFalse(this.userController.createUser(expectedUser).isPresent());
-
-        verify(userRepository,times(1)).countUsersByUserName(any());
     }
 
 
