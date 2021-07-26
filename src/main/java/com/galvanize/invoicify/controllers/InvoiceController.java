@@ -39,13 +39,14 @@ public class InvoiceController {
     }
 
     /**
-     *This invoice endpoint creates an invoice.
+     * <p>
+     *  This invoice endpoint creates an invoice.
      *  Process Steps :
      *   1. Check if there is an actual user logged in.
      *   2. Check if IDs (Company ID, and Billing record IDs) in the parameters are valid and existing.
      *   3. Save data to Invoice and InvoiceLineItem entity tables.
      *   4. Create Invoice response object. see@Return
-     *
+     * </p>
      *
      * @param auth
      * @param invoice
@@ -53,7 +54,7 @@ public class InvoiceController {
      *    "invoiceDescription":"new invoice",
      *    "recordIds":[1,2]
      * }
-     * @param companyId
+     * @param companyId - any positive long number.
      * @return an invoice object that looks something like this
      * @see <a href="https://documenter.getpostman.com/view/11036917/TzedhkB1#10cb449b-7938-4772-8368-667999b6f86b"> Create Invoice Response</a>
      *
@@ -61,23 +62,26 @@ public class InvoiceController {
     @PostMapping("/{companyId}")
     public Invoice createInvoice(Authentication auth, @RequestBody Invoice invoice, @PathVariable long companyId) {
         String userName = "";
-        if (auth != null) {
-             User user = (User) auth.getPrincipal();
+        if (auth != null) { //prevent Null Pointer Exception
+             User user = (User) auth.getPrincipal(); //get logged in user. Auth is automatically populated when a user hits a successful PUT method on http://localhost:8080/api/session
              userName = user.getUsername();
         }
         try {
             return adapter.createInvoice(invoice, companyId, userName);
-        } catch (Exception e) {
+        } catch (Exception e) { //The only exceptions thrown right now is if one of the IDs in the parameters is valid.
             System.out.println(e.getMessage());
             return null;
         }
     }
 
     /**
-     *
-     *
-     * @return a list of all Invoice objects.
-     * @see <a href="https://documenter.getpostman.com/view/11036917/TzedhkB1#10cb449b-7938-4772-8368-667999b6f86b"> Create Invoice Response</a>
+     * <p>
+     *      A Get request is sent to: http://localhost:8080/api/invoice , that logic is processed and then shipped
+     *      to the adapter to communicate with the DataAccessObject -> and the database in turn. The response is
+     *      the rendered list of invoices that the DataAccessObject retrieves. Important to note that if there
+     *      are no invoices present, the application will not crash.
+     * </p>
+     * @return : List<Company> : a compiled list of all the present companies
      */
     @GetMapping()
     public List<Invoice> getAllInvoices() {
