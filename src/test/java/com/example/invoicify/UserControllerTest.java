@@ -1,12 +1,11 @@
 package com.example.invoicify;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.UserController;
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.adapter.Adapter;
-import com.galvanize.invoicify.repository.adapter.DuplicateUserException;
+
 import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
 import org.junit.jupiter.api.*;
@@ -16,14 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +26,6 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -83,6 +75,9 @@ public class UserControllerTest {
 
         // test bad case (name is not unique)
         assertFalse(this.userController.createUser(expectedUser).isPresent());
+
+        verify(userRepository, times(1)).findByUsername(any());
+        verifyNoMoreInteractions(this.userRepository);
     }
 
 
@@ -102,6 +97,10 @@ public class UserControllerTest {
 
         assertEquals(expectedUserStr,actualUserStr);
         verify(userRepository, times(1)).save(any());
+        verify(userRepository, times(1)).findByUsername(any());
+
+        verifyNoMoreInteractions(this.userRepository);
+
     }
 
 
@@ -130,6 +129,8 @@ public class UserControllerTest {
 
         }
         verify(userRepository, times(1)).findAll();
+
+        verifyNoMoreInteractions(this.userRepository);
     }
 
     @Test
@@ -144,10 +145,9 @@ public class UserControllerTest {
         String expectedUserStr = objectMapper.writeValueAsString(expectedUser);
         assertEquals(actualUserStr, expectedUserStr);
 
-
-
         verify(userRepository, times(1)).findById(1L);
 
+        verifyNoMoreInteractions(this.userRepository);
     }
 
     @Test
@@ -171,6 +171,9 @@ public class UserControllerTest {
 
         verify(userRepository, times(1)).findById(any());
         verify(userRepository, times(1)).save(any());
+        verify(userRepository, times(1)).findByUsername(any());
+
+        verifyNoMoreInteractions(this.userRepository);
 
     }
 
@@ -196,6 +199,9 @@ public class UserControllerTest {
 
         verify(userRepository, times(1)).findById(any());
         verify(userRepository, times(1)).save(any());
+        verify(userRepository, times(1)).findByUsername(any());
+
+        verifyNoMoreInteractions(this.userRepository);
 
     }
 
@@ -220,6 +226,8 @@ public class UserControllerTest {
 
         verify(userRepository, times(1)).findById(any());
         verify(userRepository, times(1)).save(any());
+
+        verifyNoMoreInteractions(this.userRepository);
 
     }
 
