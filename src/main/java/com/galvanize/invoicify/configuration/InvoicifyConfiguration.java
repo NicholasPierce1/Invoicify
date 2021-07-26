@@ -30,8 +30,4 @@ public class InvoicifyConfiguration {
         return DateTimeFormatter.ofPattern("yyyy-MM-dd");
     }
 
-    public static @NotNull DateTimeFormatter getStaticDateFormatter(){
-        return DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    }
-
 }

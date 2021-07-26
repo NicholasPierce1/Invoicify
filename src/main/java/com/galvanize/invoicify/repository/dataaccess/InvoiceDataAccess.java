@@ -57,9 +57,6 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
     @Transient
     private ArrayList<InvoiceLineItemDataAccess> lineItems = new ArrayList<InvoiceLineItemDataAccess>();
 
-    @Transient
-    DateTimeFormatter dateTimeFormatter = InvoicifyConfiguration.getStaticDateFormatter();
-
     public void setCompany(CompanyDataAccess company) {
         this.company = company;
     }

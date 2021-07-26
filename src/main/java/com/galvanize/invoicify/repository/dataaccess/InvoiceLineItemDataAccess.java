@@ -48,9 +48,6 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
     @Transient
     private BillingRecordDataAccess<? extends BillingRecord> billingRecord;
 
-    @Transient
-    DateTimeFormatter dateTimeFormatter = InvoicifyConfiguration.getStaticDateFormatter();
-
     public InvoiceLineItemDataAccess(long billingRecordId, Date createdOn, long createdBy, long invoiceId) {
         this.id = id;
         this.billingRecordId = billingRecordId;
