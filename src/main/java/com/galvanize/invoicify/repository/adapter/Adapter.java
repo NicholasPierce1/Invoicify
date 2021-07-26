@@ -454,7 +454,7 @@ public final class Adapter {
      *  }
      * @param companyId - any positive long number.
      * @param userName - this is pre-populated when a user logs in and is passed from InvoiceController.java
-     * @return Invoice Object
+     * @return Invoice Object without the record Ids passed in from the client request.
      * @throws InvalidRequestException
      */
     public Invoice createInvoice(Invoice invoice, long companyId, String userName) throws InvalidRequestException {
