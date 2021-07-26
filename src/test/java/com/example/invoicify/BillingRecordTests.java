@@ -14,6 +14,7 @@ import com.galvanize.invoicify.repository.repositories.companyrepository.Company
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.ratebasebillingrecord.RateBaseBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.userrepository.UserRepository;
+import org.checkerframework.checker.nullness.Opt;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -65,9 +66,9 @@ public class BillingRecordTests {
 
     private ObjectMapper _objectMapper;
 
-    private UserDataAccess userOneDataAccess;
+    private UserDataAccess _userOneDataAccess;
 
-    private CompanyDataAccess companyOneDataAccess;
+    private CompanyDataAccess _companyOneDataAccess;
 
     @BeforeAll
     public void createAdapter(){
@@ -92,19 +93,19 @@ public class BillingRecordTests {
         companyOne.setName("Subway");
         companyOne.setId(1L);
 
-        this.companyOneDataAccess = new CompanyDataAccess();
-        this.companyOneDataAccess.setName(companyOne.getName());
-        this.companyOneDataAccess.setId(companyOne.getId());
+        this._companyOneDataAccess = new CompanyDataAccess();
+        this._companyOneDataAccess.setName(companyOne.getName());
+        this._companyOneDataAccess.setId(companyOne.getId());
 
         final User userOne = new User();
         userOne.setId(1L);
         userOne.setUsername("username");
         userOne.setPassword("password");
 
-        this.userOneDataAccess = new UserDataAccess();
-        this.userOneDataAccess.setId(userOne.getId());
-        this.userOneDataAccess.setUsername(userOne.getUsername());
-        this.userOneDataAccess.setPassword(userOne.getPassword());
+        this._userOneDataAccess = new UserDataAccess();
+        this._userOneDataAccess.setId(userOne.getId());
+        this._userOneDataAccess.setUsername(userOne.getUsername());
+        this._userOneDataAccess.setPassword(userOne.getPassword());
 
         this._flatFeeBillingRecordsDataAccess = new ArrayList<FlatFeeBillingRecordDataAccess>()
         {{
@@ -196,14 +197,17 @@ public class BillingRecordTests {
 
         // registers mock on all id values for every data access
         for(final FlatFeeBillingRecordDataAccess flatFee : this._flatFeeBillingRecordsDataAccess) {
-            when(this._userRepository.findById(flatFee.getCreatedBy())).thenReturn(Optional.of(this.userOneDataAccess));
-            when(this._companyRepository.findById(flatFee.getCompanyId())).thenReturn(Optional.of(this.companyOneDataAccess));
+            when(this._userRepository.findById(flatFee.getCreatedBy())).thenReturn(Optional.of(this._userOneDataAccess));
+            when(this._companyRepository.findById(flatFee.getCompanyId())).thenReturn(Optional.of(this._companyOneDataAccess));
             when(this._flatFeeBillingRecordRepository.findById(flatFee.getId())).thenReturn(Optional.of(flatFee));
+
+            // registers null mocks for rate based (rate based ids should yield nullO
+            when(this._rateBasedBillingRecordRepository.findById(flatFee.getId())).thenReturn(Optional.empty());
         }
 
         for(final RateBasedBillingRecordDataAccess rateBasedFee : this._rateBasedBillingRecordsDataAccess){
-            when(this._userRepository.findById(rateBasedFee.getCreatedBy())).thenReturn(Optional.of(this.userOneDataAccess));
-            when(this._companyRepository.findById(rateBasedFee.getCompanyId())).thenReturn(Optional.of(this.companyOneDataAccess));
+            when(this._userRepository.findById(rateBasedFee.getCreatedBy())).thenReturn(Optional.of(this._userOneDataAccess));
+            when(this._companyRepository.findById(rateBasedFee.getCompanyId())).thenReturn(Optional.of(this._companyOneDataAccess));
             when(this._rateBasedBillingRecordRepository.findById(rateBasedFee.getId())).thenReturn(Optional.of(rateBasedFee));
         }
 
@@ -213,7 +217,16 @@ public class BillingRecordTests {
     public void resetMocks(){
         Mockito.reset(
                 this._flatFeeBillingRecordRepository,
-                this._rateBasedBillingRecordRepository
+                this._rateBasedBillingRecordRepository,
+                this._companyRepository,
+                this._userRepository
+        );
+
+        Mockito.clearInvocations(
+                this._flatFeeBillingRecordRepository,
+                this._rateBasedBillingRecordRepository,
+                this._companyRepository,
+                this._userRepository
         );
     }
 
@@ -229,7 +242,7 @@ public class BillingRecordTests {
         final List<BillingRecord> actualBillingRecords = actualBillingRecordsOptional.get();
 
         // assert size of lists are equal
-        assertEquals(_generalBillingRecordAmalgamation.size(), actualBillingRecords.size());
+        assertEquals(this._generalBillingRecordAmalgamation.size(), actualBillingRecords.size());
 
         // assert list content is of expected (note: is order specific to implementation)
         assertEquals(
@@ -237,6 +250,26 @@ public class BillingRecordTests {
                 this._objectMapper.writeValueAsString(actualBillingRecords)
         );
 
+        verify(this._flatFeeBillingRecordRepository, times(1)).findAll();
+        verify(this._rateBasedBillingRecordRepository, times(1)).findAll();
+        verify(
+                this._companyRepository,
+                times(this._generalBillingRecordAmalgamation.size())
+        )
+                .findById(this._companyOneDataAccess.getId());
+
+        verify(
+                this._userRepository,
+                times(this._generalBillingRecordAmalgamation.size())
+        )
+                .findById(this._userOneDataAccess.getId());
+
+        verifyNoMoreInteractions(
+                this._rateBasedBillingRecordRepository,
+                this._flatFeeBillingRecordRepository,
+                this._userRepository,
+                this._companyRepository
+        );
     }
 
     @Test
@@ -255,6 +288,43 @@ public class BillingRecordTests {
                     )
             );
         }
+
+        // verifies rate based retrieves corresponding objects via id & flat fee returns null for every id
+        for(final RateBasedBillingRecordDataAccess rateBased : this._rateBasedBillingRecordsDataAccess) {
+            verify(
+                    this._rateBasedBillingRecordRepository,
+                    times(1)
+            ).findById(rateBased.getId());
+
+            verify(
+                    this._flatFeeBillingRecordRepository,
+                    times(1)
+            ).findById(rateBased.getId());
+        }
+
+        for(final FlatFeeBillingRecordDataAccess flatFee : this._flatFeeBillingRecordsDataAccess)
+            verify(
+                    this._flatFeeBillingRecordRepository,
+                    times(1)
+            ).findById(flatFee.getId());
+
+        verify(
+                this._companyRepository,
+                times(this._generalBillingRecordAmalgamation.size())
+        )
+                .findById(this._companyOneDataAccess.getId());
+
+        verify(
+                this._userRepository,
+                times(this._generalBillingRecordAmalgamation.size())
+        )
+                .findById(this._userOneDataAccess.getId());
+
+        verifyNoMoreInteractions(
+                this._flatFeeBillingRecordRepository,
+                this._userRepository,
+                this._companyRepository
+        );
 
     }
 
@@ -279,12 +349,12 @@ public class BillingRecordTests {
         when(
                 this._companyRepository.findById(flatFeeBillingRecord.getClient().getId())
         )
-                .thenReturn(Optional.of(this.companyOneDataAccess));
+                .thenReturn(Optional.of(this._companyOneDataAccess));
 
         when(
                 this._userRepository.findById(flatFeeBillingRecord.getCreatedBy().getId())
         )
-                .thenReturn(Optional.of(this.userOneDataAccess));
+                .thenReturn(Optional.of(this._userOneDataAccess));
 
         assertEquals(
                 this._objectMapper.writeValueAsString(expectedFlatFeeBillingRecord),
@@ -294,6 +364,20 @@ public class BillingRecordTests {
                 )
         );
 
+        verify(this._flatFeeBillingRecordRepository, times(1))
+                .save(any(FlatFeeBillingRecordDataAccess.class));
+
+        verify(this._userRepository, times(1))
+                .findById(flatFeeBillingRecord.getCreatedBy().getId());
+
+        verify(this._companyRepository, times(1))
+                .findById(flatFeeBillingRecord.getClient().getId());
+
+        verifyNoMoreInteractions(
+                this._flatFeeBillingRecordRepository,
+                this._companyRepository,
+                this._userRepository
+        );
     }
 
     @Test
@@ -317,12 +401,12 @@ public class BillingRecordTests {
         when(
                 this._companyRepository.findById(rateBasedBillingRecord.getClient().getId())
         )
-                .thenReturn(Optional.of(this.companyOneDataAccess));
+                .thenReturn(Optional.of(this._companyOneDataAccess));
 
         when(
                 this._userRepository.findById(rateBasedBillingRecord.getCreatedBy().getId())
         )
-                .thenReturn(Optional.of(this.userOneDataAccess));
+                .thenReturn(Optional.of(this._userOneDataAccess));
 
         assertEquals(
                 this._objectMapper.writeValueAsString(expectedRateBaseBillingRecord),
@@ -330,6 +414,21 @@ public class BillingRecordTests {
                         this._billingRecordController.saveRateBasedBillingRecord(rateBasedBillingRecord)
                                 .orElseThrow(RuntimeException::new)
                 )
+        );
+
+        verify(this._rateBasedBillingRecordRepository, times(1))
+                .save(any(RateBasedBillingRecordDataAccess.class));
+
+        verify(this._userRepository, times(1))
+                .findById(rateBasedBillingRecord.getCreatedBy().getId());
+
+        verify(this._companyRepository, times(1))
+                .findById(rateBasedBillingRecord.getClient().getId());
+
+        verifyNoMoreInteractions(
+                this._rateBasedBillingRecordRepository,
+                this._companyRepository,
+                this._userRepository
         );
 
     }

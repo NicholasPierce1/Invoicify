@@ -5,14 +5,21 @@ import com.galvanize.invoicify.models.RateBasedBillingRecord;
 import javax.persistence.*;
 import java.util.function.Supplier;
 
+/**
+ * <h2>
+ *     RateBasedBillingRecordDataAccess
+ * </h2>
+ * <p>
+ *     Serves as the data definition for a RateBasedBillingRecordDataAccess for the remote data store endpoint.
+ *     Functionality exists to encapsulate DA to/from Model conversion
+ *     Note: Not exhaustive for this entity definition. Maps with referential BillingRecordDataAccess's definition
+ *     for RateBasedBillingRecordDataAccess complete definition.
+ * </p>
+ */
 @Entity(name = "RATE_BASED_BILLING_RECORD")
 public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<RateBasedBillingRecord> {
 
     // fields
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    public Long id;
 
     @Column(nullable = false)
     public double rate;
