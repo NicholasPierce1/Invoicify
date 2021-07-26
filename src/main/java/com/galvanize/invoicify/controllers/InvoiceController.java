@@ -17,10 +17,26 @@ public class InvoiceController {
         this.adapter = adapter;
     }
 
-    /*{
-        "invoiceDescription":"new invoice",
-            "recordIds":[1,2]
-    }*/
+    /**
+     *This invoice endpoint creates an invoice.
+     *  Process Steps :
+     *   1. Check if there is an actual user logged in.
+     *   2. Check if IDs (Company ID, and Billing record IDs) in the parameters are valid and existing.
+     *   3. Save data to Invoice and InvoiceLineItem entity tables.
+     *   4. Create Invoice response object. see@Return
+     *
+     *
+     * @param auth
+     * @param invoice
+     * {
+     *    "invoiceDescription":"new invoice",
+     *    "recordIds":[1,2]
+     * }
+     * @param companyId
+     * @return an invoice object that looks something like this
+     * @see <a href="https://documenter.getpostman.com/view/11036917/TzedhkB1#10cb449b-7938-4772-8368-667999b6f86b"> Create Invoice Response</a>
+     *
+     */
     @PostMapping("/{companyId}")
     public Invoice createInvoice(Authentication auth, @RequestBody Invoice invoice, @PathVariable long companyId) {
         String userName = "";
@@ -35,6 +51,12 @@ public class InvoiceController {
         }
     }
 
+    /**
+     *
+     *
+     * @return a list of all Invoice objects.
+     * @see <a href="https://documenter.getpostman.com/view/11036917/TzedhkB1#10cb449b-7938-4772-8368-667999b6f86b"> Create Invoice Response</a>
+     */
     @GetMapping()
     public List<Invoice> getAllInvoices() {
         return adapter.getInvoices();
