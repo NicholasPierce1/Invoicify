@@ -59,9 +59,10 @@ public final class Adapter {
      *     The userName is updated to the given userName, which then verifies the password is not null or blank.
      *     Then saves the user as a DAO in the user table and converts the DAO to a user Model.
      *</p>
-     * @param user
-     * @param id
-     * @return User :
+     * @param user -> requires a String username from the request body prior to retrieving a user by username
+     * @param id -> requires an id in order to search for the requested user
+     * @return User : With the userRepository, it checks if the user already exists, throws a DuplicateCompanyException,
+     *  otherwise, a new User DataAccessObject is instantiated then converted to a User Model
      * */
 
 
