@@ -198,24 +198,18 @@ public class InvoiceControllerTest {
 
         invoiceDataAccessList.add(invoiceDataAccess);
 
-        //initialize the mock Create invoice response.
-        InvoiceDataAccess invoiceDataAccessResp = new InvoiceDataAccess();
-        invoiceDataAccessResp.setId(invoiceId);
-        invoiceDataAccessResp.setCompany(companyDataAccess);
-        invoiceDataAccessResp.setCreatedOn(createdOn);
-        invoiceDataAccessResp.setUser(userDataAccess);
-        invoiceDataAccessResp.setDescription(invoiceDescription);
-        invoiceDataAccessResp.setLineItems(lineItems);
-
-        List<InvoiceDataAccess> expectedInvoiceDataAccessRespList = new ArrayList<InvoiceDataAccess>();
-        expectedInvoiceDataAccessRespList.add(invoiceDataAccessResp);
-        expectedInvoiceDataAccessRespList.stream().map((invoiceDataAccess -> invoiceDataAccess.convertToModel(Invoice::new))).collect(Collectors.toList());
+        // creates the expected Invoice that's qualified from the pending mock and conversion operations enclosed
+        // within the adapter
+        final List<Invoice> expectedInvoiceList = invoiceDataAccessList
+                .stream()
+                .map((invoiceDataAccess -> invoiceDataAccess.convertToModel(Invoice::new)))
+                .collect(Collectors.toList());
 
         when(_invoiceRepository.fetchInvoices(anyLong(), anyList())).thenReturn(invoiceDataAccessList);
         
         List<Invoice> actualInvoiceList = this.invoiceController.getAllInvoices();
 
-        assertEquals(objectMapper.writeValueAsString(expectedInvoiceDataAccessRespList), objectMapper.writeValueAsString(actualInvoiceList));
+        assertEquals(objectMapper.writeValueAsString(expectedInvoiceList), objectMapper.writeValueAsString(actualInvoiceList));
     }
 
 
