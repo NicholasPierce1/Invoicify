@@ -78,7 +78,7 @@ public class BillingRecordController {
      * @return an Optional BillingRecord varying on if the ID maps to a preexisting BillingRecord
      */
     @RequestMapping(
-            value = "/{id}",
+            value = {"/", ""},
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
