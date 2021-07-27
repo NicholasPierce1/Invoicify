@@ -470,8 +470,8 @@ public final class Adapter {
      *     know usages: Adapter.java - createInvoice method.
      * </p>
      *
-     * @param companyId
-     * @param recordIds
+     * @param companyId - companyId passed from the client request.
+     * @param recordIds - list of long that is passed from the client request.
      * @throws InvalidRequestException
      */
     private void validateRequestCompanyIDAndRecordIds(long companyId, List<Long> recordIds) throws InvalidRequestException {
@@ -494,9 +494,9 @@ public final class Adapter {
      *      known usages : CreateInvoice in Adapter.java
      * </p>
      *
-     * @param invoiceId
-     * @param recordIds
-     * @param createdById
+     * @param invoiceId - invoiceId of the newly created Invoice.
+     * @param recordIds - list of long that came from the client.
+     * @param createdById - the id of the logged in user.
      */
     private void saveInvoiceItemsToDb(long invoiceId, List<Long> recordIds, long createdById) {
         for(Long billingRecordId : recordIds) {
