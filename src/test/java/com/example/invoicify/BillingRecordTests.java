@@ -260,10 +260,13 @@ public class BillingRecordTests {
                 this._objectMapper.writeValueAsString(actualBillingRecords)
         );
 
+        // verifies that flat fee and rate base repos initiated request to find all one time
+        // (regardless of children requests for child state)
         verify(this._flatFeeBillingRecordRepository, times(1)).findAll();
 
         verify(this._rateBasedBillingRecordRepository, times(1)).findAll();
 
+        // verifies each child repository invoked for hibernate retrieval for n-objects
         verify(
                 this._companyRepository,
                 times(this._generalBillingRecordAmalgamation.size())
@@ -276,6 +279,7 @@ public class BillingRecordTests {
         )
                 .findById(this._userOneDataAccess.getId());
 
+        // asserts no subsequent interactions with any mocked instances -- includes invocation queue
         verifyNoMoreInteractions(
                 this._rateBasedBillingRecordRepository,
                 this._flatFeeBillingRecordRepository,
@@ -314,12 +318,15 @@ public class BillingRecordTests {
             ).findById(rateBased.getId());
         }
 
+        // verifies every flat fee has been found by its ID only 1 time
         for(final FlatFeeBillingRecordDataAccess flatFee : this._flatFeeBillingRecordsDataAccess)
             verify(
                     this._flatFeeBillingRecordRepository,
                     times(1)
             ).findById(flatFee.getId());
 
+        // verifies each child received n-requests to retrieve its state
+        // from its id
         verify(
                 this._companyRepository,
                 times(this._generalBillingRecordAmalgamation.size())
@@ -332,6 +339,7 @@ public class BillingRecordTests {
         )
                 .findById(this._userOneDataAccess.getId());
 
+        // asserts no subsequent interactions with any mocked instances -- includes invocation queue
         verifyNoMoreInteractions(
                 this._flatFeeBillingRecordRepository,
                 this._userRepository,
@@ -420,6 +428,7 @@ public class BillingRecordTests {
         )
                 .thenReturn(Optional.of(this._userOneDataAccess));
 
+        // asserts equality amongst the JSON stings of the fully, qualified rate base record that has been saved
         assertEquals(
                 this._objectMapper.writeValueAsString(expectedRateBaseBillingRecord),
                 this._objectMapper.writeValueAsString(
@@ -428,15 +437,18 @@ public class BillingRecordTests {
                 )
         );
 
+        // verify that the rate base billing record has been saved once
         verify(this._rateBasedBillingRecordRepository, times(1))
                 .save(any(RateBasedBillingRecordDataAccess.class));
 
+        // verifies children have invoked for full, qualification collation occured once
         verify(this._userRepository, times(1))
                 .findById(rateBasedBillingRecord.getCreatedBy().getId());
 
         verify(this._companyRepository, times(1))
                 .findById(rateBasedBillingRecord.getClient().getId());
 
+        // asserts no subsequent interactions with any mocked instances -- includes invocation queue
         verifyNoMoreInteractions(
                 this._rateBasedBillingRecordRepository,
                 this._companyRepository,
