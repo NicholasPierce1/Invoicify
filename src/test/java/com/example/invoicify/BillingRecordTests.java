@@ -63,6 +63,7 @@ public class BillingRecordTests {
 
     private List<BillingRecord> _generalBillingRecordAmalgamation;
 
+    @Autowired
     private ObjectMapper _objectMapper;
 
     private UserDataAccess _userOneDataAccess;
@@ -72,13 +73,14 @@ public class BillingRecordTests {
     @BeforeAll
     public void createAdapter(){
 
-        this._objectMapper = new ObjectMapper();
-
+        // creating mocked instances to register pre-determined outputs on scoped interactions for each test
         this._flatFeeBillingRecordRepository = Mockito.mock(FlatFeeBillingRecordRepository.class);
         this._rateBasedBillingRecordRepository = Mockito.mock(RateBaseBillingRecordRepository.class);
         this._userRepository = Mockito.mock(UserRepository.class);
         this._companyRepository = Mockito.mock(CompanyRepository.class);
 
+        // initializes the adapter that will be maintained locally to
+        // ensure the integrity and invocation/usage of test stub mocks
         this._adapter = new Adapter(
                 _userRepository,
                 _companyRepository,
@@ -88,6 +90,8 @@ public class BillingRecordTests {
 
         this._billingRecordController = new BillingRecordController(_adapter);
 
+        // creates hardcoded companies and users
+        // subsequently converts to reflected data access equivalency for pending test mocks
         final Company companyOne = new Company();
         companyOne.setName("Subway");
         companyOne.setId(1L);
@@ -106,6 +110,8 @@ public class BillingRecordTests {
         this._userOneDataAccess.setUsername(userOne.getUsername());
         this._userOneDataAccess.setPassword(userOne.getPassword());
 
+        // initializes flat fee billing records & tailors corresponding user and companies to them
+        // to fully qualify the data access objects
         this._flatFeeBillingRecordsDataAccess = new ArrayList<FlatFeeBillingRecordDataAccess>()
         {{
             add(new FlatFeeBillingRecordDataAccess()
@@ -135,6 +141,8 @@ public class BillingRecordTests {
             );
         }};
 
+        // initializes rate based billing records & tailors corresponding user and companies to them
+        // to fully qualify the data access objects
         this._rateBasedBillingRecordsDataAccess = new ArrayList<RateBasedBillingRecordDataAccess>()
         {{
             add(new RateBasedBillingRecordDataAccess()
@@ -166,6 +174,7 @@ public class BillingRecordTests {
             );
         }};
 
+        // streams flat fees in order to map them to their corresponding model objects
         this._flatFeeBillingRecords = this._flatFeeBillingRecordsDataAccess
                 .stream()
                 .map(
@@ -173,6 +182,7 @@ public class BillingRecordTests {
                 )
                 .collect(Collectors.toList());
 
+        // streams rate base fees in order to map them to their corresponding model objects
         this._rateBasedBillingRecords = this._rateBasedBillingRecordsDataAccess
                 .stream()
                 .map(
@@ -180,6 +190,7 @@ public class BillingRecordTests {
                 )
                 .collect(Collectors.toList());
 
+        // collates the previous model objects together into their upcasted model object
         this._generalBillingRecordAmalgamation = new ArrayList<BillingRecord>(){{
             addAll(_flatFeeBillingRecords);
             addAll(_rateBasedBillingRecords);
