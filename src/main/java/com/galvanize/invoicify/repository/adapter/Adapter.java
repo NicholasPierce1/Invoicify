@@ -517,11 +517,13 @@ public final class Adapter {
      * @return - InvoiceDataAccess that is constructed in this method.
      */
     private InvoiceDataAccess saveInvoiceToDb(Invoice invoiceRequest, long companyId, long createdById) {
+
         InvoiceDataAccess invoiceDataAccess = new InvoiceDataAccess();
+        invoiceDataAccess.convertToDataAccess(invoiceRequest);
         invoiceDataAccess.setCompanyId(companyId);
-        invoiceDataAccess.setCreatedOn(new Date());
         invoiceDataAccess.setCreatedBy(createdById);
-        invoiceDataAccess.setDescription(invoiceRequest.getInvoiceDescription());
+        invoiceDataAccess.setCreatedOn(new Date());
+
         this._invoiceRepository.save(invoiceDataAccess).convertToModel(Invoice::new);
         return invoiceDataAccess;
     }

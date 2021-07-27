@@ -21,7 +21,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
+/**
+ * <h2>
+ *     Spring bean Entity that manages the connection between the database and the Model. It  corresponds to the invoice
+ *     table in the database. It has fields that expresses the columns in the table directly. It implements IDataAccess
+ *     interface and inherits the methods: convertToModel, convertToDataAccess; all of which wraps and
+ *     unwraps the Invoice Model while restricting transactions to the database.
+ * </h2>.
+ */
 @Entity
 @Table(name = "invoice")
 public class InvoiceDataAccess implements IDataAccess<Invoice> {
@@ -154,10 +161,9 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
         return invoice;
     }
 
-    //todo: implement and use in create invoice method
     @Override
     public <M extends Invoice> void convertToDataAccess(M modelObject) {
-
+        this.setDescription(modelObject.getInvoiceDescription());
     }
 
 
