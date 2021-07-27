@@ -48,7 +48,7 @@ public class InvoiceController {
      *   4. Create Invoice response object. see@Return
      * </p>
      *
-     * @param auth
+     * @param auth - user login context. this is auto populated when the user successfully logged in using session.
      * @param invoice
      * {
      *    "invoiceDescription":"new invoice",
