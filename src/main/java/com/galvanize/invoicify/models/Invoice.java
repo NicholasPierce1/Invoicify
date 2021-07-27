@@ -12,8 +12,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * <h2>
+ *     This invoice object is used for mapping the invoice request on create endpoint and this object is returned to the client.
+ * </h2>
+ */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Invoice {
+
+    //fields
     private long id;
     private Company company;
 
@@ -25,6 +32,8 @@ public class Invoice {
 
     private List<Long> recordIds = new ArrayList<Long>();
 
+
+    //getters and setters
 
     public long getId() {
         return id;

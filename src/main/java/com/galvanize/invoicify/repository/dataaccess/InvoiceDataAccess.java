@@ -33,6 +33,8 @@ import java.util.stream.Collectors;
 @Table(name = "invoice")
 public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
+    //fields
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "invoice_id")
@@ -88,15 +90,32 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
         return user;
     }
 
+    //constructor
+
     public InvoiceDataAccess() {
 
     }
+
+    /**
+     * <p>
+     *     This constructor takes in companyId, createdOn, createdBy and description to be set to this class's private property fields.
+     *     This is used only on creation of Invoice.
+     * </p>
+     *
+     *
+     * @param companyId - the company where the invoice is created for.
+     * @param createdOn - this usually is just new Date();
+     * @param createdBy - the user id of the logged in user.
+     * @param description - the description of the invoice that is to be created.
+     */
     public InvoiceDataAccess(long companyId, Date createdOn, long createdBy, String description) {
         this.companyId = companyId;
         this.createdOn = createdOn;
         this.createdBy = createdBy;
         this.description = description;
     }
+
+    //setters and getters.
 
     public long getId() {
         return id;
@@ -138,6 +157,15 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
         this.description = description;
     }
 
+    /**
+     * <p>
+     *     Converts a InvoiceDataAccessOject to InvoiceModel Object and builds the invoice object for response.
+     * </p>
+     * @param supplier - provides implementation of converting to a Model Object.
+     *                   NOTE: the default state set in the supplier may/will be written over
+     * @param <M> - A model type used to create data access reflections
+     * @return
+     */
     @Override
     public <M extends Invoice> M convertToModel(Supplier<M> supplier) {
         M invoice = supplier.get();
@@ -161,6 +189,12 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
         return invoice;
     }
 
+    /**
+     * <p>
+     *     Converts a Invoice Model Object to a InvoiceDataAccessObject and sets description.
+     * </p>
+     * @param <M> -> A Invoice Model Object used to convert DataAccessObject
+     */
     @Override
     public <M extends Invoice> void convertToDataAccess(M modelObject) {
         this.setDescription(modelObject.getInvoiceDescription());
