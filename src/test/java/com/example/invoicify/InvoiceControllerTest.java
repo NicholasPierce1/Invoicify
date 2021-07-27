@@ -84,6 +84,10 @@ public class InvoiceControllerTest {
     private InvoiceLineItemDataAccess invoiceLineItemDataAccess2;
 
 
+    /**
+     * Since both endpoints are using the same objects, then initialize all shared objects in here.
+     * @throws Exception
+     */
     @BeforeAll
     public void createAdapter() throws Exception {
         this._invoiceRepository = Mockito.mock(InvoiceRepository.class);
@@ -105,7 +109,11 @@ public class InvoiceControllerTest {
         initializeObjects();
     }
 
-
+    /**
+     * Initialize DataAccess objects. All these are being used by both unit tests.
+     *
+     * @throws Exception
+     */
     private void initializeObjects() throws Exception {
         companyId = 1L;
         userId = 1L;
@@ -116,11 +124,14 @@ public class InvoiceControllerTest {
         invoiceDescription = "test desc";
         createdOn = new Date();
 
-        //initialize data accesses models
+        //initialize company data accesses models
         companyDataAccess = new CompanyDataAccess(companyId, "Subway");
+
+        //initialize user data accesses models
         userDataAccess = new UserDataAccess(username, password);
         userDataAccess.setId(userId);
 
+        //initialize invoice data accesses models
         invoiceDataAccess = new InvoiceDataAccess(companyId, createdOn, userId, invoiceDescription);
         invoiceDataAccess.setId(invoiceId);
         invoiceDataAccess.setCompany(companyDataAccess);
@@ -129,6 +140,8 @@ public class InvoiceControllerTest {
         invoiceDataAccess.setDescription(invoiceDescription);
 
         lineItems = new ArrayList<InvoiceLineItemDataAccess>();
+
+        //initialize line item data accesses models
 
         //1st invoice line item
         invoiceLineItemDataAccess = new InvoiceLineItemDataAccess();
@@ -150,6 +163,11 @@ public class InvoiceControllerTest {
         invoiceDataAccess.setLineItems(lineItems);
     }
 
+    /**
+     * <p>
+     *    reset all company repository to not share objects and repositories.
+     * </p>
+     */
     @AfterEach
     public void resetMocks(){
         Mockito.reset(this._companyRepository,
@@ -162,6 +180,13 @@ public class InvoiceControllerTest {
         _invoiceRepository);
     }
 
+    /**
+     * <p>
+     *     create invoice test.  all objects for mocking are initialized in initializedObjects.
+     * </p>
+     *
+     * @throws Exception
+     */
     @Test
     public void createInvoice() throws Exception {
         //initialize request object. this is the exact data that are passed in when creating an invoice.
@@ -209,6 +234,12 @@ public class InvoiceControllerTest {
 
     }
 
+    /**
+     * <p>
+     *     retur
+     * </p>
+     * @throws Exception
+     */
     @Test
     public void getInvoices() throws Exception {
 
