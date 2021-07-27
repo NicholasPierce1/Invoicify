@@ -61,9 +61,15 @@ public final class UserController {
 	)
 	public @NotNull Optional<User> updateUser(@RequestBody User user, @PathVariable Long id)  {
 		 try {
+
+		 	if(user.getUsername() == null || user.getUsername().equals("")) {
+		 		throw new Exception("Sorry, cannot update a user without a name ");
+			}
 		 	return Optional.of(adapter.updateUser(user, id));
+
 		 } catch (Exception e) {
 			 System.out.println(e.getLocalizedMessage());
+
 			 return Optional.empty();
 		 }
 	}
@@ -81,8 +87,11 @@ public final class UserController {
 
 	@PostMapping
 	public @NotNull Optional<User> createUser(@RequestBody User user) {
-		try{
 
+		try{
+			if(user.getUsername() == null || user.getUsername().equals("")){
+				throw new Exception("Sorry, cannot create a user without a name. ");
+			}
 			return Optional.of(adapter.createUser(user));
 		} catch (Exception e) {
 			System.out.println(e.getLocalizedMessage());

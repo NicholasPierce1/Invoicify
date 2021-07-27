@@ -66,20 +66,16 @@ public final class Adapter {
      * */
 
 
-    public @NotNull User updateUser(@NotNull final User user, @NotNull final Long id) throws DuplicateUserException {
+    public @NotNull User updateUser(@NotNull final User user, Long id) throws Exception {
+
         UserDataAccess currentUserData = this._userRepository.findById(id).get();
 
-        if (user.getUsername() != null && !user.getUsername().equals("")) {
-            //check if there's another user with the given username and prevent duplication of user ids.
-            if (isUserExists(user.getUsername())){
-                throw new DuplicateUserException("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
-            }
-            currentUserData.setUsername(user.getUsername());
+        if (this._userRepository.findByUsername(user.getUsername()).isPresent()) {
+
+            throw new DuplicateUserException("User " + user.getUsername() + "is an existing user name. Please choose a different name. " );
         }
 
-        if (user.getPassword() != null && !user.getPassword().equals("")) {
-            currentUserData.setPassword(_encoder.encode(user.getPassword()));
-        }
+        currentUserData.setUsername(user.getUsername());
 
         return _userRepository.save(currentUserData).convertToModel((User::new));
     }
@@ -100,14 +96,18 @@ public final class Adapter {
      * prompting to adjust serialization so table integrity in tact and aligned with the rest of the system
      * */
 
-    public @NotNull User createUser(@NotNull final User user) throws DuplicateUserException {
-        if (isUserExists(user.getUsername())){
-            throw new DuplicateUserException("Username " + user.getUsername() + " already exists. Please choose another username to update your account to." );
+    public @NotNull User createUser(@NotNull final User user) throws Exception {
+
+        if(this._userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new DuplicateUserException("Sorry " + user.getUsername() + "already exists. Please provide another user name");
         }
+
         UserDataAccess userDataAccess = new UserDataAccess();
-        userDataAccess.setUsername(user.getUsername());
-        userDataAccess.setPassword(_encoder.encode(user.getPassword()));
-        return _userRepository.save(userDataAccess).convertToModel((User::new));
+        userDataAccess.convertToDataAccess(user);
+
+        return _userRepository
+                .save(userDataAccess)
+                .convertToModel(User::new);
     }
 
     /**
