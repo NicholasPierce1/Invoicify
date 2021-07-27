@@ -34,58 +34,127 @@ import java.util.stream.Collectors;
 public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     //fields
-
+    /**
+     * <p>
+     *     unique invoice id
+     * </p>
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "invoice_id")
-
     @JsonProperty(value = "invoice_id")
     private long id;
 
+
+    /**
+     * <p>
+     *     companyId the invoice is tied to. jsonproperty is for mapping the column name of the result set to this object
+     * </p>
+     */
     @Column(name = "invoice_company_id", nullable = false)
     @JsonProperty(value = "invoice_company_id")
     private long companyId;
 
+    /**
+     * <p>
+     *     the invoice's created date. jsonproperty is for mapping the column name of the result set to this object
+     * </p>
+     */
     @Column(name = "created_on",nullable = false)
     @JsonProperty(value = "created_on")
     private Date createdOn;
 
+    /**
+     * <p>
+     *     the creator of invoice. jsonproperty is for mapping the column name of the result set to this object
+     * </p>
+     */
     @Column(name = "created_by",nullable = false)
     @JsonProperty(value = "created_by")
     private long createdBy;
 
+    /**
+     * <p>
+     *     description of the invoice
+     * </p>
+     */
     @Column(name = "description", nullable = false)
     private String description;
 
+    /**
+     * <p>
+     *     this is transient and ignored upon save. this is the field for storing the company details of the invoice from the result set.
+     * </p>
+     */
     @Transient
     private CompanyDataAccess company;
 
+    /**
+     * <p>
+     *     this is transient and ignored upon save. this is the field for storing the user details of the invoice from the result set.
+     * </p>
+     */
     @Transient
     private UserDataAccess user;
 
+    /**
+     * <p>
+     *     this is transient and ignored upon save. this is the arraylist field for storing all invoice line items.
+     * </p>
+     */
     @Transient
     private ArrayList<InvoiceLineItemDataAccess> lineItems = new ArrayList<InvoiceLineItemDataAccess>();
 
+    /**
+     * set company
+     * @param company
+     */
     public void setCompany(CompanyDataAccess company) {
         this.company = company;
     }
 
+    /**
+     * set the list of lineItems
+     * @param lineItems
+     */
     public void setLineItems(ArrayList<InvoiceLineItemDataAccess> lineItems) {
         this.lineItems = lineItems;
     }
 
+    /**
+     * set User
+     * @param user
+     */
     public void setUser(UserDataAccess user) {
         this.user = user;
     }
 
+    /**
+     * <p>
+     *     return line items
+     * </p>
+     * @return a list of all line items
+     */
     public ArrayList<InvoiceLineItemDataAccess> getLineItems() {
         return lineItems;
     }
 
+    /**
+     * <p>
+     *     returns company
+     * </p>
+     * @return company
+     */
     public CompanyDataAccess getCompany() {
         return company;
     }
 
+    /**
+     * <p>
+     *     returns user field
+     * </p>
+     * @return user
+     */
     public UserDataAccess getUser() {
         return user;
     }
@@ -117,42 +186,82 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     //setters and getters.
 
+    /**
+     * returns id
+     * @return id
+     */
     public long getId() {
         return id;
     }
 
+    /**
+     * set id
+     * @param id
+     */
     public void setId(long id) {
         this.id = id;
     }
 
+    /**
+     * return company
+     * @return company
+     */
     public long getCompanyId() {
         return companyId;
     }
 
+    /**
+     * set companyId
+     * @param companyId
+     */
     public void setCompanyId(long companyId) {
         this.companyId = companyId;
     }
 
+    /**
+     *  returns createdOn
+     * @return createdOn
+     */
     public Date getCreatedOn() {
         return createdOn;
     }
 
+    /**
+     * sets createdOn
+     * @param createdOn
+     */
     public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
     }
 
+    /**
+     * returns createdBy
+     * @return createdBy
+     */
     public long getCreatedBy() {
         return createdBy;
     }
 
+    /**
+     * sets createdBy
+     * @param createdBy
+     */
     public void setCreatedBy(long createdBy) {
         this.createdBy = createdBy;
     }
 
+    /**
+     * return description
+     * @return description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * sets description
+     * @param description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
