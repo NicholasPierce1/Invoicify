@@ -12,11 +12,12 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * <h1>DataAccessConversionHelper</h1>
- * <h2>Type: Class</h2>
+ * <h2>DataAccessConversionHelper</h2>
  *
+ * <p>
  * Implementing Helper methods to create data access objects(DAOs)
  * from the data from the database
+ * </p>
  */
 @Component
 public final class DataAccessConversionHelper {

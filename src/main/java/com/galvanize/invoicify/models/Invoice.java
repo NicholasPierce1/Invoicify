@@ -1,15 +1,9 @@
 package com.galvanize.invoicify.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
-import javax.persistence.Entity;
-import javax.persistence.Transient;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -100,7 +94,7 @@ public class Invoice {
 
     /**
      * <p>set the instance's company</p>
-     * @Param company
+     * @param company
      */
     public void setCompany(Company company) {
         this.company = company;

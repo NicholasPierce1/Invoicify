@@ -1,27 +1,25 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.galvanize.invoicify.configuration.InvoicifyConfiguration;
 import com.galvanize.invoicify.models.BillingRecord;
 import com.galvanize.invoicify.models.InvoiceLineItem;
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.function.Supplier;
 
 /**
  * <h2>
+ *     InvoiceLineItemDataAccess
+ * </h2>
+ * <p>
  *     Spring bean Entity that manages the connection between the database and the Model. It  corresponds to the invoice
  *     table in the database. It has fields that expresses the columns in the table directly. It implements IDataAccess
  *     interface and inherits the methods: convertToModel, convertToDataAccess; all of which wraps and
  *     unwraps the Invoice line item Model while restricting transactions to the database.
- * </h2>.
+ * </p>.
  */
 @Entity
 @Table(name = "invoice_line_item")

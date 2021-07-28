@@ -2,10 +2,7 @@ package com.galvanize.invoicify.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
-import javax.persistence.Transient;
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * <h2>

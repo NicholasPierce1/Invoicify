@@ -6,8 +6,8 @@ import com.galvanize.invoicify.repository.adapter.Adapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
 /**
  * <h2>
  *     The Invoice Controller Class is responsible for facilitating business logic to the adapter to fulfill invoice endpoint responses. It takes in requests

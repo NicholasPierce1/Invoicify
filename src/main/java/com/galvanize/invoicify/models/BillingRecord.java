@@ -1,22 +1,41 @@
 package com.galvanize.invoicify.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-
 public abstract class BillingRecord {
 
-
     // fields
+    /**
+     * <p>
+     *     Billing Record Id.
+     * </p>
+     */
     public Long id;
 
+    /**
+     * <p>
+     *     represents the ID of a child User that created this Billing Record.
+     * </p>
+     */
     public User createdBy;
 
+    /**
+     * <p>
+     *     indicates if the BillingRecord is currently in use to an Invoice.
+     * </p>
+     */
     public boolean inUse;
 
+    /**
+     * <p>
+     *     delineates current state of the BillingRecord
+     * </p>
+     */
     public String description;
 
+    /**
+     * <p>
+     *     represents the ID of a child Company that this BillingRecord is tethered to.
+     * </p>
+     */
     public Company client;
 
     // constructors
@@ -25,39 +44,82 @@ public abstract class BillingRecord {
 
     // gets & sets
 
-
+    /**
+     * <p>
+     *    returns id
+     * </p>
+     * @return id
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * <p>
+     *     returns description
+     * </p>
+     * @return description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * <p>
+     *     returns client
+     * </p>
+     * @return a Company client object
+     */
     public Company getClient() {
         return client;
     }
 
+    /**
+     * returns User Object createdBy
+     *
+     * @return user object createdBy
+     */
     public User getCreatedBy() {
         return createdBy;
     }
 
+    /**
+     * set id
+     * @param id
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * set inUse
+     *
+     * @param inUse
+     */
     public void setInUse(boolean inUse) {
         this.inUse = inUse;
     }
 
+    /**
+     * set description
+     * @param description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * set client
+     * @param client
+     */
     public void setClient(Company client) {
         this.client = client;
     }
 
+    /**
+     * set createdBy
+     * @param createdBy
+     */
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
@@ -65,5 +127,10 @@ public abstract class BillingRecord {
     // methods
 
     // abstract method for a field accessor
+
+    /**
+     * return the total
+     * @return
+     */
     public abstract double getTotal();
 }

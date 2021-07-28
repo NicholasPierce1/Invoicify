@@ -5,7 +5,6 @@ import com.galvanize.invoicify.InvoicifyApplication;
 import com.galvanize.invoicify.controllers.CompanyController;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.repository.adapter.Adapter;
-import com.galvanize.invoicify.repository.adapter.DuplicateCompanyException;
 import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
@@ -22,19 +21,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-//import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
-//@WebMvcTest(CompanyController.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = InvoicifyApplication.class)
@@ -61,13 +54,15 @@ public class CompanyControllerTest {
 
     private Adapter adapter;
 
+    private CompanyDataAccess companyDataAccess;
+
     @AfterEach
-    public void resetMocks(){
+    public void resetMocks() {
         Mockito.reset(this.companyRepository);
     }
 
     @BeforeAll
-    public void createAdapter(){
+    public void createAdapter() {
 
         this.companyRepository = Mockito.mock(CompanyRepository.class);
 
@@ -85,185 +80,261 @@ public class CompanyControllerTest {
     }
 
     @Test
-    public void  testViewAllCompanies() throws Exception {
+    public void testViewAllCompanies() throws Exception {
 
-
-        // todo: nick, create bean for object mapper via mapper build
+        // Instantiating an object mapper instance
         final ObjectMapper objectMapper = new ObjectMapper();
 
-        final ArrayList<CompanyDataAccess> companyDataAccesses = new ArrayList<CompanyDataAccess>(){{
+        // Creating a new CompanyDataAccess ArrayList with setting an Id and name
+        final ArrayList<CompanyDataAccess> companyDataAccesses = new ArrayList<CompanyDataAccess>() {{
+            CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+            companyDataAccess.setId(1L);
+            companyDataAccess.setName("LTI");
 
-            add(new CompanyDataAccess(){{
-                setId(1L);
-                setName("LTI");
-            }});
-
-            add(new CompanyDataAccess(){{
-                setId(2L);
-                setName("Galvanize");
-            }});
+            // Creating another CompanyDataAccess instance set to the same Id and name
+            CompanyDataAccess companyDataAccess2 = new CompanyDataAccess();
+            companyDataAccess2.setId(1L);
+            companyDataAccess2.setName("LTI");
 
         }};
 
+        // Setting the list of companies to a expected variable, streams the result, and maps all CompanyDataAccess instances,
+        //      then converts to a company model object, finally persists to a list
         List<Company> expectedCompanies =
                 companyDataAccesses
                         .stream()
-                        .map( (companyDataAccess -> companyDataAccess.convertToModel(Company::new)) )
+                        .map((companyDataAccess -> companyDataAccess.convertToModel(Company::new)))
                         .collect(Collectors.toList());
 
+        // Utilizing company repository to find all companyDataAccesses
         when(companyRepository.findAll()).thenReturn(companyDataAccesses);
-        // this allows the controller, adapter, data access, and model to work as expected
-        // ONLY the repository is hardcoded for its response
-        System.out.println(adapter._companyRepository.findAll().size());
-        final List<Company> actualCompanyList = this.companyController.viewAllCompanies();
+
+        // Setting an Optional List of Companies to an actual variable that calls the companyController to view all companies
+        final Optional<List<Company>>
+                actualCompanyListOptional = this.companyController.viewAllCompanies();
+
+        // Assume that the list of companies is present
+        assertTrue(actualCompanyListOptional.isPresent());
+
+        // Unwrapping the optional list of companies
+        final List<Company> actualCompanyList = actualCompanyListOptional.get();
 
         Assertions.assertEquals(
                 expectedCompanies.size(),
                 actualCompanyList.size()
         ); // size of list the same
 
-        for(int i = 0; i < actualCompanyList.size(); i++) // compares json strings of response to expected for each company
+        for (int i = 0; i < actualCompanyList.size(); i++) // compares json strings of response to expected for each company
             Assertions.assertEquals(
                     objectMapper.writeValueAsString(expectedCompanies.get(i)), // converts company object to json string
                     objectMapper.writeValueAsString(actualCompanyList.get(i)) // extracts json string from json array
             );
 
-
-        verify(companyRepository, times(2)).findAll();
+        // Making sure that the company repository found 2 entries
+        verify(companyRepository, times(1)).findAll();
 
     }
 
     @Test
     public void testGetCompanyById() throws Exception {
 
+        // Instantiating an object mapper instance
         final ObjectMapper objectMapper = new ObjectMapper();
 
-        final CompanyDataAccess companyDataAccess = new CompanyDataAccess() {{
-            setId(1L);
-            setName("LTI");
-        }};
+        // Creating a CompanyDataAccess instance and setting the Id and name
+        CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+        companyDataAccess.setId(1L);
+        companyDataAccess.setName("LTI");
 
-        Company expectedCompany =
+        // Setting a companyDataAccess object variable then converting it to a company object
+        final Company expectedCompany =
                 companyDataAccess.convertToModel(Company::new);
 
+        // Utilizing company repository to find one corresponding companyDataAccess by Id
         when(companyRepository.findById(companyDataAccess.getId())).thenReturn(Optional.of(companyDataAccess));
 
-        final Company actualCompany = this.companyController.findById(companyDataAccess.getId());
+        // Setting an Optional Company to an actual variable that calls the companyController to find one specific company by Id
+        final Optional<Company> actualCompanyOptional = this.companyController.findById(companyDataAccess.getId());
 
+        // Assume that the company is present
+        assertTrue(actualCompanyOptional.isPresent());
+
+        // Unwrapping the optional company
+        final Company actualCompany = actualCompanyOptional.get();
+
+        // Makes sure the Ids of the retrieved companies are the same
         Assertions.assertEquals(
                 objectMapper.writeValueAsString(expectedCompany.getId()),
                 objectMapper.writeValueAsString(actualCompany.getId())
         );
 
+        verify(companyRepository, times(1)).findById(companyDataAccess.getId());
+
+        verifyNoMoreInteractions(this.companyRepository);
+
+    }
+
+    @Test
+    public void testCreateCompanyThatAlreadyExists() throws Exception {
+
+        // Instantiating an object mapper instance
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        // Creating a CompanyDataAccess instance and setting the name
+        final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
+        companyDataAccess.setName("Subway");
+
+        // Setting a companyDataAccess object variable then converting it to a company object
+        final Company expectedCompany =
+                companyDataAccess.convertToModel(Company::new);
+
+        // when for bad case (name is not unique)
+        when(this.companyRepository.findByName(companyDataAccess.getName())).thenReturn(Optional.of(companyDataAccess));
+
+        // Testing to ensure that persisting to the company table is working
+        when(companyRepository.save(companyDataAccess)).thenReturn(companyDataAccess);
+
+        // test bad case (name is not unique)
+        assertFalse(this.companyController.addCompany(expectedCompany).isPresent());
+
+        verify(companyRepository, times(1)).findByName(companyDataAccess.getName());
+        verify(companyRepository, times(0)).save(companyDataAccess);
+
+        verifyNoMoreInteractions(this.companyRepository);
 
     }
 
     @Test
     public void testAddCompany() throws Exception {
 
+        // Instantiating an object mapper instance
         final ObjectMapper objectMapper = new ObjectMapper();
 
+        // Creating a CompanyDataAccess instance and setting the name
         final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
-        final CompanyDataAccess companyDataAccess2 = new CompanyDataAccess();
+        companyDataAccess.setName("Subway");
 
-        companyDataAccess.setName("LTI");
-
-        companyDataAccess2.setName("Subway");
-
-        Company expectedCompany =
+        // Setting a companyDataAccess object variable then converting it to a company object
+        final Company expectedCompany =
                 companyDataAccess.convertToModel(Company::new);
 
-        Company expectedCompany2 =
-                companyDataAccess2.convertToModel(Company::new);
-
-        when(companyRepository.save(companyDataAccess)).thenReturn(companyDataAccess);
-
-        // when for good case (name is unique)
+        // When for good case (name is unique)
         when(this.companyRepository.findByName(companyDataAccess.getName())).thenReturn(Optional.empty());
 
-        // when for bad case (name is not unique)
-        when(this.companyRepository.findByName(companyDataAccess2.getName())).thenReturn(Optional.of(companyDataAccess2));
+        // Testing to ensure that persisting to the company table is working
+        when(companyRepository.save(companyDataAccess)).thenReturn(companyDataAccess);
 
-//        final Company actualCompany = this.companyController.addCompany(expectedCompany);
-        final Company actualCompany = this.companyController.addCompany(expectedCompany);
+        // Sets an Optional Company object variable that calls companyController to add a company
+        final Optional<Company> actualCompany = this.companyController.addCompany(expectedCompany);
 
+        // Assume that the company is present
+        assertTrue(actualCompany.isPresent());
+
+        // Makes sure that the two companies are the same
         assertEquals(
-
-                objectMapper.writeValueAsString(actualCompany),
-                objectMapper.writeValueAsString(expectedCompany)
+                objectMapper.writeValueAsString(expectedCompany),
+                objectMapper.writeValueAsString(actualCompany.get())
 
         );
 
-       // test bad case (name is not unique)
-        assertThrows(
-                DuplicateCompanyException.class,
-                () ->{
-                    this.companyController.addCompany(expectedCompany2);
-                }
-        );
+        verify(companyRepository, times(1)).findByName(companyDataAccess.getName());
+        verify(companyRepository, times(1)).save(companyDataAccess);
+
+
+        verifyNoMoreInteractions(this.companyRepository);
 
     }
+
 
     @Test
     public void testDeleteCompanyById() throws Exception {
 
+        // Instantiating an object mapper instance
         final ObjectMapper objectMapper = new ObjectMapper();
 
+        // Creating a CompanyDataAccess instance and setting the name and Id
         final CompanyDataAccess companyDataAccess = new CompanyDataAccess();
 
         companyDataAccess.setName("LTI");
         companyDataAccess.setId(1L);
 
-        Company expectedCompany =
+        // Setting a companyDataAccess object variable then converting it to a company object
+        final Company expectedCompany =
                 companyDataAccess.convertToModel(Company::new);
 
+        // Utilizing company repository to find one corresponding companyDataAccess by Id
         when(this.companyRepository.findById(companyDataAccess.getId())).thenReturn(Optional.of(companyDataAccess));
 
+        // Adds when to handle the company repository's method call to delete an object.
+        // to test if an object is actually be deleted from the database in this test file
+        doAnswer(invocationOnMock -> {
+            final Long toDelete = invocationOnMock.getArgument(0, Long.class);
+            assertEquals(companyDataAccess.getId(), toDelete);
+            return null;
+        })
+                .when(this.companyRepository).deleteById(1L);
+
+        // Setting an Optional Company to an actual variable that calls the companyController to find one specific company by Id and delete it
         final Optional<Company> actualCompany = this.companyController.deleteCompanyById(expectedCompany.getId());
 
+        // Assume that the company is present
         assertTrue(actualCompany.isPresent());
 
+        // Ensures that the deleted company matches the Id and name of the company that the user is attempting to delete,
+        //  if not, then throws a RuntimeException
         assertEquals(
                 objectMapper.writeValueAsString(expectedCompany),
                 objectMapper.writeValueAsString(actualCompany.orElseThrow(RuntimeException::new))
 
         );
 
+        verify(companyRepository, times(1)).findById(companyDataAccess.getId());
+        verify(companyRepository, times(1)).deleteById(companyDataAccess.getId());
 
+
+        verifyNoMoreInteractions(this.companyRepository);
 
     }
 
     @Test
     public void testModifyCompanyName() throws Exception {
 
-        CompanyDataAccess existingCompanyToBeUpdated = new CompanyDataAccess(1L,"LTI");
-        CompanyDataAccess savedUpdatedCompany = new CompanyDataAccess(1L,"LTI2");
+        // Creating two CompanyDataAccess instances and setting the Id and name
+        final CompanyDataAccess existingCompanyToBeUpdated = new CompanyDataAccess(1L, "LTI");
+        final CompanyDataAccess savedUpdatedCompany = new CompanyDataAccess(1L, "LTI2");
 
-        Company expectedCompany= new Company(1L,"LTI2");
+        // Creating a Company model instance to the name of the object that is being modified
+        final Company expectedCompany = new Company(1L, "LTI2");
 
+        // Utilizing company repository to find one corresponding companyDataAccess by Id
         when(companyRepository.findById(1L)).thenReturn(Optional.of(existingCompanyToBeUpdated));
-        when(companyRepository.save(any())).thenReturn(savedUpdatedCompany);
 
-        Company actualCompany = companyController.updateCompany( expectedCompany, 1L);
+        // Utilizing company repository to find one corresponding companyDataAccess by Name
+        when(companyRepository.findByName("LTI")).thenReturn(Optional.of(existingCompanyToBeUpdated));
 
+        // Testing to ensure that the modified company has been added to the table
+        when(companyRepository.save(any(CompanyDataAccess.class))).thenReturn(savedUpdatedCompany);
+
+        // Setting an Optional Company to an actual variable that calls the companyController to find that company and modify it
+        final Optional<Company> actualCompanyOptional = companyController.updateCompany(expectedCompany, 1L);
+
+        // Assume that the company is present
+        assertTrue(actualCompanyOptional.isPresent());
+
+        // Unwrapping the optional company
+        final Company actualCompany = actualCompanyOptional.get();
+
+        // Ensures that the modified company is a new object
         assertEquals(actualCompany.getName(), "LTI2");
         assertEquals(actualCompany.getId(), 1L);
 
-        verify(companyRepository, times(1)).findById(any());
-        verify(companyRepository, times(1)).save(any());
+        // Verifies that the company has been found, and added back to the table
+        verify(companyRepository, times(1)).findById(any(Long.class));
+        verify(companyRepository, times(1)).findByName(any(String.class));
+        verify(companyRepository, times(1)).save(any(CompanyDataAccess.class));
 
+        verifyNoMoreInteractions(this.companyRepository);
 
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-

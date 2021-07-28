@@ -1,8 +1,6 @@
 package com.galvanize.invoicify.repository.repositories.invoicerepository;
 
 import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 /**
@@ -25,7 +23,7 @@ public interface InvoiceRepositoryCustom {
      *     fetch all invoices don't require params so the parameters don't contain any valuable data.
      * </p>
      * @param invoiceId - this is usually 0
-     * @param recordIds - tihs is usually empty
+     * @param recordIds - this is usually empty
      * @return list of all invoices.
      */
     List<InvoiceDataAccess> fetchInvoices(long invoiceId, List<Long> recordIds);

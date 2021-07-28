@@ -7,12 +7,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import com.galvanize.invoicify.services.AppUserDetailsService;
 import org.springframework.web.cors.CorsConfiguration;
-
 import java.util.Arrays;
 
 
@@ -46,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         corsConfiguration.setExposedHeaders(Arrays.asList("Authorization"));
 
         // You can customize the following part based on your project, it's only a sample
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/session").permitAll()
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/session", "/api/session/").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/user").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/").permitAll()

@@ -1,33 +1,27 @@
 package com.galvanize.invoicify.repository.dataaccess;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.galvanize.invoicify.configuration.InvoicifyConfiguration;
 import com.galvanize.invoicify.models.Company;
 import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.models.InvoiceLineItem;
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.persistence.*;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 /**
  * <h2>
+ *     InvoiceDataAccess
+ * </h2>
+ * <p>
  *     Spring bean Entity that manages the connection between the database and the Model. It  corresponds to the invoice
  *     table in the database. It has fields that expresses the columns in the table directly. It implements IDataAccess
  *     interface and inherits the methods: convertToModel, convertToDataAccess; all of which wraps and
  *     unwraps the Invoice Model while restricting transactions to the database.
- * </h2>.
+ * </p>.
  */
 @Entity
 @Table(name = "invoice")
@@ -48,7 +42,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     /**
      * <p>
-     *     companyId the invoice is tied to. jsonproperty is for mapping the column name of the result set to this object
+     *     companyId the invoice is tied to. json-property is for mapping the column name of the result set to this object
      * </p>
      */
     @Column(name = "invoice_company_id", nullable = false)
@@ -57,7 +51,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     /**
      * <p>
-     *     the invoice's created date. jsonproperty is for mapping the column name of the result set to this object
+     *     the invoice's created date. json-property is for mapping the column name of the result set to this object
      * </p>
      */
     @Column(name = "created_on",nullable = false)
@@ -66,7 +60,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     /**
      * <p>
-     *     the creator of invoice. jsonproperty is for mapping the column name of the result set to this object
+     *     the creator of invoice. json-property is for mapping the column name of the result set to this object
      * </p>
      */
     @Column(name = "created_by",nullable = false)
