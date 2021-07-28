@@ -212,7 +212,7 @@ public class UserControllerTest {
         UserDataAccess existingUserToBeUpdated = new UserDataAccess("testuser1","testpassword2");
         UserDataAccess savedUpdatedUser = new UserDataAccess("testuser1","newPassword1");
 
-        User expectedUser = new User("","newPassword1");
+        User expectedUser = new User("testuser1","newPassword1");
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(existingUserToBeUpdated));
         when(userRepository.save(any())).thenReturn(savedUpdatedUser);
@@ -228,6 +228,7 @@ public class UserControllerTest {
 
         verify(userRepository, times(1)).findById(any());
         verify(userRepository, times(1)).save(any());
+        verify(userRepository, times(1)).findByUsername(any());
 
         verifyNoMoreInteractions(this.userRepository);
 
