@@ -3,6 +3,7 @@ package com.galvanize.invoicify.controllers;
 import com.galvanize.invoicify.models.Invoice;
 import com.galvanize.invoicify.models.User;
 import com.galvanize.invoicify.repository.adapter.Adapter;
+import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +61,7 @@ public class InvoiceController {
      *
      */
     @PostMapping("/{companyId}")
-    public Invoice createInvoice(Authentication auth, @RequestBody Invoice invoice, @PathVariable long companyId) {
+    public @NotNull Invoice createInvoice(Authentication auth, @RequestBody Invoice invoice, @PathVariable long companyId) {
         String userName = "";
         if (auth != null) { //prevent Null Pointer Exception
              User user = (User) auth.getPrincipal(); //get logged in user. Auth is automatically populated when a user hits a successful PUT method on http://localhost:8080/api/session
@@ -84,7 +85,7 @@ public class InvoiceController {
      * @return : List<Company> : a compiled list of all the present companies
      */
     @GetMapping()
-    public List<Invoice> getAllInvoices() {
+    public @NotNull List<Invoice> getAllInvoices() {
         return adapter.getInvoices();
     }
 
