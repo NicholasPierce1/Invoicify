@@ -1,46 +1,59 @@
 package com.galvanize.invoicify.repository.repositories.sharedfiles;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.repository.dataaccess.definition.IDataAccess;
 import com.sun.istack.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * <h1>DataAccessConversionHelper</h1>
- * <h2>Type: Class</h2>
+ * <h2>DataAccessConversionHelper</h2>
  *
+ * <p>
  * Implementing Helper methods to create data access objects(DAOs)
  * from the data from the database
+ * </p>
  */
 @Component
 public final class DataAccessConversionHelper {
 
+
+    @Autowired
+    ObjectMapper objectMapper;
+
     /**
      *<p>
-     * This is a Helper method that takes the data from the database and
-     * the constructor of the specified entity to create multiple data access objects
+     *  Creates a List of the targeted DataAccess object from a List of Map representation/reflections of
+     *  Spring Data's Result Set Graph.
      *</p>
-     *
-     * @param data: Object[] data representing the information from database.
-     * @param dataList: generic list of data access objects
-     * @param typeConstructor: Lambda typeConstructor representing the constructor for the specified entity type.
-     */
-    public <U extends List<T>, T extends IDataAccess<?>> void createDataAccessObjects(
-            @NotNull final List<? extends Object[]> data,
-            @NotNull final U dataList,
-            @NotNull final Supplier<T> typeConstructor)
+     * @param data List of the conglomerated map-data representing the targeted DataAccess returned from the ResultSet
+     * @param serializerEndpoint class definition of the targeted DataAccess type
+     * @param <T> DataAccess type to convert the conglomerated-maps to
+     * @return List of the targeted DataAccess types
+ */
+    public < T extends IDataAccess<?>> List<T> createDataAccessObjects(
+            @NotNull final List<? extends Map<String, ?>> data,
+            @NotNull final Class<T> serializerEndpoint)
             throws DataAccessConversionException, IllegalArgumentException {
-        // making sure the list is == 0 before adding DAOs
-        if(dataList.size() != 0)
-            throw new IllegalArgumentException("list size of data access must be 0");
+
+        // initializes a list to retain outputted DAOs from ORM deserialization
+        final List<T> dataAccessObjects = new ArrayList<T>();
+
+        // making sure data targeted for ORM deserialization is non-empty
+        if(data.size() == 0)
+            throw new IllegalArgumentException("list size of data access must not be 0");
         // loops through data and adds each DAO created to the list
         try{
-            for (final Object[] objectData : data) {
-                dataList.add(this.createDataAccessObject(objectData, typeConstructor));
+            for (final Map<String, ? > dataAccess : data) {
+                dataAccessObjects.add(this.createDataAccessObject(dataAccess, serializerEndpoint));
             }
+
+            return dataAccessObjects;
         }
         // checks to make sure DDL is matches up properly
         catch(Exception e){
@@ -55,23 +68,23 @@ public final class DataAccessConversionHelper {
 
     /**
      *<p>
-     * This is a Helper method that takes the data from the database and
-     * the constructor of the specified entity to create a data access object
+     *  Creates a DataAccess object from a Map representation/reflection of
+     *  Spring Data's Result Set Graph.
      *</p>
-     *
-     * @param data: Object[] data representing the information from database.
-     * @param typeConstructor: Lambda typeConstructor representing the constructor for the specified entity type.
-     * @return  Returning the created data access object
+     * @param data Conglomerated map-data representing the targeted DataAccess returned from the ResultSet
+     * @param serializerEndpoint class definition of the targeted DataAccess type
+     * @param <T> DataAccess type to convert the conglomerated-map to
+     * @return the targeted DataAccess type
      */
     public <T extends IDataAccess<?>> T createDataAccessObject(
-            @NotNull final Object[] data,
-            @NotNull final Supplier<T> typeConstructor)
+            @NotNull final Map<String, ?> data,
+            @NotNull final Class<T> serializerEndpoint)
             throws DataAccessConversionException, IllegalArgumentException {
         // takes the specified type and then updates the DAO with the data
-        T returnValue = typeConstructor.get();
-        returnValue.createDataAccess(data);
-        return returnValue;
-
+        return this.objectMapper.convertValue(
+                data,
+                serializerEndpoint
+        );
     }
 
     /**
@@ -120,6 +133,20 @@ public final class DataAccessConversionHelper {
             @NotNull final Supplier<M> modelSupplier
     ){
         return dataAccess.convertToModel(modelSupplier);
+    }
+
+
+    //todo: add documentation
+    public @NotNull String removeSubQueryPrefixFromColumnName(
+            @NotNull final String columnWithPrefix
+    ){
+
+        if(!columnWithPrefix.startsWith("prefix"))
+            throw new IllegalArgumentException("column name " + columnWithPrefix + " does not start with" +
+                    "'PREFIX'. Are you sure this is a sub-query column?");
+
+        return columnWithPrefix.replaceFirst("prefix[0-9]*_", "");
+
     }
 
 }
