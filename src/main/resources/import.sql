@@ -11,6 +11,8 @@ INSERT INTO FLAT_FEE_BILLING_RECORD VALUES(3, 1, 9, 'flat fee billing record thr
 INSERT INTO RATE_BASED_BILLING_RECORD VALUES(4, 1, 9, 'rate base billing record one desc', true, 5, 13);
 INSERT INTO RATE_BASED_BILLING_RECORD VALUES(5, 1, 9, 'rate base billing record two desc', false, 10, 3.56);
 INSERT INTO RATE_BASED_BILLING_RECORD VALUES(6, 1, 9, 'rate base billing record three desc', false, 7, 100);
+INSERT INTO RATE_BASED_BILLING_RECORD VALUES(7, 1, 9, 'rate base billing record three desc 2', false, 78, 1000);
+
 
 INSERT INTO INVOICE (INVOICE_ID, invoice_company_id, CREATED_BY, CREATED_ON, DESCRIPTION) VALUES (1,1,9,TO_DATE('2021-06-30', 'yyyy-MM-dd'),'test');
 INSERT INTO INVOICE_LINE_ITEM (INVOICE_LINE_ITEM_ID, BILLING_RECORD_ID, CREATED_BY, CREATED_ON, INVOICE_ID) VALUES (1,1,9,TO_DATE('2021-06-30', 'yyyy-MM-dd'),1);

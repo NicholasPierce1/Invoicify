@@ -673,46 +673,16 @@ public final class Adapter {
                     .map( (companyDataAccess -> companyDataAccess.convertToModel(Company::new)) );
         }
 
+        /**
+         * <p>
+         *     helper method for getting the next billing record id that is shared across both flat_fee_billing_record and rate_based_billing_record.
+         * </p>
+         * @return the next billing record id to use upon creation of billing record.
+         */
         public @NotNull Long getNextBillingRecordId(){
-
-            if(BillingRecordDataAccess.current_biggest_id != null)
-                return ++BillingRecordDataAccess.current_biggest_id;
-
-            Long biggestId = -1L;
-
-            // initialization -- acquire all ids from billing records (no children attached)
-            final List<BillingRecord> billingRecordList =
-                    this
-                            ._adapter
-                            ._flatFeeBillingRecordRepository
-                            .findAll()
-                    .stream()
-                            .map(
-                                    (flatFeeBillingRecordDataAccess ->
-                                            flatFeeBillingRecordDataAccess.convertToModel(FlatFeeBillingRecord::new))
-                            )
-                    .collect(Collectors.toList());
-
-            billingRecordList.addAll(
-                    this
-                            ._adapter
-                            ._rateBasedBillingRecordRepository
-                            .findAll()
-                            .stream()
-                            .map(
-                                    (flatFeeBillingRecordDataAccess ->
-                                            flatFeeBillingRecordDataAccess.convertToModel(RateBasedBillingRecord::new))
-                            )
-                            .collect(Collectors.toList())
-            );
-
-            for(final BillingRecord billingRecordDataAccess : billingRecordList)
-                if(billingRecordDataAccess.getId() > biggestId)
-                    biggestId = billingRecordDataAccess.getId();
-
-            BillingRecordDataAccess.current_biggest_id = ++biggestId;
-
-            return biggestId;
+            long flatFeeBillingRecordMaxId = this._adapter._flatFeeBillingRecordRepository.getMaxId();
+            long rateBasedBillingRecordRepositoryMaxId = this._adapter._rateBasedBillingRecordRepository.getMaxId();
+            return Math.max(flatFeeBillingRecordMaxId, rateBasedBillingRecordRepositoryMaxId) + 1;
         }
 
     }
