@@ -680,9 +680,17 @@ public final class Adapter {
          * @return the next billing record id to use upon creation of billing record.
          */
         public @NotNull Long getNextBillingRecordId(){
+
+            if(BillingRecordDataAccess.current_biggest_id != null)
+                return ++BillingRecordDataAccess.current_biggest_id;
+
             long flatFeeBillingRecordMaxId = this._adapter._flatFeeBillingRecordRepository.getMaxId();
             long rateBasedBillingRecordRepositoryMaxId = this._adapter._rateBasedBillingRecordRepository.getMaxId();
-            return Math.max(flatFeeBillingRecordMaxId, rateBasedBillingRecordRepositoryMaxId) + 1;
+
+            BillingRecordDataAccess.current_biggest_id =
+                    Math.max(flatFeeBillingRecordMaxId, rateBasedBillingRecordRepositoryMaxId) + 1;
+
+            return BillingRecordDataAccess.current_biggest_id;
         }
 
     }

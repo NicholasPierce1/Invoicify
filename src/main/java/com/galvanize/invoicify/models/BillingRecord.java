@@ -1,5 +1,8 @@
 package com.galvanize.invoicify.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class BillingRecord {
 
     // fields

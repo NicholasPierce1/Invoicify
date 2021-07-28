@@ -120,7 +120,7 @@ public final class CompanyController {
 
         try {
 
-            if (company.getName() == null || company.getName().equals("")) {
+            if (company.getName() == null || company.getName().trim().equals("")) {
                 throw new Exception("Sorry, cannot create a company without a name ");
 
             }
@@ -185,7 +185,7 @@ public final class CompanyController {
     Optional<Company> updateCompany(@NotNull final @RequestBody Company company, final @PathVariable Long id) {
         try {
 
-            if (company.getName() == null || company.getName().equals("")) {
+            if (company.getName() == null || company.getName().trim().equals("")) {
                 throw new Exception("Sorry, cannot update to a company without a name ");
 
             }
