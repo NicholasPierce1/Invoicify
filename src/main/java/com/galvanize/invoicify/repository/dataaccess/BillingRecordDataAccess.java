@@ -53,13 +53,14 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
 
     // fields
 
+    public static Long current_biggest_id = null;
+
     /**
      * <p>
      *     shared, unique ID field across all subtypes
      * </p>
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
     /**
@@ -262,11 +263,13 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
     public <M extends T> M convertToModel(Supplier<M> supplier) {
 
         final M billingRecord = supplier.get();
-        billingRecord.setClient(this.getCompany().convertToModel(Company::new));
+        if(this.getCompany() != null)
+            billingRecord.setClient(this.getCompany().convertToModel(Company::new));
         billingRecord.setDescription(this.getDescription());
         billingRecord.setInUse(this.getInUse());
         billingRecord.setId(this.getId());
-        billingRecord.setCreatedBy(this.getUser().convertToModel(User::new));
+        if(this.getUser() != null)
+            billingRecord.setCreatedBy(this.getUser().convertToModel(User::new));
 
         return billingRecord;
     }

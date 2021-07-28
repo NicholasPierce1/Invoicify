@@ -19,7 +19,9 @@ import java.util.Optional;
  */
 
 @RestController
-@RequestMapping("/api/user/")
+@RequestMapping(
+		value  = {"/api/user/", "/api/user"}
+)
 public final class UserController {
 
 	/**

@@ -2,13 +2,8 @@ package com.galvanize.invoicify.repository.adapter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.galvanize.invoicify.models.*;
-import com.galvanize.invoicify.repository.dataaccess.FlatFeeBillingRecordDataAccess;
-import com.galvanize.invoicify.repository.dataaccess.UserDataAccess;
+import com.galvanize.invoicify.repository.dataaccess.*;
 import com.galvanize.invoicify.models.Company;
-import com.galvanize.invoicify.repository.dataaccess.CompanyDataAccess;
-import com.galvanize.invoicify.repository.dataaccess.InvoiceDataAccess;
-import com.galvanize.invoicify.repository.dataaccess.InvoiceLineItemDataAccess;
-import com.galvanize.invoicify.repository.dataaccess.RateBasedBillingRecordDataAccess;
 import com.galvanize.invoicify.repository.repositories.companyrepository.CompanyRepository;
 import com.galvanize.invoicify.repository.repositories.flatfeebillingrecord.FlatFeeBillingRecordRepository;
 import com.galvanize.invoicify.repository.repositories.invoicelineitemrepository.InvoiceLineItemRepository;
@@ -131,9 +126,15 @@ public final class Adapter {
         // getting user by id --- user exists in database guaranteed
         UserDataAccess currentUserData = this._userRepository.findById(id).get();
 
-        if (this._userRepository.findByUsername(user.getUsername()).isPresent()) {
+        final Optional<User> userWithUserName =
+                this._userRepository.findByUsername(user.getUsername())
+                .map(
+                        (userDataAccess -> userDataAccess.convertToModel(User::new))
+                );
 
-            throw new DuplicateUserException("User " + user.getUsername() + "is an existing user name. Please choose a different name. " );
+        if (userWithUserName.isPresent() && !userWithUserName.get().getId().equals(id) ) {
+
+            throw new DuplicateUserException("User " + user.getUsername() + " is an existing user name. Please choose a different name. " );
         }
 
         currentUserData.setUsername(user.getUsername());
@@ -421,9 +422,12 @@ public final class Adapter {
                 .map(
                         (companyDataAccess -> companyDataAccess.convertToModel(Company::new))
                 );
+
         // verifies that user and company exist
-        if(!user.isPresent() || !company.isPresent() || flatFeeBillingRecord.getId() != null)
+        if(!user.isPresent() || !company.isPresent())
             return Optional.empty();
+
+        flatFeeBillingRecordDataAccess.setId(this._billingRecordParentHelper.getNextBillingRecordId());
 
         // save flat fee object
         flatFeeBillingRecord.setId(
@@ -482,8 +486,10 @@ public final class Adapter {
                 );
 
         // verifies that user and company exist
-        if(!user.isPresent() || !company.isPresent() || rateBasedBillingRecord.getId() != null)
+        if(!user.isPresent() || !company.isPresent())
             return Optional.empty();
+
+        rateBasedBillingRecordDataAccess.setId(this._billingRecordParentHelper.getNextBillingRecordId());
 
         // save flat fee object
         rateBasedBillingRecord.setId(
@@ -665,6 +671,48 @@ public final class Adapter {
                     ._companyRepository
                     .findById(companyId)
                     .map( (companyDataAccess -> companyDataAccess.convertToModel(Company::new)) );
+        }
+
+        public @NotNull Long getNextBillingRecordId(){
+
+            if(BillingRecordDataAccess.current_biggest_id != null)
+                return ++BillingRecordDataAccess.current_biggest_id;
+
+            Long biggestId = -1L;
+
+            // initialization -- acquire all ids from billing records (no children attached)
+            final List<BillingRecord> billingRecordList =
+                    this
+                            ._adapter
+                            ._flatFeeBillingRecordRepository
+                            .findAll()
+                    .stream()
+                            .map(
+                                    (flatFeeBillingRecordDataAccess ->
+                                            flatFeeBillingRecordDataAccess.convertToModel(FlatFeeBillingRecord::new))
+                            )
+                    .collect(Collectors.toList());
+
+            billingRecordList.addAll(
+                    this
+                            ._adapter
+                            ._rateBasedBillingRecordRepository
+                            .findAll()
+                            .stream()
+                            .map(
+                                    (flatFeeBillingRecordDataAccess ->
+                                            flatFeeBillingRecordDataAccess.convertToModel(RateBasedBillingRecord::new))
+                            )
+                            .collect(Collectors.toList())
+            );
+
+            for(final BillingRecord billingRecordDataAccess : billingRecordList)
+                if(billingRecordDataAccess.getId() > biggestId)
+                    biggestId = billingRecordDataAccess.getId();
+
+            BillingRecordDataAccess.current_biggest_id = ++biggestId;
+
+            return biggestId;
         }
 
     }
