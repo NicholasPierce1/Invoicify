@@ -49,7 +49,7 @@ public final class UserController {
 	 * <p>
 	 *  	A Put request is sent to http://localhost:8080/api/user/{userId}, the request invokes
 	 *  	the adapter to confirm the user
-	 *  	DataAccessObject -> the database in turn.
+	 *  	DataAccessObject   the database in turn.
 	 *  	The response is then rendered a user that the DataAccessObject retrieves.
 	 * </p>
 	 * @param id requires an id in the @PathVariable to locate the user to update.
@@ -84,7 +84,7 @@ public final class UserController {
 	 * 	   be added to the system and client should see their account information show up in the response.
 	 * </p>
 	 * @param user requires a user @RequestBody param in order to create a new User in the database.
-	 * @return : Optional<User> : a user is returned once that User is created
+	 * @return : Optional User: a user is returned once that User is created
 	 * */
 
 	@PostMapping
@@ -104,9 +104,9 @@ public final class UserController {
 	/**
 	 * <p>
 	 *     A get request is sent to http://localhost:8080/api/user in means of starting a request to
-	 *     retrieve a lsit of all users. It sent sent to the adapter which returns the list of all companies.
+	 *     retrieve a list of all users. It sent sent to the adapter which returns the list of all companies.
 	 * </p>
-	 * @return : List<User> : a complied list of all present users
+	 * @return : List User : a complied list of all present users
 	 * */
 
 	@GetMapping

@@ -1,1 +1,1 @@
-web: java -jar -Dserver.port=$PORT invoicify-1.0.1-SNAPSHOT.jar
+web: java -jar -Dserver.port=$PORT *.jar

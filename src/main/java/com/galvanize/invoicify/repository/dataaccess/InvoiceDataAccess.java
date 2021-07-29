@@ -101,7 +101,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     /**
      * set company
-     * @param company
+     * @param company add doc here
      */
     public void setCompany(CompanyDataAccess company) {
         this.company = company;
@@ -109,7 +109,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     /**
      * set the list of lineItems
-     * @param lineItems
+     * @param lineItems add doc here
      */
     public void setLineItems(ArrayList<InvoiceLineItemDataAccess> lineItems) {
         this.lineItems = lineItems;
@@ -117,7 +117,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     /**
      * set User
-     * @param user
+     * @param user add doc here
      */
     public void setUser(UserDataAccess user) {
         this.user = user;
@@ -190,7 +190,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     /**
      * set id
-     * @param id
+     * @param id add doc here
      */
     public void setId(long id) {
         this.id = id;
@@ -206,7 +206,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     /**
      * set companyId
-     * @param companyId
+     * @param companyId add doc here
      */
     public void setCompanyId(long companyId) {
         this.companyId = companyId;
@@ -222,7 +222,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     /**
      * sets createdOn
-     * @param createdOn
+     * @param createdOn add doc here
      */
     public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
@@ -238,7 +238,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     /**
      * sets createdBy
-     * @param createdBy
+     * @param createdBy add doc here
      */
     public void setCreatedBy(long createdBy) {
         this.createdBy = createdBy;
@@ -254,7 +254,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
 
     /**
      * sets description
-     * @param description
+     * @param description add doc here
      */
     public void setDescription(String description) {
         this.description = description;
@@ -266,7 +266,6 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
      * </p>
      * @param supplier - provides implementation of converting to a Model Object.
      *                   NOTE: the default state set in the supplier may/will be written over
-     * @param - A model type used to create data access reflections
      * @return - A supplier
      */
     @Override
@@ -296,7 +295,8 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
      * <p>
      *     Converts a Invoice Model Object to a InvoiceDataAccessObject and sets description.
      * </p>
-     * @param A Invoice Model Object used to convert DataAccessObject
+     * @param <M> Invoice Model Object used to convert DataAccessObject
+     * @param modelObject add doc here
      */
     @Override
     public <M extends Invoice> void convertToDataAccess(M modelObject) {

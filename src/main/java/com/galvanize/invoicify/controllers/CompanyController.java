@@ -112,6 +112,8 @@ public final class CompanyController {
      *
      * @param company : requires a company @RequestBody parameter in order to add a company to the list.
      * @return : companyRepository : saving created company
+     *
+     * @throws Exception add doc here
      */
 
     @PostMapping

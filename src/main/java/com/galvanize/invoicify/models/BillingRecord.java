@@ -88,7 +88,7 @@ public abstract class BillingRecord {
 
     /**
      * set id
-     * @param id
+     * @param id add doc here
      */
     public void setId(Long id) {
         this.id = id;
@@ -97,7 +97,7 @@ public abstract class BillingRecord {
     /**
      * set inUse
      *
-     * @param inUse
+     * @param inUse add doc here
      */
     public void setInUse(boolean inUse) {
         this.inUse = inUse;
@@ -105,7 +105,7 @@ public abstract class BillingRecord {
 
     /**
      * set description
-     * @param description
+     * @param description add doc here
      */
     public void setDescription(String description) {
         this.description = description;
@@ -113,7 +113,7 @@ public abstract class BillingRecord {
 
     /**
      * set client
-     * @param client
+     * @param client add doc here
      */
     public void setClient(Company client) {
         this.client = client;
@@ -121,7 +121,7 @@ public abstract class BillingRecord {
 
     /**
      * set createdBy
-     * @param createdBy
+     * @param createdBy add doc here
      */
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
@@ -133,7 +133,7 @@ public abstract class BillingRecord {
 
     /**
      * return the total
-     * @return
+     * @return double representing the total cost of the billing record
      */
     public abstract double getTotal();
 }

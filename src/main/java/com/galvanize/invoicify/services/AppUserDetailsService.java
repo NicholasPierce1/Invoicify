@@ -32,8 +32,8 @@ public class AppUserDetailsService implements UserDetailsService {
 	 *      through the login form with the user information retrieved through the UserDetailsService.
 	 *      This is retrieve by the adapter then returned as a user model.
 	 * </p>
-	 * @param username -> the String username provided for the given user
-	 * @return UserDetails -> the details of a given user
+	 * @param username the String username provided for the given user
+	 * @return UserDetails the details of a given user
 	 * */
 
 	@Override

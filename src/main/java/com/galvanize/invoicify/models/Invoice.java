@@ -82,7 +82,7 @@ public class Invoice {
 
     /**
      * <p>set the instance's invoice id</p>
-     * @param id
+     * @param id add doc here
      */
     public void setId(long id) {
         this.id = id;
@@ -98,7 +98,7 @@ public class Invoice {
 
     /**
      * <p>set the instance's company</p>
-     * @param company
+     * @param company add doc here
      */
     public void setCompany(Company company) {
         this.company = company;
@@ -114,7 +114,7 @@ public class Invoice {
 
     /**
      * <p>set createdOn field.</p>
-     * @param createdOn
+     * @param createdOn add doc here
      */
     public void setCreatedOn(LocalDate createdOn) {
         this.createdOn = createdOn;
@@ -157,7 +157,7 @@ public class Invoice {
 
     /**
      * <p>return the list of invoice line items</p>
-     * @return
+     * @return List of invoice line items that pertain to this invoice
      */
     public List<InvoiceLineItem> getLineItems() {
         return lineItems;
@@ -177,7 +177,7 @@ public class Invoice {
      * <p>
      *     return a list of record Ids
      * </p>
-     * @return
+     * @return List of all billing record ids
      */
     public List<Long> getRecordIds() {
         return recordIds;
@@ -187,7 +187,7 @@ public class Invoice {
      * <p>
      *     return list of recordIds
      * </p>
-     * @param recordIds
+     * @param recordIds list of all longs to set the billing record ids for this invoice
      */
     public void setRecordIds(List<Long> recordIds) {
         this.recordIds = recordIds;

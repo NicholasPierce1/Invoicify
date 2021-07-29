@@ -42,7 +42,7 @@ public class RateBasedBillingRecordDataAccess extends BillingRecordDataAccess<Ra
     // constructors
     /**
      * <p>
-     *     No arg-constructor to be created for DA->Model conversion and JacksonJSON serialization in custom
+     *     No arg-constructor to be created for DA Model conversion and JacksonJSON serialization in custom
      *     ORM.
      * </p>
      */

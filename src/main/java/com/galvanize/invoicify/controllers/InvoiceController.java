@@ -35,7 +35,7 @@ public class InvoiceController {
      * <p>
      *      Autowired constructor that takes in the Adapter bean and renders a bean of type InvoiceController.
      * </p>
-     * @param adapter -> preexisting bean injection servicing the remote data store
+     * @param adapter preexisting bean injection servicing the remote data store
      */
     @Autowired
     public InvoiceController(Adapter adapter) {
@@ -59,9 +59,7 @@ public class InvoiceController {
      *    "recordIds":[1,2]
      * }
      * @param companyId - any positive long number.
-     * @return an invoice object that looks something like this
-     * @see https://documenter.getpostman.com/view/11036917/TzedhkB1#10cb449b-7938-4772-8368-667999b6f86b Create Invoice Response
-     *
+     * @return an invoice object that looks something like this*
      */
     @PostMapping("/{companyId}")
     public @NotNull Invoice createInvoice(Authentication auth, @RequestBody Invoice invoice, @PathVariable long companyId) {
@@ -81,7 +79,7 @@ public class InvoiceController {
     /**
      * <p>
      *      A Get request is sent to: http://localhost:8080/api/invoice , that logic is processed and then shipped
-     *      to the adapter to communicate with the DataAccessObject -> and the database in turn. The response is
+     *      to the adapter to communicate with the DataAccessObject and the database in turn. The response is
      *      the rendered list of invoices that the DataAccessObject retrieves. Important to note that if there
      *      are no invoices present, the application will not crash.
      * </p>

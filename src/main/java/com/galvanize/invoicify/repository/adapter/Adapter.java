@@ -149,7 +149,7 @@ public final class Adapter {
      * @param user : takes in the specific user provided
      * @return User : With the userRepository, it checks if the user exists, throws a DuplicateUserExecption,
      * otherwise, a new user DAO is instantiated then converted to a user model.
-     * @throws DuplicateUserException : It addresses the issue of computing logic against duplication
+     * @throws Exception It addresses the issue of computing logic against duplication
      * of keys. Since the User table must contain non-null, unique String name entries,
      * this exception prevents the user from assigning a name to a User that already exists
      * in the table. This aslo handles redirecting the user in these instances and
@@ -516,7 +516,7 @@ public final class Adapter {
      * @param company : takes in a Company company specified by the user
      * @return : Company : With the companyRepository, it checks if the company already exists, throws a DuplicateCompanyException,
      * otherwise, a new company DataAccessObject is instantiated then converted to a Company Model
-     * @throws DuplicateCompanyException
+     * @throws Exception add doc here
      */
     public @NotNull
     Company createCompany(@NotNull final Company company) throws Exception {
@@ -537,7 +537,7 @@ public final class Adapter {
 
     /**
      * <p>
-     * Once the delete request has been sent from the controller, an Optional<Company> company Object is sent to the
+     * Once the delete request has been sent from the controller, an Optional Company company Object is sent to the
      * companyRepository to find the corresponding DataAccessObject and converts it to the Company Model. If that
      * company is not present, an error message prompts user to change their input. If the company does exist,
      * then it will be stored in a temporary variable, deleted from the database and returned to the user.
@@ -547,6 +547,7 @@ public final class Adapter {
      * @return : Optional Company : Validates if the specified company exists. If the company does not exist,
      * it returns an empty Optional. If it does, then it calls companyRepository to delete it and returns the
      * deleted company.
+     * @throws Exception add doc here
      */
     public @NotNull
     Optional<Company> deleteCompany(@NotNull final Long id) throws Exception{
@@ -577,6 +578,7 @@ public final class Adapter {
      * @param id      : Requires the serialized id of the company being updated.
      * @return : Company : Calls the companyRepository to save the modified company DataAccessObject, then converts to
      * a Company Model.
+     * @throws Exception add doc here
      */
     public @NotNull
     Company updateCompany(@NotNull final Company company, Long id) throws Exception{
@@ -715,7 +717,7 @@ public final class Adapter {
      * @param companyId - any positive long number.
      * @param userName - this is pre-populated when a user logs in and is passed from InvoiceController.java
      * @return Invoice Object without the record Ids passed in from the client request.
-     * @throws InvalidRequestException
+     * @throws InvalidRequestException add doc here
      */
     public Invoice createInvoice(Invoice invoice, long companyId, String userName) throws InvalidRequestException {
         validateRequestCompanyIDAndRecordIds(companyId, invoice.getRecordIds());

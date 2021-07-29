@@ -62,7 +62,7 @@ public class InvoiceRepositoryImpl implements InvoiceRepositoryCustom {
      * </p>
      * @param dataSource represents DataAccessConversionHelper's Bean injection
      *     to facilitate and encapsulate
-     *     DBO Graph -> DataAccess conversions
+     *     DBO Graph DataAccess conversions
      *     and
      *     parsing/removing DBO Graph state for ORM conversion
      * @param dataAccessConversionHelper represents Spring's Data DataSource Bean injection embedding connection state to the current

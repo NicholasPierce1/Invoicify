@@ -126,7 +126,7 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
 
     /**
      * <p>set id</p>
-     * @param id
+     * @param id add doc here
      */
     public void setId(long id) {
         this.id = id;
@@ -147,7 +147,7 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
      * <p>
      * set billing record id
      * </p>
-     * @param billingRecordId
+     * @param billingRecordId add doc here
      */
     public void setBillingRecordId(long billingRecordId) {
         this.billingRecordId = billingRecordId;
@@ -187,7 +187,7 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
      * <p>
      *     sets user
      * </p>
-     * @param user
+     * @param user add doc here
      */
     public void setUser(UserDataAccess user) {
         this.user = user;
@@ -197,7 +197,7 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
      * <p>
      *     set billing record.
      * </p>
-     * @param billingRecord
+     * @param billingRecord add doc here
      */
     public void setBillingRecord(BillingRecordDataAccess<? extends BillingRecord> billingRecord) {
         this.billingRecord = billingRecord;
@@ -207,7 +207,7 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
      * <p>
      *     set created on.
      * </p>
-     * @param createdOn
+     * @param createdOn add doc here
      */
     public void setCreatedOn(Date createdOn) {
         this.createdOn = createdOn;
@@ -227,7 +227,7 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
      * <p>
      *     set created by.
      * </p>
-     * @param createdBy
+     * @param createdBy add doc here
      */
     public void setCreatedBy(long createdBy) {
         this.createdBy = createdBy;
@@ -247,7 +247,7 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
      * <p>
      *     sets invoice id.
      * </p>
-     * @param invoiceId
+     * @param invoiceId add doc here
      */
     public void setInvoiceId(long invoiceId) {
         this.invoiceId = invoiceId;
@@ -258,8 +258,8 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
      *     this is to convert this InvoiceLineItemDataAccess to Invoice model.
      * </p>
      *
-     * @param - supplier InvoiceLineItem
-     * @param - A model type used to create data access reflections
+     * @param supplier - supplier InvoiceLineItem
+     * @param <M> - A model type used to create data access reflections
      * @return - InvoiceLineItem
      */
     @Override
@@ -274,7 +274,7 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
     /**
      * There is no need to convert model to dataaccess anywhere in the application.
      * @param modelObject - InvoiceLineItem
-     * @param - InvoiceLineItem
+     * @param <M> InvoiceLineItem
      */
     public <M extends InvoiceLineItem> void convertToDataAccess(M modelObject) {
 

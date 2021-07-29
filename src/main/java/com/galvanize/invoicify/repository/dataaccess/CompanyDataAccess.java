@@ -126,7 +126,8 @@ public final class CompanyDataAccess implements IDataAccess<Company> {
      * <p>
      *     Converts a Model Object to a DataAccessObject and sets the name and id.
      * </p>
-     * @param M : A Model Object used to convert DataAccessObject
+     * @param modelObject model object
+     * @param <M> A Model Object used to convert DataAccessObject
      */
     @Override
     public <M extends Company> void convertToDataAccess(M modelObject) {

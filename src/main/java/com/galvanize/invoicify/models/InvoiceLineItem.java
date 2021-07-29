@@ -65,7 +65,7 @@ public class InvoiceLineItem {
      * <p>
      *     sets the id.
      * </p>
-     * @param id
+     * @param id add doc here
      */
     public void setId(long id) {
         this.id = id;
@@ -105,7 +105,7 @@ public class InvoiceLineItem {
      * <p>
      *    set dateCreatedOn
      * </p>
-     * @param dateCreatedOn
+     * @param dateCreatedOn add doc here
      */
     public void setCreatedOn(LocalDate dateCreatedOn) {
         this.dateCreatedOn = dateCreatedOn;
@@ -126,7 +126,7 @@ public class InvoiceLineItem {
      * <p>
      *    set createdBy
      * </p>
-     * @param createdBy
+     * @param createdBy add doc here
      */
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
@@ -146,7 +146,7 @@ public class InvoiceLineItem {
      * <p>
      *     set invoice
      * </p>
-     * @param invoice
+     * @param invoice add doc here
      */
     public void setInvoice(Invoice invoice) {
         this.invoice = invoice;

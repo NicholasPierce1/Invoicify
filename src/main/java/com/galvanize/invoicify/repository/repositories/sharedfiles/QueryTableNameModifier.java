@@ -9,8 +9,9 @@ import com.sun.istack.NotNull;
  */
 public class QueryTableNameModifier {
     /**
+     * <p>
      * Replaces the targeted query with all nominal place holders (t#) to their corresponding tableName.
-     * NOTE: t1 --> tableName[0]
+     * NOTE: t1 - tableName[0]
      *
      * ex:
      *  - input:
@@ -23,6 +24,7 @@ public class QueryTableNameModifier {
      *    - query: Select t1.* From t1
      *    - tableNames: table1
      *   - output: Select table1.* From table1
+     *   </p>
      *
      * @param query: String query to manipulate
      * @param tableNames: String name of tables for which entity repository corresponds with

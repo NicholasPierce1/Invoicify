@@ -9,8 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  *		The Model Object that is unwrapped from its DataAccessObject: contains four fields
  *		that describe a User and where it lies on the data base. The
  * </h2>
- * @implements
- *  <p>UserDetails -> interface that checks for authentication. </p>
+ *  <p>UserDetails interface that checks for authentication. </p>
  * */
 
 public final class User implements UserDetails {
@@ -53,8 +52,8 @@ public final class User implements UserDetails {
 	 *     This constructor is used to convey properties that are assigned to the User Model.
 	 *     It can be overloaded to have a one arg constructor as well as a no arg constructor.
 	 * </p>
-	 * @param username -> The string representation for the password.
-	 * @param password -> The string representation for the password.
+	 * @param username   The string representation for the password.
+	 * @param password   The string representation for the password.
 	 * */
 
 	public User(String username, String password) {
@@ -73,7 +72,7 @@ public final class User implements UserDetails {
 	 *     This methods gets the password stored for the User DataAccessObject
 	 *     stored in the user table.
 	 * </p>
-	 * @return password -> password stored in the user_password field in the User table.
+	 * @return password   password stored in the user_password field in the User table.
 	 */
 
 	@Override
@@ -86,7 +85,7 @@ public final class User implements UserDetails {
 	 *     This method gets the String username for the User DataAccessObject
 	 *     stored in the user table
 	 * </p>
-	 * @return username -> string username stored in the user_password field in the user table.
+	 * @return username   string username stored in the user_password field in the user table.
 	 * */
 
 	@Override
@@ -98,7 +97,7 @@ public final class User implements UserDetails {
 	 * <p>
 	 *		This method checks if the account is non-expired in the user data store.
 	 * </p>
-	 * @return true -> return true if the account credentials are non-expired.
+	 * @return true   return true if the account credentials are non-expired.
 	 * */
 
 	@Override
@@ -110,7 +109,7 @@ public final class User implements UserDetails {
 	 * <p>
 	 *		This method checks if the authentication for the user is locked.
 	 * </p>
-	 * @return true -> boolean returns true of the account is locked.
+	 * @return true   boolean returns true of the account is locked.
 	 * */
 
 	@Override
@@ -122,7 +121,7 @@ public final class User implements UserDetails {
 	 * <p>
 	 *		Checks if the credentials entered are expired.
 	 * </p>
-	 * @return true -> boolean returns true if the credentials stored are expired.
+	 * @return true   boolean returns true if the credentials stored are expired.
 	 * */
 
 	@Override
@@ -140,7 +139,7 @@ public final class User implements UserDetails {
 	 *     This is the reflection of the user id in the database that has been
 	 *     converted.
 	 * </p>
-	 * @return id -> retrieves the id that was assigned to that user DataAccessObject.
+	 * @return id   retrieves the id that was assigned to that user DataAccessObject.
 	 * */
 
 	public Long getId() {
@@ -151,7 +150,7 @@ public final class User implements UserDetails {
 	 * <p>
 	 *     This id is assigned to the DataAccessObject when converted to the User Model.
 	 * </p>
-	 * @param id -> takes in the id that was assigned to the DataAccessObject and unwrapped into the
+	 * @param id   takes in the id that was assigned to the DataAccessObject and unwrapped into the
 	 *           User Model.
 	 * */
 
@@ -163,7 +162,7 @@ public final class User implements UserDetails {
 	 * <p>
 	 *		This sets String password
 	 * </p>
-	 * @param password -> sets the password of the User assigned to the DataAccessObject after conversion.
+	 * @param password   sets the password of the User assigned to the DataAccessObject after conversion.
 	 * */
 
 	public void setPassword(String password) {
@@ -174,7 +173,7 @@ public final class User implements UserDetails {
 	 * <p>
 	 *		The String username that is parsed from the User DataAccessObject
 	 * </p>
-	 * @param username -> sets the username of the User assigned to the DataAccessObject.
+	 * @param username   sets the username of the User assigned to the DataAccessObject.
 	 * */
 
 	public void setUsername(String username) {
