@@ -24,8 +24,8 @@ public interface CompanyRepository extends JpaRepository<CompanyDataAccess, Long
      *     This custom repository method wraps a CompanyDataAccess Object and returns that
      *      object given its name as input
      * </p>
-     * @param name -> requires a String name for the company to look up
-     * @return : Optional<CompanyDataAccess> if that Company exists with the name, null otherwise
+     * @param name : requires a String name for the company to look up
+     * @return : Optional CompanyDataAccess if that Company exists with the name, null otherwise
      */
     public Optional<CompanyDataAccess> findByName(@NotNull final String name);
 
