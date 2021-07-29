@@ -27,7 +27,8 @@ import java.util.stream.Collectors;
  *   Adapter
  * </h2>
  * <p>
- *     //todo: describe here
+ *     Adapter class that utilizes all endpoints repositories - company, invoice, billingrecord, user etc...
+ *     This class contains all the business logic for all the end points.
  * </p>
  */
 @Service
@@ -69,9 +70,6 @@ public final class Adapter {
         this._invoiceLineItemRepository = invoiceLineItemRepository;
     }
 
-
-    // ...stubs go below
-    // add your method signatures to complete your user stories here
 
     /**
      * <p>
