@@ -51,8 +51,8 @@ public final class CompanyDataAccess implements IDataAccess<Company> {
      *     a one arg constructor because the company_name column in the table cannot have null entries, therefore, there
      *     can only be a no args or all arg constructor.
      * </p>
-     * @param id -> Auto-serialized number when created and saved
-     * @param name -> The String name of the company assigned by user when creating company
+     * @param id : Auto-serialized number when created and saved
+     * @param name : The String name of the company assigned by user when creating company
      */
     public CompanyDataAccess(Long id, String name) {
         this.id=id;
@@ -66,7 +66,7 @@ public final class CompanyDataAccess implements IDataAccess<Company> {
      * <p>
      *     This gets the company id in the company table.
      * </p>
-     * @return id -> id stored in the company_id field in Company table
+     * @return id : id stored in the company_id field in Company table
      */
     public Long getId() {
         return id;
@@ -76,7 +76,7 @@ public final class CompanyDataAccess implements IDataAccess<Company> {
      * <p>
      *     This gets the company name that is stored in the Company table.
      * </p>
-     * @return name -> retrieves the name that was assigned to that company.
+     * @return name : retrieves the name that was assigned to that company.
      */
     public String getName() {
         return name;
@@ -86,7 +86,7 @@ public final class CompanyDataAccess implements IDataAccess<Company> {
      * <p>
      *     This sets the serialized id that was assigned to the Company DataAccessObject.
      * </p>
-     * @param id -> takes in the serialized id that was assigned to the Company DataAccessObject.
+     * @param id : takes in the serialized id that was assigned to the Company DataAccessObject.
      */
     public void setId(Long id) {
         this.id = id;
@@ -96,7 +96,7 @@ public final class CompanyDataAccess implements IDataAccess<Company> {
      * <p>
      *     This sets the String name for the Company DataAccessObject that the user assigns.
      * </p>
-     * @param name -> takes in the String name for the Company DataAccessObject that the user assigns.
+     * @param name : takes in the String name for the Company DataAccessObject that the user assigns.
      */
     public void setName(String name) {
         this.name = name;
@@ -108,7 +108,7 @@ public final class CompanyDataAccess implements IDataAccess<Company> {
      * <p>
      *     The method that creates the DataAccessObject that communicates with the database.
      * </p>
-     * @param supplier -> takes in the DataAccessObject that Spring auto-generates.
+     * @param supplier : takes in the DataAccessObject that Spring auto-generates.
      */
     @Override
     public <M extends Company> M convertToModel(Supplier<M> supplier) {
@@ -126,7 +126,7 @@ public final class CompanyDataAccess implements IDataAccess<Company> {
      * <p>
      *     Converts a Model Object to a DataAccessObject and sets the name and id.
      * </p>
-     * @param <M> -> A Model Object used to convert DataAccessObject
+     * @param M : A Model Object used to convert DataAccessObject
      */
     @Override
     public <M extends Company> void convertToDataAccess(M modelObject) {
