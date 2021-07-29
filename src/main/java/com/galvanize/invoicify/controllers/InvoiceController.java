@@ -11,10 +11,13 @@ import java.util.List;
 
 /**
  * <h2>
+ *     InvoiceController
+ * </h2>
+ * <p>
  *     The Invoice Controller Class is responsible for facilitating business logic to the adapter to fulfill invoice endpoint responses. It takes in requests
  *     by request, and based off of the endpoint, it will either return to the user a list of Invoices, or an individual
  *     invoice. This controller is expected to perform a custom create, and custom read crud method (implemented using a sql connection stream that executes a custom SQL query).
- * </h2>
+ * </p>
  */
 @RestController
 @RequestMapping("/api/invoice")
@@ -57,7 +60,7 @@ public class InvoiceController {
      * }
      * @param companyId - any positive long number.
      * @return an invoice object that looks something like this
-     * @see <a href="https://documenter.getpostman.com/view/11036917/TzedhkB1#10cb449b-7938-4772-8368-667999b6f86b"> Create Invoice Response</a>
+     * @see https://documenter.getpostman.com/view/11036917/TzedhkB1#10cb449b-7938-4772-8368-667999b6f86b Create Invoice Response
      *
      */
     @PostMapping("/{companyId}")
@@ -82,7 +85,7 @@ public class InvoiceController {
      *      the rendered list of invoices that the DataAccessObject retrieves. Important to note that if there
      *      are no invoices present, the application will not crash.
      * </p>
-     * @return : List<Company> : a compiled list of all the present companies
+     * @return : a compiled list of all the present companies
      */
     @GetMapping()
     public @NotNull List<Invoice> getAllInvoices() {

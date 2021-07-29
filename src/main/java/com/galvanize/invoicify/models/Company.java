@@ -37,8 +37,8 @@ public final class Company {
      *     This constructor is used to convey properties that signify Company Model. It can be overloaded to have a one
      *     arg constructor or no arg constructor.
      * </p>
-     * @param id -> Describes the auto-serialized number assigned by Spring.
-     * @param name -> The string name representation for the company.
+     * @param id : Describes the auto-serialized number assigned by Spring.
+     * @param name : The string name representation for the company.
      */
     public Company(Long id, String name) {
         this.id = id;
@@ -49,7 +49,7 @@ public final class Company {
      * <p>
      *     This is the reflection of the company id that has been converted.
      * </p>
-     * @return id -> retrieves the id that was assigned to that company DataAccessObject.
+     * @return id : retrieves the id that was assigned to that company DataAccessObject.
      */
     public Long getId() {
         return id;
@@ -59,7 +59,7 @@ public final class Company {
      * <p>
      *     This id is associated to the DataAccessObject when converted to the Model.
      * </p>
-     * @param id -> takes in the id that was assigned to the Company DataAccessObject and unwrapped into the Model.
+     * @param id : takes in the id that was assigned to the Company DataAccessObject and unwrapped into the Model.
      */
     public void setId(Long id) {
         this.id = id;
@@ -69,7 +69,7 @@ public final class Company {
      * <p>
      *     retrieves the  name of a converted Company DataAccessObject.
      * </p>
-     * @return name -> retrieves the name of a converted Company DataAccessObject that was assigned to that company.
+     * @return name : retrieves the name of a converted Company DataAccessObject that was assigned to that company.
      */
     public String getName() {
         return name;
@@ -79,7 +79,7 @@ public final class Company {
      * <p>
      *     The String name that is parsed from the User DataAccessObject input.
      * </p>
-     * @param name -> sets the name of company assigned by the DataAccessObject after conversion.
+     * @param name : sets the name of company assigned by the DataAccessObject after conversion.
      */
     public void setName(String name) {
         this.name = name;
