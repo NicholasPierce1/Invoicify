@@ -33,7 +33,7 @@ public final class CompanyController {
      * Autowired constructor that takes in the Adapter bean and renders a bean of type CompanyController.
      * </p>
      *
-     * @param adapter -> preexisting bean injection servicing the remote data store
+     * @param adapter : preexisting bean injection servicing the remote data store
      */
     @Autowired
     public CompanyController(Adapter adapter) {
@@ -43,12 +43,12 @@ public final class CompanyController {
     /**
      * <p>
      * A Get request is sent to: http://localhost:8080/api/company , that logic is processed and then shipped
-     * to the adapter to communicate with the DataAccessObject -> and the database in turn. The response is
+     * to the adapter to communicate with the DataAccessObject : and the database in turn. The response is
      * the rendered list of companies that the DataAccessObject retrieves. Important to note that if there
      * is no companies present, the application will not crash.
      * </p>
      *
-     * @return : List<Company> : a compiled list of all the present companies
+     * @return : List of Company : a compiled list of all the present companies
      */
     @GetMapping(
             value = {"/", ""},
@@ -78,8 +78,8 @@ public final class CompanyController {
      * application
      * </p>
      *
-     * @param id -> requires an id @PathVariable in order to search for the requested company
-     * @return : Optional<Company> if that Company exists with the id, null otherwise
+     * @param id : requires an id @PathVariable in order to search for the requested company
+     * @return : Optional Company if that Company exists with the id, null otherwise
      */
     @GetMapping(
             value = {"/{id}", "/{id}/"},
@@ -110,8 +110,8 @@ public final class CompanyController {
      * database.
      * </p>
      *
-     * @param company -> requires a company @RequestBody parameter in order to add a company to the list.
-     * @return : companyRepository -> saving created company
+     * @param company : requires a company @RequestBody parameter in order to add a company to the list.
+     * @return : companyRepository : saving created company
      */
 
     @PostMapping
@@ -143,7 +143,7 @@ public final class CompanyController {
      * entry.
      * </p>
      *
-     * @param id -> requires an id @PathVariable in order to search for the requested company to delete
+     * @param id : requires an id @PathVariable in order to search for the requested company to delete
      * @return : the company that was removed; should be null
      */
     @DeleteMapping(
@@ -173,8 +173,8 @@ public final class CompanyController {
      * adjustments as collected from the user.
      * </p>
      *
-     * @param company -> requires a Company type company from the body of the request preliminarily
-     * @param id      -> requires an id in the PathVariable to find the company
+     * @param company : requires a Company type company from the body of the request preliminarily
+     * @param id      : requires an id in the PathVariable to find the company
      * @return : the updated Company
      */
     @PutMapping(
