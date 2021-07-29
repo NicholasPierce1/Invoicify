@@ -258,9 +258,9 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
      *     this is to convert this InvoiceLineItemDataAccess to Invoice model.
      * </p>
      *
-     * @param supplier InvoiceLineItem
-     * @param <M> of type InvoiceLineItem
-     * @return
+     * @param - supplier InvoiceLineItem
+     * @param - A model type used to create data access reflections
+     * @return - InvoiceLineItem
      */
     @Override
     public <M extends InvoiceLineItem> M convertToModel(Supplier<M> supplier) {
@@ -274,7 +274,7 @@ public class InvoiceLineItemDataAccess implements IDataAccess<InvoiceLineItem> {
     /**
      * There is no need to convert model to dataaccess anywhere in the application.
      * @param modelObject - InvoiceLineItem
-     * @param <M> - InvoiceLineItem
+     * @param - InvoiceLineItem
      */
     public <M extends InvoiceLineItem> void convertToDataAccess(M modelObject) {
 
