@@ -267,7 +267,7 @@ public class InvoiceDataAccess implements IDataAccess<Invoice> {
      * @param supplier - provides implementation of converting to a Model Object.
      *                   NOTE: the default state set in the supplier may/will be written over
      * @param - A model type used to create data access reflections
-     * @return
+     * @return - A supplier
      */
     @Override
     public <M extends Invoice> M convertToModel(Supplier<M> supplier) {

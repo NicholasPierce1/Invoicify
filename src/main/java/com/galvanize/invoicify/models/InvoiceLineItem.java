@@ -6,8 +6,11 @@ import java.time.LocalDate;
 
 /**
  * <h2>
- *     this invoiceLineItem object is only used for storing invoice billing record line items that are returned from the database through InvoiceDataAccess.
+ *     InvoiceLineItem
  * </h2>
+ * <p>
+ *     this invoiceLineItem object is only used for storing invoice billing record line items that are returned from the database through InvoiceDataAccess.
+ * </p>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class InvoiceLineItem {
