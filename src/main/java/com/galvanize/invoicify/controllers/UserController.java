@@ -52,8 +52,8 @@ public final class UserController {
 	 *  	DataAccessObject -> the database in turn.
 	 *  	The response is then rendered a user that the DataAccessObject retrieves.
 	 * </p>
-	 * @param id -> requires an id in the @PathVariable to locate the user to update.
-	 * @param user -> requires a User type user from the request body prior to updating a user
+	 * @param id requires an id in the @PathVariable to locate the user to update.
+	 * @param user requires a User type user from the request body prior to updating a user
 	 * @return : User that is mapped/qualified by the given path variable ID
 	 */
 
@@ -83,7 +83,7 @@ public final class UserController {
 	 * 	   access to the system, after adding their username and password then they should
 	 * 	   be added to the system and client should see their account information show up in the response.
 	 * </p>
-	 * @param user -> requires a user @RequestBody param in order to create a new User in the database.
+	 * @param user requires a user @RequestBody param in order to create a new User in the database.
 	 * @return : Optional<User> : a user is returned once that User is created
 	 * */
 
@@ -124,7 +124,7 @@ public final class UserController {
 	 * 	 	retrieve data about a single user. The controller process the request sends it to the
 	 * 	 	adapter. After the request has been validated and processed the specific user is returned.
 	 * </p>
-	 * @param id -> requires an id @PathVariable in order to search for the requested user.
+	 * @param id requires an id @PathVariable in order to search for the requested user.
 	 * @return : User that is mapped/qualified by the given path variable ID
 	 * */
 

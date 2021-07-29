@@ -62,8 +62,8 @@ public final class UserDataAccess implements IDataAccess<User> {
      *     It cannot have a one arg constructor because the user_name column in the table cannot have null entries,
      *     therefore, there can only be a no args or all arg constructor.
      * </p>
-     * @param username -> String username of the user that is assigned by the user when created and saved
-     * @param password -> String password of the user that is assigned by the user when created and saved
+     * @param username String username of the user that is assigned by the user when created and saved
+     * @param password  String password of the user that is assigned by the user when created and saved
      * */
 
     public UserDataAccess(String username, String password) {
@@ -79,7 +79,7 @@ public final class UserDataAccess implements IDataAccess<User> {
      *<p>
      *  This gets the user id in the user table.
      *</p>
-     * @return id -> id stored in the user_id field in User table.
+     * @return id id stored in the user_id field in User table.
      * */
 
     public Long getId() {
@@ -90,7 +90,7 @@ public final class UserDataAccess implements IDataAccess<User> {
      *<p>
      *  This gets the password that is stored in the user table.
      *</p>
-     * @return password -> retrieves the password that was assigned to that user.
+     * @return password retrieves the password that was assigned to that user.
      * */
 
     public String getPassword() {
@@ -101,7 +101,7 @@ public final class UserDataAccess implements IDataAccess<User> {
      * <p>
      *     This gets the user name that is stored in the User table.
      * </p>
-     * @return username -> retrieves the username that was assigned to that user.
+     * @return username retrieves the username that was assigned to that user.
      * */
 
     public String getUsername() {
@@ -112,7 +112,7 @@ public final class UserDataAccess implements IDataAccess<User> {
      * <p>
      *     This sets the serialized id that was assigned to the User DataAccessObject.
      * </p>
-     * @param id -> takes in the serialized id that was assigned to the user DataAccessObject
+     * @param id takes in the serialized id that was assigned to the user DataAccessObject
      * */
 
     public void setId(Long id) {
@@ -123,7 +123,7 @@ public final class UserDataAccess implements IDataAccess<User> {
      * <p>
      *     The sets the string password for the User that is stored in the user table.
      * </p>
-     * @param password -> set the password of the User assigned to that User
+     * @param password set the password of the User assigned to that User
      */
 
     public void setPassword(String password) {
@@ -134,7 +134,7 @@ public final class UserDataAccess implements IDataAccess<User> {
      * <p>
      *     This sets the username that is stored for the user in the user table.
      * </p>
-     * @param username -> sets the username of the User
+     * @param username sets the username of the User
      */
 
     public void setUsername(String username) {

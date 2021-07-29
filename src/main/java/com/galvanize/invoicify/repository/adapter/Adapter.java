@@ -79,7 +79,7 @@ public final class Adapter {
      * DataAccessObjects, and converts each of them into a Company Model and persists them to a list.
      * </p>
      *
-     * @return : List<Company> -> finds all Company DataAccessObjects, streams and maps them together, converts
+     * @return : List<Company> finds all Company DataAccessObjects, streams and maps them together, converts
      * each into a Company Model Object, then returns it as a list
      */
     public @NotNull
@@ -97,7 +97,7 @@ public final class Adapter {
      *      Handles the request from the controller by utilizing the userRepository; looks up the
      *      user with the given name then converts the UserDataAccessModel to a User Model.
      * </p>
-     * @param username -> requires a String username from the request body prior to retrieving a user by username
+     * @param username requires a String username from the request body prior to retrieving a user by username
      * @return Optional<User> : uses userRepository to find the specified User DataAccessObject by its name and converts
      *  it to a User Model Object.
      * */
@@ -148,13 +148,13 @@ public final class Adapter {
      *     with to verify that the given userName does not already exist in the user table.
      *     Then saves the user as a DAO in the user table and converts the DAO to a user Model.
      *</p>
-     * @param user -> takes in the specific user provided
+     * @param user takes in the specific user provided
      * @return User : With the userRepository, it checks if the user exists, throws a DuplicateUserExecption,
      * otherwise, a new user DAO is instantiated then converted to a user model.
      * @throws DuplicateUserException : It addresses the issue of computing logic against duplication
      * of keys. Since the User table must contain non-null, unique String name entries,
      * this exception prevents the user from assigning a name to a User that already exists
-     * in the table. This aslo handles redirecting the user in these instances and
+     * in the table. This also handles redirecting the user in these instances and
      * prompting to adjust serialization so table integrity in tact and aligned with the rest of the system
      * */
 
@@ -175,10 +175,10 @@ public final class Adapter {
      *      Handles the request from the controller by utilizing userRepository; it counts the user with the given
      *      userName to validate if the specified user exists. If it does, it returns true as a boolean.
      *</p>
-     * @param userName -> specific user to be verified to exist in data store
-     * @return boolean -> validates if specified user exists, then counts the number of times the userName is listed to
+     * @param userName specific user to be verified to exist in data store
+     * @return boolean validates if specified user exists, then counts the number of times the userName is listed to
      * verify that the user exists. If it does exist, it returns true.
-     * @exception DuplicateUserException -> It addresses the issue of computing logic against duplication of keys.
+     * @exception DuplicateUserException addresses the issue of computing logic against duplication of keys.
      * Since the User table must contain non-null, unique String name entries, this exception prevents the user from
      * assigning a name to a User that already exists in the table. This also handles redirecting the user in these
      * instances and prompting to adjust serialization so table integrity in tact and aligned with the rest of the system
@@ -212,8 +212,8 @@ public final class Adapter {
      *     Handles the request from the controller by looking up the user with the
      *     provided id, then converts the DAO to a User Model.
      * </p>
-     * @param id -> requires and id param for the requested user
-     * @return : User -> finds the specific user DAO by ID and converts it
+     * @param id requires and id param for the requested user
+     * @return : User finds the specific user DAO by ID and converts it
      * to a user Model.
      */
     public User findUser(Long id) {
@@ -229,8 +229,8 @@ public final class Adapter {
      * id and then converts the DataAccessObject to a Company Model.
      * </p>
      *
-     * @param id -> requires an id in order to search for the requested company
-     * @return : Company -> uses companyRepository to find the specified company DotaAccessObject by its id and converts
+     * @param id requires an id in order to search for the requested company
+     * @return : Company uses companyRepository to find the specified company DotaAccessObject by its id and converts
      * it to a Company Model Object.
      */
     public @NotNull
@@ -515,8 +515,8 @@ public final class Adapter {
      * DataAccessObject in the company table and returns it as the converted Company Model.
      * </p>
      *
-     * @param company -> takes in a Company company specified by the user
-     * @return : Company -> With the companyRepository, it checks if the company already exists, throws a DuplicateCompanyException,
+     * @param company takes in a Company company specified by the user
+     * @return : Company With the companyRepository, it checks if the company already exists, throws a DuplicateCompanyException,
      * otherwise, a new company DataAccessObject is instantiated then converted to a Company Model
      * @throws DuplicateCompanyException
      */
@@ -545,8 +545,8 @@ public final class Adapter {
      * then it will be stored in a temporary variable, deleted from the database and returned to the user.
      * </p>
      *
-     * @param id -> specified company id to delete
-     * @return : Optional<Company> -> Validates if the specified company exists. If the company does not exist,
+     * @param id specified company id to delete
+     * @return : Optional<Company> Validates if the specified company exists. If the company does not exist,
      * it returns an empty Optional. If it does, then it calls companyRepository to delete it and returns the
      * deleted company.
      */
@@ -576,9 +576,9 @@ public final class Adapter {
      *
      * </p>
      *
-     * @param company -> Requires the base company that is being updated.
-     * @param id      -> Requires the serialized id of the company being updated.
-     * @return : Company -> Calls the companyRepository to save the modified company DataAccessObject, then converts to
+     * @param company Requires the base company that is being updated.
+     * @param id Requires the serialized id of the company being updated.
+     * @return : Company  Calls the companyRepository to save the modified company DataAccessObject, then converts to
      * a Company Model.
      */
     public @NotNull
