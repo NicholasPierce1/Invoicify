@@ -8,8 +8,12 @@ import java.util.List;
 
 /**
  * <h2>
- *     This invoice object is used for mapping the invoice request on create endpoint and this object is populated within InvoiceDataAccess and returned to the client.
+ *     Invoice
  * </h2>
+ *
+ * <p>
+ *     This invoice object is used for mapping the invoice request on create endpoint and this object is populated within InvoiceDataAccess and returned to the client.
+ * </p>
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Invoice {
