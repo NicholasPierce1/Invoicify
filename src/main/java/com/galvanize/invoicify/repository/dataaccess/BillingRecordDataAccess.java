@@ -50,7 +50,6 @@ public abstract class BillingRecordDataAccess<T extends BillingRecord> implement
             return typeName;
         }
     }
-
     // fields
 
     public static Long current_biggest_id = null;
